@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.timezone import now
 
+from ..apps import APP_NAME
 
-class SoftDeleteQuerySet(models.QuerySet):
+
+class UFDLBaseQuerySet(models.QuerySet):
     """
     Base class for query-sets of soft-delete models.
     """
@@ -36,12 +38,22 @@ class SoftDeleteQuerySet(models.QuerySet):
         active.update(deletion_time=now())
 
 
-class SoftDeleteModel(models.Model):
+class UFDLBaseModel(models.Model):
     """
     Base class for models that don't actually get deleted from the
     database, instead recording a deletion time.
     """
-    # The deletion time of the model. A value of null means it hasn't been deleted
+    # The user that created the object
+    creator = models.ForeignKey(f"{APP_NAME}.User",
+                                on_delete=models.DO_NOTHING,
+                                related_name="+",
+                                editable=False)
+
+    # The creation date/time of the object
+    creation_time = models.DateTimeField(auto_now_add=True,
+                                         editable=False)
+
+    # The deletion time of the object. A value of null means it hasn't been deleted
     deletion_time = models.DateTimeField(null=True,
                                          default=None,
                                          editable=False)

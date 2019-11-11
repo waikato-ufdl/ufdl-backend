@@ -2,10 +2,10 @@ from django.db import models
 
 from ..apps import APP_NAME
 from ._OrganisationInferable import OrganisationInferable
-from ._SoftDeleteModel import SoftDeleteModel, SoftDeleteQuerySet
+from ._UFDLBaseModel import UFDLBaseModel, UFDLBaseQuerySet
 
 
-class ProjectQuerySet(SoftDeleteQuerySet):
+class ProjectQuerySet(UFDLBaseQuerySet):
     """
     Custom query-set which handles project creation and deletion.
     """
@@ -37,22 +37,12 @@ class ProjectQuerySet(SoftDeleteQuerySet):
         return self.filter(organisation__in=Organisation.objects.for_user(user))
 
 
-class Project(OrganisationInferable, SoftDeleteModel):
+class Project(OrganisationInferable, UFDLBaseModel):
     """
     Currently a project represents a related group of datasets.
     """
     # The name of the project
     name = models.CharField(max_length=200)
-
-    # The date/time of project creation
-    creation_time = models.DateTimeField(auto_now_add=True,
-                                         editable=False)
-
-    # The member that created the project
-    creator = models.ForeignKey(f"{APP_NAME}.Membership",
-                                on_delete=models.DO_NOTHING,
-                                related_name="projects_created",
-                                editable=False)
 
     # The organisation the project belongs to
     organisation = models.ForeignKey(f"{APP_NAME}.Organisation",
@@ -67,7 +57,7 @@ class Project(OrganisationInferable, SoftDeleteModel):
             # Ensure that each active project has a unique name within a single organisation
             models.UniqueConstraint(name="unique_active_project_names_per_organisation",
                                     fields=["name", "organisation"],
-                                    condition=SoftDeleteModel.active_Q)
+                                    condition=UFDLBaseModel.active_Q)
         ]
 
     def pre_delete(self):

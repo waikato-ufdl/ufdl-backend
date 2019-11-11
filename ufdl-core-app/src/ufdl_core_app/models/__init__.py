@@ -6,5 +6,5 @@ from ._Membership import Membership
 from ._Organisation import Organisation
 from ._OrganisationInferable import OrganisationInferable
 from ._Project import Project
-from ._SoftDeleteModel import SoftDeleteModel
+from ._UFDLBaseModel import UFDLBaseModel
 from ._User import User

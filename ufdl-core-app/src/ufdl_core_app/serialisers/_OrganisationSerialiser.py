@@ -1,13 +1,8 @@
-from rest_framework import serializers
-
 from ..models import Organisation
+from ._UFDLBaseSerialiser import UFDLBaseSerialiser
 
 
-class OrganisationSerialiser(serializers.ModelSerializer):
+class OrganisationSerialiser(UFDLBaseSerialiser):
     class Meta:
         model = Organisation
-        fields = ["name", "creation_time", "creator", "deletion_time"]
-
-    def create(self, validated_data):
-        validated_data["creator"] = self.context["request"].user
-        return super().create(validated_data)
+        fields = ["name"] + UFDLBaseSerialiser.base_fields

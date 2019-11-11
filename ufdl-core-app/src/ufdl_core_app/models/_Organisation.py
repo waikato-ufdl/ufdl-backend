@@ -2,10 +2,10 @@ from django.db import models
 
 from ..apps import APP_NAME
 from ._OrganisationInferable import OrganisationInferable
-from ._SoftDeleteModel import SoftDeleteModel, SoftDeleteQuerySet
+from ._UFDLBaseModel import UFDLBaseModel, UFDLBaseQuerySet
 
 
-class OrganisationQuerySet(SoftDeleteQuerySet):
+class OrganisationQuerySet(UFDLBaseQuerySet):
     """
     Custom query-set for organisations.
     """
@@ -62,7 +62,7 @@ class OrganisationQuerySet(SoftDeleteQuerySet):
                            memberships__user=user)
 
 
-class Organisation(OrganisationInferable, SoftDeleteModel):
+class Organisation(OrganisationInferable, UFDLBaseModel):
     """
     An organisation represents a collection of users and the projects
     that they are working on.
@@ -70,19 +70,10 @@ class Organisation(OrganisationInferable, SoftDeleteModel):
     # The name of the organisation
     name = models.CharField(max_length=200)
 
-    # The creation date/time of the organisation
-    creation_time = models.DateTimeField(auto_now_add=True,
-                                         editable=False)
-
-    # The user that created the organisation
-    creator = models.ForeignKey(f"{APP_NAME}.User",
-                                on_delete=models.DO_NOTHING,
-                                related_name="+",
-                                editable=False)
-
     # The members of the organisation
     members = models.ManyToManyField(f"{APP_NAME}.User",
                                      through=f"{APP_NAME}.Membership",
+                                     through_fields=("organisation", "user"),
                                      related_name="organisations")
 
     objects = OrganisationQuerySet.as_manager()
@@ -92,7 +83,7 @@ class Organisation(OrganisationInferable, SoftDeleteModel):
             # Ensure that each active organisation has a unique name
             models.UniqueConstraint(name="unique_active_organisation_names",
                                     fields=["name"],
-                                    condition=SoftDeleteModel.active_Q)
+                                    condition=UFDLBaseModel.active_Q)
         ]
 
     def infer_organisation(self) -> "Organisation":

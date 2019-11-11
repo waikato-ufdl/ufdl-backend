@@ -1,26 +1,20 @@
 from ..models import Dataset
 from ._OrganisationInferableSerialiser import OrganisationInferableSerialiser
+from ._UFDLBaseSerialiser import UFDLBaseSerialiser
 
 
-class DatasetSerialiser(OrganisationInferableSerialiser):
+class DatasetSerialiser(OrganisationInferableSerialiser, UFDLBaseSerialiser):
     class Meta:
         model = Dataset
         fields = ["name",
                   "version",
-                  "creation_time",
-                  "creator",
-                  "deletion_time",
                   "project",
                   "licence",
                   "is_public",
-                  "tags"]
+                  "tags"] + UFDLBaseSerialiser.base_fields
         extra_kwargs = {
             "tags": {"allow_blank": True}
         }
-
-    def create(self, validated_data):
-        validated_data["creator"] = self.active_membership_for(self.context["request"].user)
-        return super().create(validated_data)
 
     @classmethod
     def get_organisation_from_validated_data(cls, validated_data):

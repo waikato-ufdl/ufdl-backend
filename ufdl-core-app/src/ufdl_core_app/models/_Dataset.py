@@ -2,10 +2,10 @@ from django.db import models
 
 from ..apps import APP_NAME
 from ._OrganisationInferable import OrganisationInferable
-from ._SoftDeleteModel import SoftDeleteModel, SoftDeleteQuerySet
+from ._UFDLBaseModel import UFDLBaseModel, UFDLBaseQuerySet
 
 
-class DatasetQuerySet(SoftDeleteQuerySet):
+class DatasetQuerySet(UFDLBaseQuerySet):
     """
     Custom query-set for datasets.
     """
@@ -37,22 +37,12 @@ class DatasetQuerySet(SoftDeleteQuerySet):
                            models.Q(project__organisation__in=Organisation.objects.for_user(user)))
 
 
-class Dataset(OrganisationInferable, SoftDeleteModel):
+class Dataset(OrganisationInferable, UFDLBaseModel):
     # The name of the dataset
     name = models.CharField(max_length=200)
 
     # The version of the dataset
     version = models.IntegerField(default=1)
-
-    # The creation date/time of the dataset
-    creation_time = models.DateTimeField(auto_now_add=True,
-                                         editable=False)
-
-    # The member that created the dataset
-    creator = models.ForeignKey(f"{APP_NAME}.Membership",
-                                on_delete=models.DO_NOTHING,
-                                related_name="datasets_created",
-                                editable=False)
 
     # The project the dataset belongs to
     project = models.ForeignKey(f"{APP_NAME}.Project",

@@ -1,18 +1,14 @@
 from ..models import Project
 from ._OrganisationInferableSerialiser import OrganisationInferableSerialiser
+from ._UFDLBaseSerialiser import UFDLBaseSerialiser
 
 
-class ProjectSerialiser(OrganisationInferableSerialiser):
+class ProjectSerialiser(OrganisationInferableSerialiser, UFDLBaseSerialiser):
     class Meta:
         model = Project
-        fields = ["name",
-                  "creation_time",
-                  "deletion_time",
-                  "organisation"]
-
-    def create(self, validated_data):
-        validated_data["creator"] = self.active_membership_for(self.context["request"].user)
-        return super().create(validated_data)
+        fields = ["id",
+                  "name",
+                  "organisation"] + UFDLBaseSerialiser.base_fields
 
     @classmethod
     def get_organisation_from_validated_data(cls, validated_data):

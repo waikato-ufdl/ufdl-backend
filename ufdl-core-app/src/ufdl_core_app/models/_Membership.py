@@ -2,10 +2,10 @@ from django.db import models
 
 from ..apps import APP_NAME
 from ._OrganisationInferable import OrganisationInferable
-from ._SoftDeleteModel import SoftDeleteModel, SoftDeleteQuerySet
+from ._UFDLBaseModel import UFDLBaseModel, UFDLBaseQuerySet
 
 
-class MembershipQuerySet(SoftDeleteQuerySet):
+class MembershipQuerySet(UFDLBaseQuerySet):
     """
     Custom query-set for memberships.
     """
@@ -40,7 +40,7 @@ class MembershipQuerySet(SoftDeleteQuerySet):
         return self.filter(permissions=Membership.PERMISSION_ADMIN)
 
 
-class Membership(OrganisationInferable, SoftDeleteModel):
+class Membership(OrganisationInferable, UFDLBaseModel):
     # Permission constants
     PERMISSION_READ = "R"
     PERMISSION_WRITE = "W"
@@ -55,10 +55,6 @@ class Membership(OrganisationInferable, SoftDeleteModel):
     organisation = models.ForeignKey(f"{APP_NAME}.Organisation",
                                      on_delete=models.DO_NOTHING,
                                      related_name="memberships")
-
-    # The date/time the member joined the organisation
-    joined_time = models.DateTimeField(auto_now_add=True,
-                                       editable=False)
 
     # The permissions the member has within the organisation
     permissions = models.CharField(max_length=1,
@@ -77,7 +73,7 @@ class Membership(OrganisationInferable, SoftDeleteModel):
             # Ensure that each user is only an active member of each organisation once
             models.UniqueConstraint(name="one_active_membership_per_user_per_organisation",
                                     fields=["user", "organisation"],
-                                    condition=SoftDeleteModel.active_Q)
+                                    condition=UFDLBaseModel.active_Q)
         ]
 
     def is_admin(self) -> bool:

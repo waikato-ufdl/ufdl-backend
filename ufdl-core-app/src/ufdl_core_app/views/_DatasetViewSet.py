@@ -1,12 +1,12 @@
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import AllowAny
 
 from ..models import Dataset
 from ..serialisers import DatasetSerialiser
-from ..permissions import MemberHasWritePermission, IsMember, IsPublicDataset
-from ._PerActionPermissionsModelViewSet import PerActionPermissionsModelViewSet
+from ..permissions import MemberHasWritePermission, IsMember, IsPublicDataset, IsAdminUser
+from ._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class DatasetViewSet(PerActionPermissionsModelViewSet):
+class DatasetViewSet(UFDLBaseViewSet):
     queryset = Dataset.objects.all()
     serializer_class = DatasetSerialiser
 

@@ -1,12 +1,10 @@
-from rest_framework.permissions import IsAdminUser
-
 from ..models import Project
 from ..serialisers import ProjectSerialiser
-from ..permissions import IsMember, MemberHasWritePermission
-from ._PerActionPermissionsModelViewSet import PerActionPermissionsModelViewSet
+from ..permissions import IsMember, MemberHasWritePermission, IsAdminUser, IsAuthenticated
+from ._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class ProjectViewSet(PerActionPermissionsModelViewSet):
+class ProjectViewSet(UFDLBaseViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerialiser
 
@@ -14,6 +12,6 @@ class ProjectViewSet(PerActionPermissionsModelViewSet):
     default_permissions = []
 
     permission_classes = {
-        "list": [IsMember],  # List filtering is done seperately
+        "list": [IsAuthenticated],
         "retrieve": [IsMember]
     }

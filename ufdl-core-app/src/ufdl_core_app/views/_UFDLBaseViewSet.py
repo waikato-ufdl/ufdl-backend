@@ -1,8 +1,10 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny
+
+from ..permissions import IsAdminUser
 
 
-class PerActionPermissionsModelViewSet(ModelViewSet):
+class UFDLBaseViewSet(ModelViewSet):
     """
     Modifies the permissions of a model view-set so that
     they can be defined per-action (list, create, etc.).
@@ -36,4 +38,11 @@ class PerActionPermissionsModelViewSet(ModelViewSet):
                         f"got {type(self.permission_classes)}")
 
     def get_queryset(self):
-        return super().get_queryset().for_user(self.request.user)
+        query_set = super().get_queryset()
+
+        # Use the full query-set for most actions, but list can't only
+        # those objects that the user has permissions for.
+        if self.action == "list":
+            query_set = query_set.for_user(self.request.user)
+
+        return query_set

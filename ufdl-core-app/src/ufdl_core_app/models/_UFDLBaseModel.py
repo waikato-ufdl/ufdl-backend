@@ -8,6 +8,15 @@ class UFDLBaseQuerySet(models.QuerySet):
     """
     Base class for query-sets of soft-delete models.
     """
+    def for_user(self, user):
+        """
+        Filters the query-set to those instances that the given
+        user has access to.
+
+        :param user:    The user.
+        """
+        raise NotImplementedError(UFDLBaseQuerySet.for_user.__qualname__)
+
     def active(self):
         """
         Filters the query-set to only those that are active.

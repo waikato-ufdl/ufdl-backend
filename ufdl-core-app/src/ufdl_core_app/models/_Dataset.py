@@ -3,18 +3,13 @@ from django.db import models
 from ..apps import APP_NAME
 from ._OrganisationInferable import OrganisationInferable
 from ._UFDLBaseModel import UFDLBaseModel, UFDLBaseQuerySet
+from ._PublicModel import PublicModel, PublicQuerySet
 
 
-class DatasetQuerySet(UFDLBaseQuerySet):
+class DatasetQuerySet(PublicQuerySet, UFDLBaseQuerySet):
     """
     Custom query-set for datasets.
     """
-    def public(self):
-        """
-        Filters datasets down to only those that are public.
-        """
-        return self.filter(is_public=True)
-
     def for_user(self, user):
         """
         Gets all datasets that a given user has read-access to.
@@ -37,7 +32,7 @@ class DatasetQuerySet(UFDLBaseQuerySet):
                            models.Q(project__organisation__in=Organisation.objects.for_user(user)))
 
 
-class Dataset(OrganisationInferable, UFDLBaseModel):
+class Dataset(OrganisationInferable, PublicModel, UFDLBaseModel):
     # The name of the dataset
     name = models.CharField(max_length=200)
 
@@ -51,9 +46,6 @@ class Dataset(OrganisationInferable, UFDLBaseModel):
 
     # The licence type for this dataset
     licence = models.CharField(max_length=200, default="proprietary")
-
-    # Whether the dataset is available for public download
-    is_public = models.BooleanField(default=False)
 
     # The tags applied to this dataset
     tags = models.TextField()

@@ -8,7 +8,7 @@ setup(
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
         'Topic :: Scientific/Engineering :: Mathematics',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
     ],
     license='MIT',
     package_dir={

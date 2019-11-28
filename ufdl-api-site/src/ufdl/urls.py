@@ -19,8 +19,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('core/', include('ufdl_core_app.urls')),
-    path('jwt/refresh/', TokenRefreshView.as_view(), name='refresh_jwt_token'),
-    path('jwt/verify/', TokenVerifyView.as_view(), name='verify_jwt_token'),
-    path('jwt/obtain/', TokenObtainPairView.as_view(), name='obtain_jwt_token')
+    path('v1/core/', include('ufdl_core_app.urls')),
+    path('v1/auth/refresh/', TokenRefreshView.as_view(), name='refresh_jwt_token'),
+    path('v1/auth/verify/', TokenVerifyView.as_view(), name='verify_jwt_token'),
+    path('v1/auth/obtain/', TokenObtainPairView.as_view(), name='obtain_jwt_token')
 ]

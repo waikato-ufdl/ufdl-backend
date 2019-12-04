@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'ufdl_core_app.apps.UFDLCoreAppConfig'
+    'ufdl_core_app',
+    'simple_django_teams'
 ]
 
 MIDDLEWARE = [

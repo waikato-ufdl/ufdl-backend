@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 
-class UFDLBaseSerialiser(serializers.ModelSerializer):
+class SoftDeleteModelSerialiser(serializers.ModelSerializer):
     """
     Base class for common functionality of serialisers.
     """

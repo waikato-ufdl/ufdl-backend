@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from simple_django_teams.util import ensure_model
 
 
 class IsPublicDataset(permissions.BasePermission):
@@ -10,7 +11,6 @@ class IsPublicDataset(permissions.BasePermission):
         from ..models import Dataset
 
         # Make sure the object is a dataset
-        if not isinstance(obj, Dataset):
-            return False
+        ensure_model(obj, Dataset)
 
         return obj.is_public

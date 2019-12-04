@@ -1,16 +1,18 @@
 from rest_framework import permissions
+from simple_django_teams.mixins import TeamOwnedModel
+from simple_django_teams.models import Membership
+from simple_django_teams.util import active_membership
 
 
 class MemberPermission(permissions.BasePermission):
     """
     Base class for member permissions. Checks that the user
-    is a member of the relevant organisation before deferring
+    is a member of the relevant team before deferring
     the remainder of the permission check.
     """
     def has_permission(self, request, view):
         # Local imports to avoid circularity errors
-        from ..serialisers import OrganisationInferableSerialiser
-        from ..models import Membership
+        from ..serialisers import TeamOwnedModelSerialiser
 
         # List action performs it's authorisation separately,
         # and all other actions use the object permissions
@@ -20,9 +22,9 @@ class MemberPermission(permissions.BasePermission):
         # Get the serialiser type for the view
         serialiser_class = view.serializer_class
 
-        # If the organisation can't be inferred from the serialiser class,
+        # If the team can't be inferred from the serialiser class,
         # trivially pass and we'll further discriminate later
-        if not issubclass(serialiser_class, OrganisationInferableSerialiser):
+        if not issubclass(serialiser_class, TeamOwnedModelSerialiser):
             return True
 
         # Create a serialiser instance for the request data
@@ -37,7 +39,7 @@ class MemberPermission(permissions.BasePermission):
         # User the instance to infer the membership to test for authorisation
         membership = serialiser.active_membership_for(request.user)
 
-        # If the user is not a member of the organisation, permission denied
+        # If the user is not a member of the team, permission denied
         if not isinstance(membership, Membership):
             return False
 
@@ -45,10 +47,10 @@ class MemberPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         # Local imports to avoid circularity errors
-        from ..models import User, Membership, OrganisationInferable
+        from ..models import User
 
-        # The object being tested should imply the organisation it belongs to
-        if not isinstance(obj, OrganisationInferable):
+        # The object being tested should imply the team it belongs to
+        if not isinstance(obj, TeamOwnedModel):
             return False
 
         # User must be logged in
@@ -56,9 +58,9 @@ class MemberPermission(permissions.BasePermission):
             return False
 
         # Get the user's membership
-        membership = obj.active_membership_for(request.user)
+        membership = active_membership(request.user, obj.get_owning_team())
 
-        # If the user is not a member of the organisation, permission denied
+        # If the user is not a member of the team, permission denied
         if not isinstance(membership, Membership):
             return False
 

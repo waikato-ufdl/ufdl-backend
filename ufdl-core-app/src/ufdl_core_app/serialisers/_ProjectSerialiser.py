@@ -1,15 +1,15 @@
 from ..models import Project
-from ._OrganisationInferableSerialiser import OrganisationInferableSerialiser
-from ._UFDLBaseSerialiser import UFDLBaseSerialiser
+from ._TeamOwnedModelSerialiser import TeamOwnedModelSerialiser
+from ._SoftDeleteModelSerialiser import SoftDeleteModelSerialiser
 
 
-class ProjectSerialiser(OrganisationInferableSerialiser, UFDLBaseSerialiser):
+class ProjectSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
     class Meta:
         model = Project
         fields = ["id",
                   "name",
-                  "organisation"] + UFDLBaseSerialiser.base_fields
+                  "team"] + SoftDeleteModelSerialiser.base_fields
 
     @classmethod
-    def get_organisation_from_validated_data(cls, validated_data):
-        return validated_data["organisation"]
+    def get_team_from_validated_data(cls, validated_data):
+        return validated_data["team"]

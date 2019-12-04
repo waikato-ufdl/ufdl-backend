@@ -9,7 +9,7 @@ class PublicQuerySet(models.QuerySet):
         """
         Filters datasets down to only those that are public.
         """
-        return self.filter(is_public=True)
+        return self.filter(PublicModel.public_Q)
 
 
 class PublicModel(models.Model):
@@ -19,6 +19,11 @@ class PublicModel(models.Model):
     """
     # Whether the object is available for public access
     is_public = models.BooleanField(default=False)
+
+    # Q object for filtering public models
+    public_Q = models.Q(is_public=True)
+
+    objects = PublicQuerySet.as_manager()
 
     class Meta:
         abstract = True

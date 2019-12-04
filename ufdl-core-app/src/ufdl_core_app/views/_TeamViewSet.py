@@ -1,12 +1,13 @@
-from ..models import Organisation
-from ..serialisers import OrganisationSerialiser
+from simple_django_teams.models import Team
+
+from ..serialisers import TeamSerialiser
 from ..permissions import IsAuthenticated, IsMember, IsAdminUser, MemberHasAdminPermission
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class OrganisationViewSet(UFDLBaseViewSet):
-    queryset = Organisation.objects.all()
-    serializer_class = OrganisationSerialiser
+class TeamViewSet(UFDLBaseViewSet):
+    queryset = Team.objects.all()
+    serializer_class = TeamSerialiser
 
     admin_permission_class = IsAdminUser | MemberHasAdminPermission
     default_permissions = []

@@ -2,6 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 
 from ..permissions import IsAdminUser
+from ..util import for_user
 
 
 class UFDLBaseViewSet(ModelViewSet):
@@ -43,6 +44,6 @@ class UFDLBaseViewSet(ModelViewSet):
         # Use the full query-set for most actions, but list can't only
         # those objects that the user has permissions for.
         if self.action == "list":
-            query_set = query_set.for_user(self.request.user)
+            query_set = for_user(query_set, self.request.user)
 
         return query_set

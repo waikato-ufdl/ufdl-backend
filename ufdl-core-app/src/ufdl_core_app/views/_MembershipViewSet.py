@@ -1,4 +1,5 @@
-from ..models import Membership
+from simple_django_teams.models import Membership
+
 from ..serialisers import MembershipSerialiser
 from ..permissions import MemberHasAdminPermission, IsAuthenticated, IsAdminUser, IsOwnMembership
 from ._UFDLBaseViewSet import UFDLBaseViewSet

@@ -1,15 +1,16 @@
-from ..models import Membership
-from ._OrganisationInferableSerialiser import OrganisationInferableSerialiser
-from ._UFDLBaseSerialiser import UFDLBaseSerialiser
+from simple_django_teams.models import Membership
+
+from ._TeamOwnedModelSerialiser import TeamOwnedModelSerialiser
+from ._SoftDeleteModelSerialiser import SoftDeleteModelSerialiser
 
 
-class MembershipSerialiser(OrganisationInferableSerialiser, UFDLBaseSerialiser):
+class MembershipSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
     class Meta:
         model = Membership
         fields = ["user",
-                  "organisation",
-                  "permissions"] + UFDLBaseSerialiser.base_fields
+                  "team",
+                  "permissions"] + SoftDeleteModelSerialiser.base_fields
 
     @classmethod
-    def get_organisation_from_validated_data(cls, validated_data):
-        return validated_data["organisation"]
+    def get_team_from_validated_data(cls, validated_data):
+        return validated_data["team"]

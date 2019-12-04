@@ -6,7 +6,7 @@ from . import views
 router = DefaultRouter()
 router.register("datasets", views.DatasetViewSet)
 router.register("memberships", views.MembershipViewSet)
-router.register("organisations", views.OrganisationViewSet)
+router.register("teams", views.TeamViewSet)
 router.register("projects", views.ProjectViewSet)
 router.register("users", views.UserViewSet)
 

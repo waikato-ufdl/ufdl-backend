@@ -1,38 +1,15 @@
 from django.db import models
+from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
 
 from ..apps import APP_NAME
-from ._OrganisationInferable import OrganisationInferable
-from ._UFDLBaseModel import UFDLBaseModel, UFDLBaseQuerySet
-from ._PublicModel import PublicModel, PublicQuerySet
+from ..mixins import PublicModel, PublicQuerySet
 
 
-class DatasetQuerySet(PublicQuerySet, UFDLBaseQuerySet):
-    """
-    Custom query-set for datasets.
-    """
-    def for_user(self, user):
-        """
-        Gets all datasets that a given user has read-access to.
-
-        :param user:    The user.
-        :return:        The datasets.
-        """
-        # Local import to avoid circular references
-        from ._Organisation import Organisation
-
-        # Un-authenticated/inactive users only have access to public datasets
-        if not user.is_authenticated or not user.is_active:
-            return self.public()
-
-        # Superusers/staff can see all datasets
-        if user.is_superuser or user.is_staff:
-            return self.all()
-
-        return self.filter(models.Q(is_public=True) |
-                           models.Q(project__organisation__in=Organisation.objects.for_user(user)))
+class DatasetQuerySet(PublicQuerySet, SoftDeleteQuerySet):
+    pass
 
 
-class Dataset(OrganisationInferable, PublicModel, UFDLBaseModel):
+class Dataset(TeamOwnedModel, PublicModel, SoftDeleteModel):
     # The name of the dataset
     name = models.CharField(max_length=200)
 
@@ -52,15 +29,15 @@ class Dataset(OrganisationInferable, PublicModel, UFDLBaseModel):
 
     objects = DatasetQuerySet.as_manager()
 
-    class Meta:
+    class Meta(SoftDeleteModel.Meta):
         constraints = [
             # Ensure that each dataset has a unique name/version pair for the project
-            models.UniqueConstraint(name="unique_project_versions",
+            models.UniqueConstraint(name="unique_datasets_per_project",
                                     fields=["name", "version", "project"])
         ]
 
-    def infer_organisation(self):
-        return self.project.organisation
+    def get_owning_team(self):
+        return self.project.team
 
     def __str__(self):
         return f"Dataset \"{self.name}\": {self.project}"

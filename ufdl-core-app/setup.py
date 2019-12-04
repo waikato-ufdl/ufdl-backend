@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 setup(
@@ -14,7 +14,7 @@ setup(
     package_dir={
         '': 'src'
     },
-    packages=["core"],
+    packages=find_packages(where="src"),
     version="0.0.1",
     author='Corey Sterling',
     author_email='coreytsterling@gmail.com',

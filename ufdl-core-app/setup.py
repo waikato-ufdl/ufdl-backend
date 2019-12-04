@@ -21,6 +21,7 @@ setup(
     install_requires=[
         "django",
         "djangorestframework",
-        "wai.common"
+        "wai.common",
+        "simple-django-teams"
     ]
 )

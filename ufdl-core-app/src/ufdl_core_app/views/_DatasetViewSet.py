@@ -2,7 +2,7 @@ from rest_framework.permissions import AllowAny
 
 from ..models import Dataset
 from ..serialisers import DatasetSerialiser
-from ..permissions import MemberHasWritePermission, IsMember, IsPublicDataset, IsAdminUser
+from ..permissions import MemberHasWritePermission, IsMember, IsPublic, IsAdminUser
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
 
@@ -14,5 +14,5 @@ class DatasetViewSet(UFDLBaseViewSet):
 
     permission_classes = {
         "list": [AllowAny],  # List filtering is done seperately
-        "retrieve": [IsMember | IsPublicDataset]
+        "retrieve": [IsMember | IsPublic]
     }

@@ -2,8 +2,6 @@ from django.db import models
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel
 from simple_django_teams.models import Team
 
-from ..apps import APP_NAME
-
 
 class Project(TeamOwnedModel, SoftDeleteModel):
     """

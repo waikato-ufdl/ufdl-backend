@@ -1,6 +1,6 @@
 from simple_django_teams.models import Team
 
-from ._SoftDeleteModelSerialiser import SoftDeleteModelSerialiser
+from .mixins import SoftDeleteModelSerialiser
 
 
 class TeamSerialiser(SoftDeleteModelSerialiser):

@@ -1,6 +1,5 @@
 from ..models import Project
-from ._TeamOwnedModelSerialiser import TeamOwnedModelSerialiser
-from ._SoftDeleteModelSerialiser import SoftDeleteModelSerialiser
+from .mixins import TeamOwnedModelSerialiser, SoftDeleteModelSerialiser
 
 
 class ProjectSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):

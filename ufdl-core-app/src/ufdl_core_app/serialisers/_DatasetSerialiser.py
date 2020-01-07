@@ -1,6 +1,5 @@
 from ..models import Dataset
-from ._TeamOwnedModelSerialiser import TeamOwnedModelSerialiser
-from ._SoftDeleteModelSerialiser import SoftDeleteModelSerialiser
+from .mixins import TeamOwnedModelSerialiser, SoftDeleteModelSerialiser
 
 
 class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):

@@ -2,7 +2,7 @@ from django.db import models
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
 
 from ..apps import APP_NAME
-from ..mixins import PublicModel, PublicQuerySet
+from .mixins import PublicModel, PublicQuerySet
 
 
 class DatasetQuerySet(PublicQuerySet, SoftDeleteQuerySet):

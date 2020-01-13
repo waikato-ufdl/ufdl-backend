@@ -108,3 +108,6 @@ venv.bak/
 
 # Auto-generated secret key file
 secret.py
+
+# Test filesystem
+/fs

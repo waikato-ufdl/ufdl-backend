@@ -1,8 +1,8 @@
 from django.db import models
 from simple_django_teams.models import Team, Membership
 
-from ..mixins import PublicQuerySet
 from ..models import Dataset, Project
+from ..models.mixins import PublicQuerySet
 
 
 def for_user(query_set, user):

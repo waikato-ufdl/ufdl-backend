@@ -1,9 +1,11 @@
 import os
 
 from django.db import models
+from rest_framework.exceptions import UnsupportedMediaType
 from simple_django_teams.mixins import TeamOwnedModel
 
 from ..apps import APP_NAME
+from .mixins import AsFileModel
 
 
 class DataAssetQuerySet(models.QuerySet):
@@ -18,7 +20,7 @@ class DataAssetQuerySet(models.QuerySet):
         return self.filter(filename__startswith=prefix)
 
 
-class DataAsset(TeamOwnedModel):
+class DataAsset(AsFileModel, TeamOwnedModel):
     """
     An asset of a dataset on disk. Data assets should not
     be modified (to do so delete the asset and then add a
@@ -83,6 +85,22 @@ class DataAsset(TeamOwnedModel):
 
     def get_owning_team(self):
         return self.dataset.project.team
+
+    def supports_file_format(self, file_format: str):
+        return file_format == self.default_format()
+
+    def default_format(self) -> str:
+        return os.path.splitext(self.filename)[1][1:]
+
+    def filename_without_extension(self) -> str:
+        return os.path.splitext(self.filename)[0]
+
+    def as_file(self, file_format: str, **parameters) -> bytes:
+        # Make sure the file format is the default (the file's actual format)
+        if file_format != self.default_format():
+            raise UnsupportedMediaType(file_format)
+
+        return self.file.get_data()
 
     def __str__(self):
         return f"Data Asset \"{self.filename}\": {self.dataset}"

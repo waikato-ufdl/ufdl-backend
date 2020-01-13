@@ -7,7 +7,7 @@ from django.db import models
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
 
 from ..apps import APP_NAME
-from ..exceptions import UnknownParameters
+from ..exceptions import UnknownParameters, BadFileName
 from .mixins import PublicModel, PublicQuerySet, AsFileModel
 
 
@@ -91,13 +91,13 @@ class Dataset(AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
         # Check the filename isn't already in use
         for asset in self.assets.with_filename_prefix(filename):
             if asset.filename == filename:
-                raise ValueError(f"Filename {filename} is already in use")
+                raise BadFileName(filename, "Filename already in use")
 
             # N.B. directories in filenames are currently disallowed by Django)
             #      so this path should never execute (left in for good measure).
             #      See DataAsset.validate_filename.
             elif asset.filename.startswith(filename + "/"):
-                raise ValueError(f"Filename {filename} is already a directory prefix")
+                raise ValueError(filename, "Filename is a directory prefix")
 
         # Register the file with the file-system backend
         from ._File import File

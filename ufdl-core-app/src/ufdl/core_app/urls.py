@@ -18,5 +18,5 @@ urlpatterns = [
     path('', include(router.urls))
 ]
 
-# TODO: Explain why this is here
+# Default namespace for the views
 app_name = "ufdl-core-app"

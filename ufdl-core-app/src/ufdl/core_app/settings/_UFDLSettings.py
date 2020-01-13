@@ -12,7 +12,7 @@ class UFDLSettings:
     # File-System Settings #
     # ==================== #
     # The backend to use for storing files
-    FILESYSTEM_BACKEND = UFDLClassSetting(default="ufdl_core_app.backend.filesystem.LocalDiskBackend",
+    FILESYSTEM_BACKEND = UFDLClassSetting(default="ufdl.core_app.backend.filesystem.LocalDiskBackend",
                                           validator=IS_SUBCLASS_OF(FileSystemBackend))
 
     # The directory to store files under when using a local-disk file-system backend

@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('simple_django_teams', '0001_initial'),
-        ('ufdl_core_app', '0001_initial'),
+        ('ufdl-core', '0001_initial'),
     ]
 
     operations = [
@@ -81,17 +81,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dataset',
             name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl_core_app.Project'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl-core.Project'),
         ),
         migrations.AddField(
             model_name='dataasset',
             name='dataset',
-            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='assets', to='ufdl_core_app.Dataset'),
+            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='assets', to='ufdl-core.Dataset'),
         ),
         migrations.AddField(
             model_name='dataasset',
             name='file',
-            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='assets', to='ufdl_core_app.File'),
+            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='assets', to='ufdl-core.File'),
         ),
         migrations.AddConstraint(
             model_name='project',

@@ -1,7 +1,7 @@
 from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet, TeamOwnedModel
 
-from ..apps import APP_NAME
+from ...apps import UFDLCoreAppConfig
 from ..mixins import PublicModel, PublicQuerySet
 
 
@@ -23,7 +23,7 @@ class Model(TeamOwnedModel, PublicModel, SoftDeleteModel):
     location = models.CharField(max_length=200)
 
     # The project the model belongs to
-    project = models.ForeignKey(f"{APP_NAME}.Project",
+    project = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Project",
                                 on_delete=models.DO_NOTHING,
                                 related_name="models")
 

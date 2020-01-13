@@ -4,7 +4,7 @@ from django.db import models
 from rest_framework.exceptions import UnsupportedMediaType
 from simple_django_teams.mixins import TeamOwnedModel
 
-from ..apps import APP_NAME
+from ..apps import UFDLCoreAppConfig
 from .mixins import AsFileModel
 
 
@@ -31,13 +31,13 @@ class DataAsset(AsFileModel, TeamOwnedModel):
                                 editable=False)
 
     # The file reference of the asset with the file-system backend
-    file = models.ForeignKey(f"{APP_NAME}.File",
+    file = models.ForeignKey(f"{UFDLCoreAppConfig.label}.File",
                              on_delete=models.DO_NOTHING,
                              related_name="assets",
                              editable=False)
 
     # The dataset the asset belongs to
-    dataset = models.ForeignKey(f"{APP_NAME}.Dataset",
+    dataset = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Dataset",
                                 on_delete=models.DO_NOTHING,
                                 related_name="assets",
                                 editable=False)

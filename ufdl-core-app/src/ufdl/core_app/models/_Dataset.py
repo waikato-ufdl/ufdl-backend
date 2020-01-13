@@ -6,7 +6,7 @@ from zipfile import ZipFile
 from django.db import models
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
 
-from ..apps import APP_NAME
+from ..apps import UFDLCoreAppConfig
 from ..exceptions import UnknownParameters, BadFileName
 from .mixins import PublicModel, PublicQuerySet, AsFileModel
 
@@ -23,7 +23,7 @@ class Dataset(AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
     version = models.IntegerField(default=1)
 
     # The project the dataset belongs to
-    project = models.ForeignKey(f"{APP_NAME}.Project",
+    project = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Project",
                                 on_delete=models.DO_NOTHING,
                                 related_name="datasets")
 

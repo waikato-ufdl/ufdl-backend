@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'ufdl_core_app',
+    'ufdl.core_app',
     'simple_django_teams'
 ]
 
@@ -94,7 +94,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'ufdl_core_app.User'
+AUTH_USER_MODEL = 'ufdl-core.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -168,7 +168,7 @@ SIMPLE_JWT = {
 
 UFDL = {
     # File-system backend
-    "FILESYSTEM_BACKEND": "ufdl_core_app.backend.filesystem.LocalDiskBackend",
+    "FILESYSTEM_BACKEND": "ufdl.core_app.backend.filesystem.LocalDiskBackend",
 
     "LOCAL_DISK_FILE_DIRECTORY": "fs"
 }

@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..apps import APP_NAME
+from ...apps import UFDLCoreAppConfig
 from ._Model import ModelQuerySet, Model
 
 
@@ -18,7 +18,7 @@ class FinalModel(Model):
                                    related_name="dependent_models")
 
     # Dataset used to train this model
-    training_dataset = models.ForeignKey(f"{APP_NAME}.Dataset",
+    training_dataset = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Dataset",
                                          on_delete=models.DO_NOTHING,
                                          related_name="dependent_models")
 

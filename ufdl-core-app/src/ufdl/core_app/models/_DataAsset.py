@@ -5,6 +5,7 @@ from rest_framework.exceptions import UnsupportedMediaType
 from simple_django_teams.mixins import TeamOwnedModel
 
 from ..apps import UFDLCoreAppConfig
+from ..exceptions import BadFileName
 from .mixins import AsFileModel
 
 
@@ -75,11 +76,11 @@ class DataAsset(AsFileModel, TeamOwnedModel):
 
         # Can't end in a slash
         if filename.endswith(os.sep):
-            raise ValueError(f"Filename {original_filename} specifies a directory (ends in {os.sep})")
+            raise BadFileName(original_filename, f"Specifies a directory (ends in {os.sep})")
 
         # Can't specify a relative directory outside the top-level
         if filename.startswith(".."):
-            raise ValueError(f"Filename {original_filename} cannot extend beyond top-level directory (starts with ..)")
+            raise BadFileName(original_filename, f"Cannot extend beyond top-level directory (start with ..)")
 
         return filename
 

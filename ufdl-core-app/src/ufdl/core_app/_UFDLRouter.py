@@ -11,6 +11,8 @@ class UFDLRouter(routers.DefaultRouter):
     include_format_suffixes = False
 
     routes = routers.DefaultRouter.routes + [
+        # Route that supports the "download" url for view-sets
+        # implementing the AsFileViewSet mixin
         routers.Route(
             url=r'^{prefix}/{lookup}/download$',
             mapping={'get': 'as_file'},

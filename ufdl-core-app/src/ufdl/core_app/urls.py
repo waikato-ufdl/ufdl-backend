@@ -6,9 +6,7 @@ from ._UFDLRouter import UFDLRouter
 
 # Router for routing view-set actions
 router = UFDLRouter()
-router.register("dataassets", views.DataAssetViewSet)
 router.register("datasets", views.DatasetViewSet)
-router.register("memberships", views.MembershipViewSet)
 router.register("teams", views.TeamViewSet)
 router.register("projects", views.ProjectViewSet)
 router.register("users", views.UserViewSet)

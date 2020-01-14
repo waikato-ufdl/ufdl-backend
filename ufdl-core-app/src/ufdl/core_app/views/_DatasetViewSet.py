@@ -20,7 +20,7 @@ class DatasetViewSet(AsFileViewSet, UFDLBaseViewSet):
     permission_classes = {
         "list": [AllowAny],  # List filtering is done seperately
         "retrieve": [IsMember | IsPublic],
-        "as_file": [AllowAny]
+        "as_file": [AllowAny]  # TODO: Change to a proper level of authorisation
     }
 
     @action(detail=True, methods=["post"],

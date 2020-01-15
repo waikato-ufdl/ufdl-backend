@@ -1,40 +1,42 @@
-from rest_framework import viewsets
+from rest_framework import routers
 from rest_framework.exceptions import UnsupportedMediaType
 from rest_framework.request import Request
 from rest_framework.response import Response
 
 from ...models.mixins import AsFileModel
 from ...renderers import BinaryFileRenderer
-
-# The keyword argument name
-KWARG: str = "as_file"
+from ._RoutedViewSet import RoutedViewSet
 
 # The name of the parameter specifying the file-format
 FILE_FORMAT_PARAMETER: str = "filetype"
 
 
-class AsFileViewSet(viewsets.ModelViewSet):
+class DownloadableViewSet(RoutedViewSet):
     """
     Mixin for view-sets which can provide their objects
-    as files.
+    as files for download.
     """
-    # The file format that was requested
-    as_file_called: bool = property(lambda self: self._as_file_called)
+    # The keyword used to specify when the view-set is in downloadable mode
+    MODE_KEYWORD: str = "downloadable"
 
-    def __init__(self, **kwargs):
-        # Extract the format to save as
-        self._as_file_called = kwargs.pop(KWARG, False)
-
-        super().__init__(**kwargs)
+    @classmethod
+    def get_route(cls) -> routers.Route:
+        return routers.Route(
+            url=r'^{prefix}/{lookup}/download{trailing_slash}?$',
+            mapping={'get': 'download'},
+            name='{basename}-download',
+            detail=True,
+            initkwargs={cls.MODE_ARGUMENT_NAME: DownloadableViewSet.MODE_KEYWORD}
+        )
 
     def get_renderers(self):
-        # If not calling as_file, return the standard renderers
-        if not self.as_file_called:
+        # If not getting a file, return the standard renderers
+        if self.mode != DownloadableViewSet.MODE_KEYWORD:
             return super().get_renderers()
 
         return [BinaryFileRenderer()]
 
-    def as_file(self, request: Request, pk=None):
+    def download(self, request: Request, pk=None):
         """
         Gets the instance as a file in a particular format.
 

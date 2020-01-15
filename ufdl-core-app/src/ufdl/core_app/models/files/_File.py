@@ -1,34 +1,39 @@
 from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel
 
-from ..backend.filesystem import FileSystemBackend
+from ...backend.filesystem import FileSystemBackend
 
 
 class FileQuerySet(models.QuerySet):
     """
-    Additional functionality for working with query-sets of disk-files.
+    Additional functionality for working with query-sets of files.
     """
     def with_handle(self, handle: str):
+        """
+        Gets the subset of files with a specific handle. As
+        there is a uniqueness constraint on the handle, this
+        should only ever return a query-set of size 0 or 1.
+
+        :param handle:  The handle to filter for.
+        :return:        The filtered query-set.
+        """
         return self.filter(handle=handle)
 
 
 class File(models.Model):
     """
-    Model representing a file on disk. Each record relates a logical name to
-    the data on disk, which is stored in a hashed directory-tree structure.
-    If two or more records point to the same data, the data is only stored
-    once, but can be referred to by many filenames. If different files happen
-    to have the same hash-value (i.e. a hash collision), a tail is appended to
-    hash-filename.
+    Model representing a file. Each record contains a logical handle to
+    the data, which is stored in the file-system backend selected in the
+    settings.
     """
-    # The hash used to store the file on disk
+    # The handle to the file data in the file-system backend
     handle = models.CharField(max_length=FileSystemBackend.Handle.MAX_STRING_REPR_LENGTH)
 
     objects = FileQuerySet.as_manager()
 
     class Meta(SoftDeleteModel.Meta):
         constraints = [
-            # Ensure that each dataset has a unique name/version pair for the project
+            # Ensure that each file has a unique handle
             models.UniqueConstraint(name="unique_file_handles",
                                     fields=["handle"])
         ]
@@ -40,8 +45,8 @@ class File(models.Model):
         :return:    The file data.
         """
         # Get the file-system backend from the settings
-        from ..settings import ufdl_settings
-        from ..backend.filesystem import FileSystemBackend
+        from ...settings import ufdl_settings
+        from ...backend.filesystem import FileSystemBackend
         backend: FileSystemBackend = ufdl_settings.FILESYSTEM_BACKEND.instance()
 
         return backend.load(backend.Handle.from_database_string(self.handle))
@@ -56,8 +61,8 @@ class File(models.Model):
         :return:        The file record.
         """
         # Get the file-system backend from the settings
-        from ..settings import ufdl_settings
-        from ..backend.filesystem import FileSystemBackend
+        from ...settings import ufdl_settings
+        from ...backend.filesystem import FileSystemBackend
         backend: FileSystemBackend = ufdl_settings.FILESYSTEM_BACKEND.instance()
 
         # Save the data to the file-system
@@ -77,4 +82,4 @@ class File(models.Model):
         return file
 
     def __str__(self):
-        return f"DiskFile {self.handle}"
+        return f"File #{self.handle}"

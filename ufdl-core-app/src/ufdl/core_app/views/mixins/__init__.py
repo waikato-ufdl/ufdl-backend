@@ -1,4 +1,7 @@
 """
-Package of mixin functionality for views.
+Package of mixin functionality for view-sets.
 """
-from ._AsFileViewSet import AsFileViewSet, KWARG as AS_FILE_KWARG
+from ._CopyableViewSet import CopyableViewSet
+from ._DownloadableViewSet import DownloadableViewSet
+from ._FileContainerViewSet import FileContainerViewSet
+from ._RoutedViewSet import RoutedViewSet

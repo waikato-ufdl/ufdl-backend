@@ -1,21 +1,19 @@
-import os
 from io import BytesIO
-from typing import Optional
 from zipfile import ZipFile
 
 from django.db import models
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
 
 from ..apps import UFDLCoreAppConfig
-from ..exceptions import UnknownParameters, BadFileName
-from .mixins import PublicModel, PublicQuerySet, AsFileModel
+from ..exceptions import UnknownParameters, BadName
+from .mixins import PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel
 
 
 class DatasetQuerySet(PublicQuerySet, SoftDeleteQuerySet):
     pass
 
 
-class Dataset(AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
+class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
     # The name of the dataset
     name = models.CharField(max_length=200)
 
@@ -44,7 +42,7 @@ class Dataset(AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
                                     fields=["name", "version", "project"])
         ]
 
-    def copy(self, creator, new_name: Optional[str] = None) -> 'Dataset':
+    def copy(self, *, creator=None, new_name=None, **kwargs) -> 'Dataset':
         """
         Creates a copy of this dataset.
 
@@ -54,6 +52,18 @@ class Dataset(AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
                             the version number will be incremented.
         :return:            The new dataset.
         """
+        # New name parameter must be a string
+        if new_name is not None and not isinstance(new_name, str):
+            raise BadName(str(new_name), "New dataset name must be a string")
+
+        # Creator must be supplied
+        if creator is None:
+            raise ValueError("No creator supplied")
+
+        # No other parameters are used
+        if len(kwargs) > 0:
+            raise UnknownParameters(kwargs)
+
         # Create the new dataset
         new_dataset = Dataset(name=new_name if new_name is not None else self.name,
                               version=1 if new_name is not None else self.version + 1,
@@ -65,71 +75,11 @@ class Dataset(AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
         # Save the dataset
         new_dataset.save()
 
-        # Add our assets to the new dataset
-        from ._DataAsset import DataAsset
-        for asset in self.assets.all():
-            new_asset = DataAsset(filename=asset.filename,
-                                  file=asset.file,
-                                  dataset=new_dataset)
-
-            new_asset.save()
+        # Add our files to the new dataset
+        for file in self.files.all():
+            new_dataset.files.add(file)
 
         return new_dataset
-
-    def add_file(self, filename: str, data: bytes) -> 'DataAsset':
-        """
-        Adds a file to the given dataset.
-
-        :param dataset:     The dataset to add the asset to.
-        :param filename:    The filename to save the asset under.
-        :param data:        The asset file data.
-        """
-        # Validate the filename
-        from ._DataAsset import DataAsset
-        filename = DataAsset.validate_filename(filename)
-
-        # Check the filename isn't already in use
-        for asset in self.assets.with_filename_prefix(filename):
-            if asset.filename == filename:
-                raise BadFileName(filename, "Filename already in use")
-
-            # N.B. directories in filenames are currently disallowed by Django)
-            #      so this path should never execute (left in for good measure).
-            #      See DataAsset.validate_filename.
-            elif asset.filename.startswith(filename + "/"):
-                raise ValueError(filename, "Filename is a directory prefix")
-
-        # Register the file with the file-system backend
-        from ._File import File
-        file = File.get_reference_from_backend(data)
-
-        # Create the asset
-        asset = DataAsset(filename=filename, file=file, dataset=self)
-        asset.save()
-
-        return asset
-
-    def delete_file(self, filename: str) -> 'DataAsset':
-        """
-        Deletes a file from this dataset.
-
-        :param filename:    The name of the file to delete.
-        :return:            The deleted asset.
-        """
-        # Get the (possible) asset with the given name
-        assets = self.assets.filter(filename=filename)
-
-        # If the asset doesn't exist, it's already deleted
-        if assets.count() == 0:
-            return
-
-        # Get the asset
-        asset = assets.first()
-
-        # Delete the asset
-        asset.delete()
-
-        return asset
 
     def default_format(self) -> str:
         return "zip"
@@ -155,9 +105,9 @@ class Dataset(AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
 
         # Open the buffer as a zip-file
         with ZipFile(zip_buffer, 'w') as zip_file:
-            # Write each asset to the archive
-            for asset in self.assets.all():
-                zip_file.writestr(os.path.basename(asset.filename), asset.file.get_data())
+            # Write each file to the archive
+            for file in self.files.all():
+                zip_file.writestr(file.filename, file.get_data())
 
         zip_buffer.seek(0)
 

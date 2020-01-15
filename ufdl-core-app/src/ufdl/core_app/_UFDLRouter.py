@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from .views.mixins import AS_FILE_KWARG
+from .views.mixins import CopyableViewSet, DownloadableViewSet, FileContainerViewSet
 
 
 class UFDLRouter(routers.DefaultRouter):
@@ -11,13 +11,7 @@ class UFDLRouter(routers.DefaultRouter):
     include_format_suffixes = False
 
     routes = routers.DefaultRouter.routes + [
-        # Route that supports the "download" url for view-sets
-        # implementing the AsFileViewSet mixin
-        routers.Route(
-            url=r'^{prefix}/{lookup}/download$',
-            mapping={'get': 'as_file'},
-            name='{basename}-as-file',
-            detail=True,
-            initkwargs={AS_FILE_KWARG: True}
-        )
+        CopyableViewSet.get_route(),
+        DownloadableViewSet.get_route(),
+        FileContainerViewSet.get_route()
     ]

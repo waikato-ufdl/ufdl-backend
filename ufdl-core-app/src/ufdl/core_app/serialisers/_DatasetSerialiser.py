@@ -10,8 +10,9 @@ class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
                   "project",
                   "licence",
                   "is_public",
-                  "assets",
+                  "files",
                   "tags"] + SoftDeleteModelSerialiser.base_fields
+        read_only_fields = ["files"]
         extra_kwargs = {
             "tags": {"allow_blank": True}
         }

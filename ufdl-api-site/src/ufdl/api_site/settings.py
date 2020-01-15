@@ -172,3 +172,5 @@ UFDL = {
 
     "LOCAL_DISK_FILE_DIRECTORY": "fs"
 }
+
+APPEND_SLASH = False

@@ -1,8 +1,13 @@
+from rest_framework import serializers
+
 from ..models import Dataset
 from .mixins import TeamOwnedModelSerialiser, SoftDeleteModelSerialiser
 
 
 class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
+    # Files has to be explicitly specified to use the slug
+    files = serializers.SlugRelatedField("filename", many=True, read_only=True)
+
     class Meta:
         model = Dataset
         fields = ["name",

@@ -22,7 +22,7 @@ class DownloadableViewSet(RoutedViewSet):
     @classmethod
     def get_route(cls) -> routers.Route:
         return routers.Route(
-            url=r'^{prefix}/{lookup}/download{trailing_slash}?$',
+            url=r'^{prefix}/{lookup}/download{trailing_slash}$',
             mapping={'get': 'download'},
             name='{basename}-download',
             detail=True,

@@ -15,7 +15,7 @@ class CopyableViewSet(RoutedViewSet):
     @classmethod
     def get_route(cls) -> routers.Route:
         return routers.Route(
-            url=r'^{prefix}/{lookup}/copy{trailing_slash}?$',
+            url=r'^{prefix}/{lookup}/copy{trailing_slash}$',
             mapping={'post': 'copy'},
             name='{basename}-copy',
             detail=True,

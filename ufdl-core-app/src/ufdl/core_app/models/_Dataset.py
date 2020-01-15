@@ -1,5 +1,6 @@
 from io import BytesIO
 from zipfile import ZipFile
+from tarfile import TarFile, TarInfo
 
 from django.db import models
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
@@ -33,7 +34,7 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
 
     objects = DatasetQuerySet.as_manager()
 
-    file_formats = {"zip"}
+    file_formats = {"zip", "tar.gz"}
 
     class Meta(SoftDeleteModel.Meta):
         constraints = [
@@ -93,10 +94,15 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
             if len(parameters) > 0:
                 raise UnknownParameters(parameters)
             return self.as_zip()
+        elif file_format == "tar.gz":
+            # Shouldn't be any parameters
+            if len(parameters) > 0:
+                raise UnknownParameters(parameters)
+            return self.as_tar_gz()
 
     def as_zip(self) -> bytes:
         """
-        Gets a zip file containing the entirety of this dataset.
+        Gets a zip file containing the entirety of this data-set.
 
         :return:    The zip file in an in-memory buffer.
         """
@@ -109,9 +115,33 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
             for file in self.files.all():
                 zip_file.writestr(file.filename, file.get_data())
 
+        # Reset the buffer to the beginning for reading
         zip_buffer.seek(0)
 
         return zip_buffer.read()
+
+    def as_tar_gz(self) -> bytes:
+        """
+        Gets a tar.gz file containing the entirety of this data-set.
+
+        :return:    The tar.gz file in an in-memory buffer.
+        """
+        # Create an in-memory buffer for the file contents
+        tar_buffer = BytesIO()
+
+        # Open the buffer as a zip-file
+        with TarFile.open(fileobj=tar_buffer, mode='w:gz') as tar_file:
+            # Write each file to the archive
+            for file in self.files.all():
+                file_data = file.get_data()
+                info = TarInfo(file.filename)
+                info.size = len(file_data)
+                tar_file.addfile(info, BytesIO(file_data))
+
+        # Reset the buffer to the beginning for reading
+        tar_buffer.seek(0)
+
+        return tar_buffer.read()
 
     def get_owning_team(self):
         return self.project.team

@@ -12,7 +12,7 @@ class MemberPermission(permissions.BasePermission):
     """
     def has_permission(self, request, view):
         # Local imports to avoid circularity errors
-        from ..serialisers import TeamOwnedModelSerialiser
+        from ..serialisers.mixins import TeamOwnedModelSerialiser
 
         # List action performs it's authorisation separately,
         # and all other actions use the object permissions

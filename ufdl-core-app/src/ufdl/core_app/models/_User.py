@@ -1,10 +1,9 @@
-from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
 
 
-class UserQuerySet(models.QuerySet):
+class UserManager(DjangoUserManager):
     """
-    Custom query-set for working with groups of users.
+    Custom manager for working with groups of users.
     """
     def delete(self):
         # Don't delete users, just set their is_active flags to false
@@ -19,7 +18,7 @@ class User(AbstractUser):
     identical to the Django User class, it is considered best practice to define
     your own user model, so it can be modified in future should the need arise.
     """
-    objects = UserQuerySet.as_manager()
+    objects = UserManager()
 
     def delete(self, using=None, keep_parents=False):
         # Don't delete users, just set their is_active flags to false

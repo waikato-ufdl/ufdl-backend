@@ -18,7 +18,3 @@ from ufdl.manage import main
 import sys
 script = sys.argv[0].replace("reset.py", "manage.py")
 main([script, "migrate"])
-
-# Create the superuser
-os.environ["DJANGO_SUPERUSER_PASSWORD"] = "admin"
-main([script, "createsuperuser", "--noinput", "--username", "admin", "--email", "admin@admin.net"])

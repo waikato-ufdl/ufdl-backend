@@ -5,7 +5,7 @@ from .mixins import TeamOwnedModelSerialiser, SoftDeleteModelSerialiser
 class ProjectSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
     class Meta:
         model = Project
-        fields = ["id",
+        fields = ["pk",
                   "name",
                   "team"] + SoftDeleteModelSerialiser.base_fields
 

@@ -10,7 +10,8 @@ class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
 
     class Meta:
         model = Dataset
-        fields = ["name",
+        fields = ["pk",
+                  "name",
                   "version",
                   "project",
                   "licence",

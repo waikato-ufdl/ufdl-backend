@@ -10,4 +10,4 @@ class TeamSerialiser(SoftDeleteModelSerialiser):
 
     class Meta:
         model = Team
-        fields = ["name", "members"] + SoftDeleteModelSerialiser.base_fields
+        fields = ["pk", "name", "members"] + SoftDeleteModelSerialiser.base_fields

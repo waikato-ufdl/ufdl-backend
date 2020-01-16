@@ -1,7 +1,7 @@
 from django.urls import path, include
 
 from . import views
-from ._UFDLRouter import UFDLRouter
+from .routers import UFDLRouter
 
 
 # Router for routing view-set actions

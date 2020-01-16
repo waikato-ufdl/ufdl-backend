@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from .views.mixins import *
+from ..views.mixins import *
 
 
 class UFDLRouter(routers.DefaultRouter):

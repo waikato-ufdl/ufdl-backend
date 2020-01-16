@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from .views.mixins import CopyableViewSet, DownloadableViewSet, FileContainerViewSet
+from .views.mixins import *
 
 
 class UFDLRouter(routers.DefaultRouter):
@@ -16,5 +16,6 @@ class UFDLRouter(routers.DefaultRouter):
     routes = routers.DefaultRouter.routes + [
         CopyableViewSet.get_route(),
         DownloadableViewSet.get_route(),
-        FileContainerViewSet.get_route()
+        FileContainerViewSet.get_route(),
+        MembershipViewSet.get_route()
     ]

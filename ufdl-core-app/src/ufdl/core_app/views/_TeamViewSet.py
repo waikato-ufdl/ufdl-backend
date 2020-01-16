@@ -2,10 +2,11 @@ from simple_django_teams.models import Team
 
 from ..serialisers import TeamSerialiser
 from ..permissions import IsAuthenticated, IsMember, IsAdminUser, MemberHasAdminPermission
+from .mixins import MembershipViewSet
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class TeamViewSet(UFDLBaseViewSet):
+class TeamViewSet(MembershipViewSet, UFDLBaseViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerialiser
 

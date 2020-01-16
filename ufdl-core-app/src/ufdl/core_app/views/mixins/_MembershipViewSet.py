@@ -67,7 +67,7 @@ class MembershipViewSet(RoutedViewSet):
             raise BadArgumentType("add-member",
                                   "permissions",
                                   "string",
-                                  f"{type(permissions).__name__}")
+                                  permissions)
 
         # Make the case insensitive
         permissions = permissions.upper()

@@ -18,8 +18,7 @@ class UserSerialiser(serializers.ModelSerializer):
                   "is_staff",
                   "is_active",
                   "date_joined"]
-        read_only_fields = ["id",
-                            "last_login",
+        read_only_fields = ["last_login",
                             "is_superuser",
                             "is_staff",
                             "is_active",

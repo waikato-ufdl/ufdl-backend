@@ -18,3 +18,7 @@ from ufdl.manage import main
 import sys
 script = sys.argv[0].replace("reset.py", "manage.py")
 main([script, "migrate"])
+
+# Create the test superuser
+from ufdl.core_app.models import User
+User.objects.create_superuser("admin", "admin@admin.net", "admin")

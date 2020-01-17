@@ -1,9 +1,6 @@
 from django.db import models
 from simple_django_teams.models import Team, Membership
 
-from ..models import Dataset, Project
-from ..models.mixins import PublicQuerySet
-
 
 def for_user(query_set, user):
     """
@@ -15,6 +12,7 @@ def for_user(query_set, user):
     """
     # Non-users can only view public models
     if not user.is_authenticated or not user.is_active:
+        from ..models.mixins import PublicQuerySet
         if isinstance(query_set, PublicQuerySet):
             return query_set.public()
         else:
@@ -25,6 +23,7 @@ def for_user(query_set, user):
         return query_set.all()
 
     # Per-model filtering
+    from ..models import Dataset, Project
     if query_set.model is Dataset:
         return query_set.filter(
             models.Q(Dataset.public_Q) |

@@ -2,9 +2,11 @@ from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel
 
 from ...apps import UFDLCoreAppConfig
+from ...util import accumulate_delete
+from ..mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet
 
 
-class NamedFileQuerySet(models.QuerySet):
+class NamedFileQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySet, models.QuerySet):
     """
     Additional functionality for working with query-sets of named files.
     """
@@ -12,7 +14,7 @@ class NamedFileQuerySet(models.QuerySet):
         return self.filter(name__filename=filename)
 
 
-class NamedFile(models.Model):
+class NamedFile(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
     """
     Model relating names to files.
     """
@@ -37,6 +39,20 @@ class NamedFile(models.Model):
             models.UniqueConstraint(name="unique_filename_file_pairs",
                                     fields=["name", "file"])
         ]
+
+    def delete(self, using=None, keep_parents=False):
+        # Grab references to our filename and file
+        name, file = self.name, self.file
+
+        # Attempt to delete ourselves as usual
+        deletion_accumulator = super().delete(using, keep_parents)
+
+        # If we were deleted, delete our name and file
+        if deletion_accumulator[0] == 1:
+            deletion_accumulator = accumulate_delete(deletion_accumulator, name.delete())
+            deletion_accumulator = accumulate_delete(deletion_accumulator, file.delete())
+
+        return deletion_accumulator
 
     def get_data(self) -> bytes:
         """

@@ -109,4 +109,7 @@ class FileContainerModel(models.Model):
         # Delete the association
         self.files.remove(file)
 
+        # Delete the file (tentatively)
+        file.delete()
+
         return file

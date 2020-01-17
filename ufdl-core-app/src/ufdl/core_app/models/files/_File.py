@@ -2,9 +2,10 @@ from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel
 
 from ...backend.filesystem import FileSystemBackend
+from ..mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet
 
 
-class FileQuerySet(models.QuerySet):
+class FileQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySet, models.QuerySet):
     """
     Additional functionality for working with query-sets of files.
     """
@@ -20,7 +21,7 @@ class FileQuerySet(models.QuerySet):
         return self.filter(handle=handle)
 
 
-class File(models.Model):
+class File(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
     """
     Model representing a file. Each record contains a logical handle to
     the data, which is stored in the file-system backend selected in the

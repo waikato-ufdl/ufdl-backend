@@ -1,8 +1,10 @@
 from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel
 
+from ..mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet
 
-class FilenameQuerySet(models.QuerySet):
+
+class FilenameQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySet, models.QuerySet):
     """
     Additional functionality for working with query-sets of file-names.
     """
@@ -10,7 +12,7 @@ class FilenameQuerySet(models.QuerySet):
         return self.filter(filename=filename)
 
 
-class Filename(models.Model):
+class Filename(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
     """
     Model specifying names for files.
     """

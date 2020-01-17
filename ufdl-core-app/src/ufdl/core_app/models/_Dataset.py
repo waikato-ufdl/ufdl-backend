@@ -66,12 +66,12 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
             raise UnknownParameters(kwargs)
 
         # Create the new dataset
-        new_dataset = Dataset(name=new_name if new_name is not None else self.name,
-                              version=1 if new_name is not None else self.version + 1,
-                              project=self.project,
-                              licence=self.licence,
-                              tags=self.tags,
-                              creator=creator)
+        new_dataset = type(self)(name=new_name if new_name is not None else self.name,
+                                 version=1 if new_name is not None else self.version + 1,
+                                 project=self.project,
+                                 licence=self.licence,
+                                 tags=self.tags,
+                                 creator=creator)
 
         # Save the dataset
         new_dataset.save()

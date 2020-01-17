@@ -82,5 +82,27 @@ class File(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
 
         return file
 
+    def delete(self, using=None, keep_parents=False):
+        # Keep a reference to our handle
+        handle = self.handle
+
+        # Delete as usual (only succeeds if there are no references to us)
+        deletion_accumulator = super().delete(using, keep_parents)
+
+        # If we were deleted, delete our data from the backend
+        if deletion_accumulator[0] == 1:
+            # Get the file-system backend from the settings
+            from ...settings import ufdl_settings
+            from ...backend.filesystem import FileSystemBackend
+            backend: FileSystemBackend = ufdl_settings.FILESYSTEM_BACKEND.instance()
+
+            # Get the backend handle
+            handle = backend.Handle.from_database_string(handle)
+
+            # Delete the file
+            backend.delete(handle)
+
+        return deletion_accumulator
+
     def __str__(self):
         return f"File #{self.handle}"

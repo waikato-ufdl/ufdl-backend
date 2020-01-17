@@ -70,6 +70,15 @@ class FileSystemBackend(ABC):
 
         return contents
 
+    @abstractmethod
+    def delete(self, handle: 'Handle'):
+        """
+        Deletes a file from the file-system.
+
+        :param handle:  The handle of the file to delete.
+        """
+        pass
+
     class Handle(ABC):
         """
         Represents a single file on the file-system. Must be convertible

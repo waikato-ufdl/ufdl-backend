@@ -83,6 +83,23 @@ class LocalDiskBackend(FileSystemBackend):
                   'rb') as file:
             return file.read()
 
+    def delete(self, handle: 'Handle'):
+        # Get the directory that the file is in
+        directory = self.path_for_hashcode(handle.hashcode)
+
+        # Delete the file itself
+        os.remove(os.path.join(directory, handle.to_database_string()))
+
+        # Try to remove any directories that are now empty
+        head, tail = os.path.split(directory)
+        while directory != self._root_dir:
+            try:
+                os.rmdir(directory)
+                directory = head
+                head, tail = os.path.split(head)
+            except OSError:
+                break
+
     @classmethod
     def get_data_hash(cls, data: bytes) -> str:
         """
@@ -209,4 +226,4 @@ class LocalDiskBackend(FileSystemBackend):
             :param hashcode:    The file's hashcode.
             :return:            The file's path.
             """
-            return os.path.join(hashcode[0:2], hashcode[2:4])
+            return os.path.join(hashcode[0:3], hashcode[3:6])

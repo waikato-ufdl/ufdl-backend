@@ -12,6 +12,6 @@ class DatasetSerialiser(CoreDatasetSerialiser):
         representation = super().to_representation(instance)
 
         # Add the categories file as a field
-        representation["categories"] = Dataset.deserialise_categories_file(instance.categories.get_data())
+        representation["categories"] = instance.get_categories()
 
         return representation

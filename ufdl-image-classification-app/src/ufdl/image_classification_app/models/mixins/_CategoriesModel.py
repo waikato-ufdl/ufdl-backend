@@ -18,16 +18,11 @@ class CategoriesModel(models.Model):
     # The file containing the image categories
     categories = models.ForeignKey(f"{UFDLCoreAppConfig.label}.File",
                                    on_delete=models.DO_NOTHING,
-                                   related_name="+")
+                                   related_name="+",
+                                   null=True)
 
     class Meta:
         abstract = True
-
-    def __init__(self, *args, **kwargs):
-        # Dynamic default for categories is the empty set
-        if "categories" not in kwargs:
-            kwargs.update(categories=File.get_reference_from_backend("{}".encode()))
-        super().__init__(*args, **kwargs)
 
     @classmethod
     def serialise_categories_file(cls, file: RawJSONObject) -> bytes:
@@ -49,12 +44,22 @@ class CategoriesModel(models.Model):
         """
         return json.loads(file.decode())
 
+    def ensure_categories_file(self):
+        """
+        Adds an empty categories file to this dataset if it doesn't have one.
+        """
+        if self.categories is None:
+            self.categories = File.get_reference_from_backend("{}".encode())
+
     def get_categories(self) -> RawJSONObject:
         """
         Gets the categories of this classification data-set.
 
         :return:    The categories for each image.
         """
+        # Make sure we have a categories file
+        self.ensure_categories_file()
+
         return self.deserialise_categories_file(self.categories.get_data())
 
     def add_categories(self, images: List[str], categories: List[str]):
@@ -106,9 +111,8 @@ class CategoriesModel(models.Model):
                     new_categories_file[image] = []
                 new_categories_file[image] += additions[image]
 
-            # Create the new categories file
-            self.categories = File.get_reference_from_backend(self.serialise_categories_file(new_categories_file))
-            self.save()
+            # Replace the old categories with the new one
+            self.replace_categories_file(new_categories_file)
 
         return additions
 
@@ -158,8 +162,23 @@ class CategoriesModel(models.Model):
                 for category in removals[image]:
                     new_categories_file[image].remove(category)
 
-            # Create the new categories file
-            self.categories = File.get_reference_from_backend(self.serialise_categories_file(new_categories_file))
-            self.save()
+            # Replace the old categories with the new one
+            self.replace_categories_file(new_categories_file)
 
         return removals
+
+    def replace_categories_file(self, new_categories_file: RawJSONObject):
+        """
+        Deletes the current categories file and replaces it with a new one.
+
+        :param new_categories_file:     The new categories file.
+        """
+        # Get a reference to the current categories file
+        old_categories_file = self.categories
+
+        # Create the new categories file
+        self.categories = File.get_reference_from_backend(self.serialise_categories_file(new_categories_file))
+        self.save()
+
+        # Delete the old categories file
+        old_categories_file.delete()

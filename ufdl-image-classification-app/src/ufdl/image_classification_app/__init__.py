@@ -1,0 +1,1 @@
+default_app_config = 'ufdl.image_classification_app.apps.UFDLImageClassificationAppConfig'

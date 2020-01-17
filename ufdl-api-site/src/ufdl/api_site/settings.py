@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'ufdl.core_app',
+    'ufdl.image_classification_app',
     'simple_django_teams'
 ]
 

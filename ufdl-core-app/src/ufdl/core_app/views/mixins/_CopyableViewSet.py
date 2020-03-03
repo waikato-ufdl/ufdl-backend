@@ -1,3 +1,5 @@
+from typing import List
+
 from rest_framework import routers
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -13,14 +15,16 @@ class CopyableViewSet(RoutedViewSet):
     MODE_KEYWORD: str = "copyable"
 
     @classmethod
-    def get_route(cls) -> routers.Route:
-        return routers.Route(
-            url=r'^{prefix}/{lookup}/copy{trailing_slash}$',
-            mapping={'post': 'copy'},
-            name='{basename}-copy',
-            detail=True,
-            initkwargs={cls.MODE_ARGUMENT_NAME: CopyableViewSet.MODE_KEYWORD}
-        )
+    def get_routes(cls) -> List[routers.Route]:
+        return [
+            routers.Route(
+                url=r'^{prefix}/{lookup}/copy{trailing_slash}$',
+                mapping={'post': 'copy'},
+                name='{basename}-copy',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: CopyableViewSet.MODE_KEYWORD}
+            )
+        ]
 
     def copy(self, request: Request, pk=None):
         """

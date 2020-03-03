@@ -1,3 +1,5 @@
+from typing import List
+
 from rest_framework import routers
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -30,14 +32,16 @@ class MembershipViewSet(RoutedViewSet):
     MODE_KEYWORD: str = "membership"
 
     @classmethod
-    def get_route(cls) -> routers.Route:
-        return routers.Route(
-            url=r'^{prefix}/{lookup}/add-member{trailing_slash}$',
-            mapping={'post': 'add_member'},
-            name='{basename}-add-member',
-            detail=True,
-            initkwargs={cls.MODE_ARGUMENT_NAME: MembershipViewSet.MODE_KEYWORD}
-        )
+    def get_routes(cls) -> List[routers.Route]:
+        return [
+            routers.Route(
+                url=r'^{prefix}/{lookup}/add-member{trailing_slash}$',
+                mapping={'post': 'add_member'},
+                name='{basename}-add-member',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: MembershipViewSet.MODE_KEYWORD}
+            )
+        ]
 
     def add_member(self, request: Request, pk=None):
         """

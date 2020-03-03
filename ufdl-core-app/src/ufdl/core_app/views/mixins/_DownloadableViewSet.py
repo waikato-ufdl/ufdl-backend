@@ -1,3 +1,5 @@
+from typing import List
+
 from rest_framework import routers
 from rest_framework.exceptions import UnsupportedMediaType
 from rest_framework.request import Request
@@ -20,14 +22,16 @@ class DownloadableViewSet(RoutedViewSet):
     MODE_KEYWORD: str = "downloadable"
 
     @classmethod
-    def get_route(cls) -> routers.Route:
-        return routers.Route(
-            url=r'^{prefix}/{lookup}/download{trailing_slash}$',
-            mapping={'get': 'download'},
-            name='{basename}-download',
-            detail=True,
-            initkwargs={cls.MODE_ARGUMENT_NAME: DownloadableViewSet.MODE_KEYWORD}
-        )
+    def get_routes(cls) -> List[routers.Route]:
+        return [
+            routers.Route(
+                url=r'^{prefix}/{lookup}/download{trailing_slash}$',
+                mapping={'get': 'download'},
+                name='{basename}-download',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: DownloadableViewSet.MODE_KEYWORD}
+            )
+        ]
 
     def get_renderers(self):
         # If not getting a file, return the standard renderers

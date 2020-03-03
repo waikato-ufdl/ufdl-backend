@@ -18,16 +18,18 @@ class CategoriesViewSet(RoutedViewSet):
     MODE_KEYWORD: str = "categories"
 
     @classmethod
-    def get_route(cls) -> routers.Route:
-        return routers.Route(
-            url=r'^{prefix}/{lookup}/categories{trailing_slash}$',
-            mapping={'get': 'get_categories',
-                     'post': 'add_categories',
-                     'delete': 'remove_categories'},
-            name='{basename}-categories',
-            detail=True,
-            initkwargs={cls.MODE_ARGUMENT_NAME: CategoriesViewSet.MODE_KEYWORD}
-        )
+    def get_routes(cls) -> List[routers.Route]:
+        return [
+            routers.Route(
+                url=r'^{prefix}/{lookup}/categories{trailing_slash}$',
+                mapping={'get': 'get_categories',
+                         'post': 'add_categories',
+                         'delete': 'remove_categories'},
+                name='{basename}-categories',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: CategoriesViewSet.MODE_KEYWORD}
+            )
+        ]
 
     def get_categories(self, request: Request, pk=None):
         """

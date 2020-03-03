@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from rest_framework import routers
 from rest_framework import viewsets
@@ -22,10 +22,10 @@ class RoutedViewSet(viewsets.ModelViewSet):
         super().__init__(**kwargs)
 
     @classmethod
-    def get_route(cls) -> routers.Route:
+    def get_routes(cls) -> List[routers.Route]:
         """
         Gets the route for this view-set mixin.
 
         :return:    The mixin's route.
         """
-        raise NotImplementedError(cls.get_route.__qualname__)
+        raise NotImplementedError(cls.get_routes.__qualname__)

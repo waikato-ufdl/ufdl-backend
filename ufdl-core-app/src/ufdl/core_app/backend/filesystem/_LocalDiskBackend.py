@@ -40,10 +40,10 @@ class LocalDiskBackend(FileSystemBackend):
         directory = self.path_for_hashcode(hashcode)
 
         # Get any files that share our hashcode in their filename
-        files_with_same_hashcode = [file
-                                    for file in map(os.path.basename,
-                                                    os.listdir(directory))
-                                    if file.startswith(hashcode)] if os.path.exists(directory) else []
+        files_with_same_hashcode = (
+            [file for file in map(os.path.basename, os.listdir(directory)) if file.startswith(hashcode)]
+            if os.path.exists(directory) else []
+        )
 
         # Return a handle to an existing file if it is identical
         for handle in map(self.Handle.from_database_string, files_with_same_hashcode):

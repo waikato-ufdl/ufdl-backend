@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Dict
 
 from django.db import models
 
@@ -62,7 +62,7 @@ class CategoriesModel(models.Model):
 
         return self.deserialise_categories_file(self.categories.get_data())
 
-    def add_categories(self, images: List[str], categories: List[str]):
+    def add_categories(self, images: List[str], categories: List[str]) -> Dict[str, List[str]]:
         """
         Adds categories to the images in this data-set.
 
@@ -116,7 +116,7 @@ class CategoriesModel(models.Model):
 
         return additions
 
-    def remove_categories(self, images: List[str], categories: List[str]):
+    def remove_categories(self, images: List[str], categories: List[str]) -> Dict[str, List[str]]:
         """
         Removes categories from the images in this data-set.
 

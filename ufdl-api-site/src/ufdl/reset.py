@@ -22,3 +22,7 @@ main([script, "migrate"])
 # Create the test superuser
 from ufdl.core_app.models import User
 User.objects.create_superuser("admin", "admin@admin.net", "admin")
+
+# Run the server if the option is given
+if len(sys.argv) >= 2 and sys.argv[1] == "--run":
+    main([script, "runserver"])

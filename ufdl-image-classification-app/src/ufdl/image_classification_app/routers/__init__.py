@@ -1,1 +1,1 @@
-from ._UFDLClassificationRouter import UFDLClassificationRouter
+from ._UFDLClassificationRouter import UFDLImageClassificationRouter

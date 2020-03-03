@@ -3,7 +3,7 @@ from ufdl.core_app.routers import UFDLRouter
 from ..views.mixins import *
 
 
-class UFDLClassificationRouter(UFDLRouter):
+class UFDLImageClassificationRouter(UFDLRouter):
     """
     Adds the route for adding/removing categories.
     """

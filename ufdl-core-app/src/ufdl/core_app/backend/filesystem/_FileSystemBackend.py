@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import IO, Union
+from typing import IO, Union, Type, Iterator
 
 
 class FileSystemBackend(ABC):
@@ -33,6 +33,24 @@ class FileSystemBackend(ABC):
         :return:    The initialised backend.
         """
         pass
+
+    def migrate(self, other: Union['FileSystemBackend', Type['FileSystemBackend']]):
+        """
+        Migrates the data from this backend to another.
+
+        :param other:   The other file-system.
+        """
+        # Get the backend instance
+        if not isinstance(other, FileSystemBackend):
+            other = other.instance()
+
+        # Can't migrate to ourselves
+        if other is self:
+            raise ValueError("Cannot migrate a file-system backend to itself")
+
+        # Migrate all files
+        for handle in self:
+            other.save(self.read(handle))
 
     @abstractmethod
     def save(self, contents: Union[bytes, IO[bytes]]) -> 'Handle':
@@ -78,6 +96,18 @@ class FileSystemBackend(ABC):
         :param handle:  The handle of the file to delete.
         """
         pass
+
+    @abstractmethod
+    def all(self) -> Iterator['Handle']:
+        """
+        Gets an iterator over all files in the backend.
+
+        :return:    The file handle iterator.
+        """
+        pass
+
+    def __iter__(self) -> Iterator['Handle']:
+        return self.all()
 
     class Handle(ABC):
         """

@@ -1,6 +1,7 @@
 import hashlib
 import os
-from typing import Union, IO, Optional, Iterable
+from itertools import chain
+from typing import Union, IO, Optional, Iterable, Iterator
 
 from ._FileSystemBackend import FileSystemBackend
 
@@ -99,6 +100,12 @@ class LocalDiskBackend(FileSystemBackend):
                 head, tail = os.path.split(head)
             except OSError:
                 break
+
+    def all(self) -> Iterator['Handle']:
+        # Walk the file-system for saved files (cache in case of updates while iterating)
+        files = tuple(files for directory, dirs, files in os.walk(self._root_dir))
+
+        return (self.Handle.from_database_string(filename) for filename in chain(*files))
 
     @classmethod
     def get_data_hash(cls, data: bytes) -> str:

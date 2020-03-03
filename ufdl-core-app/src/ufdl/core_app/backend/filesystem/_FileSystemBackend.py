@@ -7,7 +7,7 @@ class FileSystemBackend(ABC):
     Base-class for file-systems supported by UFDL.
     """
     # The singleton instance of the backend
-    __instance: 'FileSystemBackend' = None
+    _instance: 'FileSystemBackend' = None
 
     @classmethod
     def instance(cls) -> 'FileSystemBackend':
@@ -17,10 +17,10 @@ class FileSystemBackend(ABC):
         :return:    The backend instance.
         """
         # Create the singleton instance on first access
-        if FileSystemBackend.__instance is None:
-            FileSystemBackend.__instance = cls._initialise_backend()
+        if cls._instance is None:
+            cls._instance = cls._initialise_backend()
 
-        return FileSystemBackend.__instance
+        return cls._instance
 
     @classmethod
     @abstractmethod
@@ -82,7 +82,7 @@ class FileSystemBackend(ABC):
     class Handle(ABC):
         """
         Represents a single file on the file-system. Must be convertible
-        to a string unique string representation.
+        to a unique string representation.
         """
         # The maximum length of the string representation of the handle
         # (so it can be stored in a database char-field)

@@ -7,7 +7,7 @@ from ufdl.core_app.apps import UFDLCoreAppConfig
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.models.files import File
 
-from wai.common.json import RawJSONObject, deep_copy
+from wai.json.raw import RawJSONObject, deep_copy
 
 
 class CategoriesModel(models.Model):

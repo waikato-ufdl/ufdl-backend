@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 
 from rest_framework import routers
 from rest_framework.request import Request
@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.views.mixins import RoutedViewSet
 
+from ...json import CategoriesModSpec
 from ...models import Dataset
 
 
@@ -58,7 +59,7 @@ class CategoriesViewSet(RoutedViewSet):
         :return:            The response containing the categories that were added.
         """
         # Get the image/category lists from the request
-        images, categories = self._parse_parameters(request)
+        mod_spec = self._parse_parameters(request)
 
         # Get the data-set
         dataset = self.get_object()
@@ -67,7 +68,7 @@ class CategoriesViewSet(RoutedViewSet):
         if not isinstance(dataset, Dataset):
             raise TypeError(f"Object {dataset} is not a dataset")
 
-        return Response(dataset.add_categories(images, categories).to_raw_json())
+        return Response(dataset.add_categories(mod_spec.images, mod_spec.categories).to_raw_json())
 
     def remove_categories(self, request: Request, pk=None):
         """
@@ -78,7 +79,7 @@ class CategoriesViewSet(RoutedViewSet):
         :return:            The response containing the categories that were removed.
         """
         # Get the image/category lists from the request
-        images, categories = self._parse_parameters(request)
+        mod_spec = self._parse_parameters(request)
 
         # Get the data-set
         dataset = self.get_object()
@@ -87,49 +88,14 @@ class CategoriesViewSet(RoutedViewSet):
         if not isinstance(dataset, Dataset):
             raise TypeError(f"Object {dataset} is not a dataset")
 
-        return Response(dataset.remove_categories(images, categories).to_raw_json())
+        return Response(dataset.remove_categories(mod_spec.images, mod_spec.categories).to_raw_json())
 
     @classmethod
-    def _parse_parameters(cls, request: Request) -> Tuple[List[str], List[str]]:
+    def _parse_parameters(cls, request: Request) -> CategoriesModSpec:
         """
         Parses the parameters for add_categories/remove_categories.
 
         :param request:     The request containing the parameters.
         :return:            The parameter values, images and categories.
         """
-        # Get the parameters
-        parameters = dict(request.data)
-
-        # Make sure the images parameter is present
-        if "images" not in parameters:
-            raise MissingParameter("images")
-
-        # Get the images parameter
-        images = parameters.pop("images")
-
-        # Make sure the images is a list of strings
-        if not isinstance(images, list) or any(not isinstance(image, str) for image in images):
-            raise BadArgumentType("add_categories",
-                                  "images",
-                                  "list of strings",
-                                  images)
-
-        # Make sure the categories parameter is present
-        if "categories" not in parameters:
-            raise MissingParameter("categories")
-
-        # Get the categories parameter
-        categories = parameters.pop("categories")
-
-        # Make sure the categories is a list of strings
-        if not isinstance(categories, list) or any(not isinstance(category, str) for category in categories):
-            raise BadArgumentType("add_categories",
-                                  "categories",
-                                  "list of strings",
-                                  categories)
-
-        # Make sure there are no other parameters present
-        if len(parameters) > 0:
-            raise UnknownParameters(parameters)
-
-        return images, categories
+        return JSONParseFailure.attempt(dict(request.data), CategoriesModSpec)

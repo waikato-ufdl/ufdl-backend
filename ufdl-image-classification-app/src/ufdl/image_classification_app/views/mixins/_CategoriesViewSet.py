@@ -8,7 +8,7 @@ from ufdl.core_app.exceptions import *
 from ufdl.core_app.views.mixins import RoutedViewSet
 
 from ...json import CategoriesModSpec
-from ...models import Dataset
+from ...models import ImageClassificationDataset
 
 
 class CategoriesViewSet(RoutedViewSet):
@@ -44,7 +44,7 @@ class CategoriesViewSet(RoutedViewSet):
         dataset = self.get_object()
 
         # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, Dataset):
+        if not isinstance(dataset, ImageClassificationDataset):
             raise TypeError(f"Object {dataset} is not a dataset")
 
         # Return the categories
@@ -65,7 +65,7 @@ class CategoriesViewSet(RoutedViewSet):
         dataset = self.get_object()
 
         # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, Dataset):
+        if not isinstance(dataset, ImageClassificationDataset):
             raise TypeError(f"Object {dataset} is not a dataset")
 
         return Response(dataset.add_categories(mod_spec.images, mod_spec.categories).to_raw_json())
@@ -85,7 +85,7 @@ class CategoriesViewSet(RoutedViewSet):
         dataset = self.get_object()
 
         # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, Dataset):
+        if not isinstance(dataset, ImageClassificationDataset):
             raise TypeError(f"Object {dataset} is not a dataset")
 
         return Response(dataset.remove_categories(mod_spec.images, mod_spec.categories).to_raw_json())

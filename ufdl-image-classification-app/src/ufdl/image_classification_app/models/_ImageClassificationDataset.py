@@ -1,17 +1,17 @@
 from typing import List
 
 from ufdl.core_app.exceptions import *
-from ufdl.core_app.models import Dataset as CoreDataset, DatasetQuerySet as CoreDatasetQuerySet
+from ufdl.core_app.models import Dataset, DatasetQuerySet
 
 from ..json import CategoriesFile
 
 
-class DatasetQuerySet(CoreDatasetQuerySet):
+class ImageClassificationDatasetQuerySet(DatasetQuerySet):
     pass
 
 
-class Dataset(CoreDataset):
-    objects = DatasetQuerySet.as_manager()
+class ImageClassificationDataset(Dataset):
+    objects = ImageClassificationDatasetQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):
         # Initialise as usual

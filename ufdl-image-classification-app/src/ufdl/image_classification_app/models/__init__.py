@@ -1,1 +1,1 @@
-from ._Dataset import Dataset, DatasetQuerySet
+from ._ImageClassificationDataset import ImageClassificationDataset, ImageClassificationDatasetQuerySet

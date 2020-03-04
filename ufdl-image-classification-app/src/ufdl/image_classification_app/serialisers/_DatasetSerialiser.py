@@ -1,11 +1,11 @@
 from ufdl.core_app.serialisers import DatasetSerialiser as CoreDatasetSerialiser
 
-from ..models import Dataset
+from ..models import ImageClassificationDataset
 
 
 class DatasetSerialiser(CoreDatasetSerialiser):
     class Meta(CoreDatasetSerialiser.Meta):
-        model = Dataset
+        model = ImageClassificationDataset
 
     def to_representation(self, instance):
         # Get the base representation

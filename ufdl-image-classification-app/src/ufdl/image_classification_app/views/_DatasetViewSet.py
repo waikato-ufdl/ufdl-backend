@@ -2,13 +2,13 @@ from rest_framework.permissions import AllowAny
 
 from ufdl.core_app.views import DatasetViewSet as CoreDatasetViewSet
 
-from ..models import Dataset
+from ..models import ImageClassificationDataset
 from ..serialisers import DatasetSerialiser
 from .mixins import CategoriesViewSet
 
 
 class DatasetViewSet(CategoriesViewSet, CoreDatasetViewSet):
-    queryset = Dataset.objects.all()
+    queryset = ImageClassificationDataset.objects.all()
     serializer_class = DatasetSerialiser
 
     permission_classes = dict(

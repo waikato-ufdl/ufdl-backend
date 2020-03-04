@@ -3,7 +3,7 @@ from typing import List
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.models import Dataset as CoreDataset, DatasetQuerySet as CoreDatasetQuerySet
 
-from .._CategoriesFile import CategoriesFile
+from ..json import CategoriesFile
 
 
 class DatasetQuerySet(CoreDatasetQuerySet):

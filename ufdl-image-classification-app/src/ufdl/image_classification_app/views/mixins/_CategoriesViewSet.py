@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.views.mixins import RoutedViewSet
 
-from ...json import CategoriesModSpec
+from ufdl.json.image_classification import CategoriesModSpec
+
 from ...models import ImageClassificationDataset
 
 

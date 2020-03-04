@@ -3,7 +3,7 @@ from typing import List
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.models import Dataset, DatasetQuerySet
 
-from ..json import CategoriesFile
+from ufdl.json.image_classification import CategoriesFile
 
 
 class ImageClassificationDatasetQuerySet(DatasetQuerySet):

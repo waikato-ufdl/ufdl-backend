@@ -24,6 +24,18 @@ class Dataset(CoreDataset):
         # Make sure the unstructured data is valid
         CategoriesFile.validate_json_string(self.unstructured)
 
+    def delete_file(self, filename: str):
+        # Delete the file as usual
+        file = super().delete_file(filename)
+
+        # Remove the file from the categories as well
+        categories = self.get_categories()
+        if categories.has_property(filename):
+            categories.delete_property(filename)
+            self.set_categories(categories)
+
+        return file
+
     def get_categories(self) -> CategoriesFile:
         """
         Gets the categories of this classification data-set.

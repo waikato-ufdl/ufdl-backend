@@ -2,18 +2,24 @@ from typing import Iterator
 
 from wai.annotations.core import InternalFormat as AnnotationsInternalFormat
 
-from ..models import ObjectDetectionDataset
 from ._image_to_annotations_internal_format import image_to_annotations_internal_format
 
 
-def annotations_iterator(dataset: ObjectDetectionDataset) -> Iterator[AnnotationsInternalFormat]:
+def annotations_iterator(dataset) -> Iterator[AnnotationsInternalFormat]:
     """
     Creates an iterator over the images in a data-set in
     the format expected by wai.annotations.
 
-    :param dataset:             The model containing the image files.
+    :param dataset:             The dataset containing the image files.
     :return:                    The iterator.
     """
+    # Local import to avoid circularity errors
+    from ..models import ObjectDetectionDataset
+
+    # Make sure the dataset is an object-detection dataset
+    if not isinstance(dataset, ObjectDetectionDataset):
+        raise TypeError("Dataset is not an object-detection dataset")
+
     # Get the annotations file
     annotations_file = dataset.get_annotations()
 

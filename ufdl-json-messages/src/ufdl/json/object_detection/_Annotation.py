@@ -39,7 +39,7 @@ class Annotation(StrictJSONObject['Annotation']):
                           y=located_object.y,
                           width=located_object.width,
                           height=located_object.height,
-                          polygon=(Polygon.from_polygon(located_object.get_actual_polygon())
+                          polygon=(Polygon.from_geometric_polygon(located_object.get_actual_polygon())
                                    if located_object.has_polygon() else Absent),
                           label=get_object_label(located_object),
                           prefix=get_object_prefix(located_object, Absent))
@@ -55,7 +55,7 @@ class Annotation(StrictJSONObject['Annotation']):
 
         # Add the polygon if present
         if self.polygon is not Absent:
-            located_object.set_polygon(self.polygon.to_polygon())
+            located_object.set_polygon(self.polygon.to_geometric_polygon())
 
         # Set the label
         set_object_label(located_object, self.label)

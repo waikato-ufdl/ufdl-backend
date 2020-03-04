@@ -19,7 +19,7 @@ class Polygon(StrictJSONObject['Polygon']):
         min_elements=3
     )
 
-    def to_polygon(self) -> GeometricPolygon:
+    def to_geometric_polygon(self) -> GeometricPolygon:
         """
         Converts this polygon into a geometric polygon.
 
@@ -28,7 +28,7 @@ class Polygon(StrictJSONObject['Polygon']):
         return GeometricPolygon(*(Point(x, y) for x, y in self.points))
 
     @staticmethod
-    def from_polygon(polygon: GeometricPolygon) -> 'Polygon':
+    def from_geometric_polygon(polygon: GeometricPolygon) -> 'Polygon':
         """
         Converts a geometric polygon into a Polygon record.
 

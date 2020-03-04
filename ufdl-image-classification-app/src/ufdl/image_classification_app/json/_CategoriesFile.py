@@ -2,7 +2,7 @@ from wai.json.object import JSONObject
 from wai.json.object.property import ArrayProperty, StringProperty
 
 
-class CategoriesFile(JSONObject):
+class CategoriesFile(JSONObject['CategoriesFile']):
     """
     Definition of a basic JSON file which holds a map
     from file names to an array of their categories.

@@ -46,12 +46,12 @@ class FileContainerModel(models.Model):
 
         return association
 
-    def get_file(self, filename: str) -> bytes:
+    def get_named_file_record(self, filename: str) -> 'NamedFile':
         """
-        Gets the contents of a file in this container.
+        Gets the file from our files with the given filename.
 
-        :param filename:    The name of the file to get.
-        :return:            The file contents.
+        :param filename:    The filename.
+        :return:            The named file record.
         """
         # Get the (possible) file with the given name
         file = self.files.all().with_filename(filename).first()
@@ -60,7 +60,16 @@ class FileContainerModel(models.Model):
         if file is None:
             raise BadName(filename, "Doesn't exist")
 
-        return file.get_data()
+        return file
+
+    def get_file(self, filename: str) -> bytes:
+        """
+        Gets the contents of a file in this container.
+
+        :param filename:    The name of the file to get.
+        :return:            The file contents.
+        """
+        return self.get_named_file_record(filename).get_data()
 
     def delete_file(self, filename: str):
         """
@@ -70,11 +79,7 @@ class FileContainerModel(models.Model):
         :return:            The file association.
         """
         # Get the (possible) file with the given name
-        file = self.files.all().with_filename(filename).first()
-
-        # If the file doesn't exist, raise an error
-        if file is None:
-            raise BadName(filename, "Doesn't exist")
+        file = self.get_named_file_record(filename)
 
         # Delete the association
         self.files.remove(file)

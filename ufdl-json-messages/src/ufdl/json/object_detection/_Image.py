@@ -1,13 +1,7 @@
 from typing import List, Optional
 
-from wai.annotations.core import ImageInfo, ImageFormat, InternalFormat as AnnotationsInternalFormat
-
-from wai.common.adams.imaging.locateobjects import LocatedObjects
-
 from wai.json.object import StrictJSONObject, Absent
 from wai.json.object.property import ArrayProperty, StringProperty, NumberProperty
-
-from ufdl.core_app.models.files import NamedFile
 
 from ._Annotation import Annotation
 
@@ -30,36 +24,6 @@ class Image(StrictJSONObject['Image']):
     annotations: List[Annotation] = ArrayProperty(
         element_property=Annotation.as_property()
     )
-
-    @staticmethod
-    def from_file(file: NamedFile) -> 'Image':
-        """
-        Creates an empty Image object for the given file.
-
-        :param file:    The file to read.
-        :return:        The Image object.
-        """
-        # Create an image-info record from the file
-        image_info = ImageInfo(file.filename, file.get_data())
-
-        return Image(format=image_info.format.get_default_extension(),
-                     dimensions=[image_info.width(), image_info.height()],
-                     annotations=[])
-
-    def to_annotations_internal_format(self, filename: str, data: bytes) -> AnnotationsInternalFormat:
-        """
-        Converts this image record to the format expected by wai.annotations.
-
-        :param filename:    The image filename to use.
-        :param data:        The image data to use.
-        :return:            The wai.annotations internal-format record.
-        """
-        size = None if self.dimensions is Absent else (self.width, self.height)
-
-        return (
-            ImageInfo(filename, data, ImageFormat.for_extension(self.format), size),
-            LocatedObjects(map(Annotation.to_located_object, self.annotations))
-        )
 
     @property
     def width(self) -> Optional[int]:

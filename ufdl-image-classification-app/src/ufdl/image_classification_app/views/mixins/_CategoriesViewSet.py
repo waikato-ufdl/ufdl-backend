@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.views.mixins import RoutedViewSet
 
-from ...models.mixins import CategoriesModel
+from ...models import Dataset
 
 
 class CategoriesViewSet(RoutedViewSet):
@@ -43,11 +43,11 @@ class CategoriesViewSet(RoutedViewSet):
         dataset = self.get_object()
 
         # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, CategoriesModel):
-            raise TypeError(f"Object {dataset} is not a categories model")
+        if not isinstance(dataset, Dataset):
+            raise TypeError(f"Object {dataset} is not a dataset")
 
         # Return the categories
-        return Response(dataset.get_categories())
+        return Response(dataset.get_categories().to_raw_json())
 
     def add_categories(self, request: Request, pk=None):
         """
@@ -64,13 +64,10 @@ class CategoriesViewSet(RoutedViewSet):
         dataset = self.get_object()
 
         # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, CategoriesModel):
-            raise TypeError(f"Object {dataset} is not a categories model")
+        if not isinstance(dataset, Dataset):
+            raise TypeError(f"Object {dataset} is not a dataset")
 
-        # Add the categories to the data-set
-        added_categories = dataset.add_categories(images, categories)
-
-        return Response(added_categories)
+        return Response(dataset.add_categories(images, categories).to_raw_json())
 
     def remove_categories(self, request: Request, pk=None):
         """
@@ -87,13 +84,10 @@ class CategoriesViewSet(RoutedViewSet):
         dataset = self.get_object()
 
         # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, CategoriesModel):
-            raise TypeError(f"Object {dataset} is not a categories model")
+        if not isinstance(dataset, Dataset):
+            raise TypeError(f"Object {dataset} is not a dataset")
 
-        # Remove the categories from the data-set
-        removed_categories = dataset.remove_categories(images, categories)
-
-        return Response(removed_categories)
+        return Response(dataset.remove_categories(images, categories).to_raw_json())
 
     @classmethod
     def _parse_parameters(cls, request: Request) -> Tuple[List[str], List[str]]:

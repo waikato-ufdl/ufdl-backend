@@ -32,6 +32,9 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
     # The tags applied to this dataset
     tags = models.TextField()
 
+    # Unstructured data (use is determined by the type of dataset)
+    unstructured = models.TextField()
+
     objects = DatasetQuerySet.as_manager()
 
     file_formats = {"zip", "tar.gz"}
@@ -71,7 +74,8 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
                                  project=self.project,
                                  licence=self.licence,
                                  tags=self.tags,
-                                 creator=creator)
+                                 creator=creator,
+                                 unstructured=self.unstructured)
 
         # Save the dataset
         new_dataset.save()

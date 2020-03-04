@@ -12,6 +12,6 @@ class DatasetSerialiser(CoreDatasetSerialiser):
         representation = super().to_representation(instance)
 
         # Add the categories file as a field
-        representation["categories"] = instance.get_categories()
+        representation["categories"] = instance.get_categories().to_raw_json()
 
         return representation

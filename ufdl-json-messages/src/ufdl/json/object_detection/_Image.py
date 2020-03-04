@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from wai.annotations.core import ImageInfo, ImageFormat, InternalFormat as AnnotationsInternalFormat
 
@@ -7,7 +7,7 @@ from wai.common.adams.imaging.locateobjects import LocatedObjects
 from wai.json.object import StrictJSONObject, Absent
 from wai.json.object.property import ArrayProperty, StringProperty, NumberProperty
 
-from ufdl.core_app.models.files import File, NamedFile
+from ufdl.core_app.models.files import NamedFile
 
 from ._Annotation import Annotation
 

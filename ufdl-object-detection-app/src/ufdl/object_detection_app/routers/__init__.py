@@ -1,0 +1,1 @@
+from ._UFDLObjectDetectionRouter import UFDLObjectDetectionRouter

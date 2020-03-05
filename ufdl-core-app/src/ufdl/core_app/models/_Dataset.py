@@ -1,4 +1,5 @@
 from io import BytesIO
+from typing import Iterator, Tuple
 from zipfile import ZipFile
 from tarfile import TarFile, TarInfo
 
@@ -6,7 +7,7 @@ from django.db import models
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
 
 from ..apps import UFDLCoreAppConfig
-from ..exceptions import UnknownParameters, BadName
+from ..exceptions import *
 from ..util import QueryParameterValue
 from .mixins import PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel
 
@@ -104,6 +105,17 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
             UnknownParameters.ensure_empty(parameters)
 
             return self.as_tar_gz()
+        else:
+            raise ValueError(f"Unknown archive format '{file_format}'; options are {self.file_formats}")
+
+    def archive_file_iterator(self) -> Iterator[Tuple[str, bytes]]:
+        """
+        Gets an iterator over the files to write to an
+        archive when calling as_file.
+
+        :return:    An iterator of filename, file-contents pairs.
+        """
+        return ((file.filename, file.get_data()) for file in self.files.all())
 
     def as_zip(self) -> bytes:
         """
@@ -117,8 +129,8 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
         # Open the buffer as a zip-file
         with ZipFile(zip_buffer, 'w') as zip_file:
             # Write each file to the archive
-            for file in self.files.all():
-                zip_file.writestr(file.filename, file.get_data())
+            for filename, contents in self.archive_file_iterator():
+                zip_file.writestr(filename, contents)
 
         # Reset the buffer to the beginning for reading
         zip_buffer.seek(0)
@@ -137,11 +149,10 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
         # Open the buffer as a zip-file
         with TarFile.open(fileobj=tar_buffer, mode='w:gz') as tar_file:
             # Write each file to the archive
-            for file in self.files.all():
-                file_data = file.get_data()
-                info = TarInfo(file.filename)
-                info.size = len(file_data)
-                tar_file.addfile(info, BytesIO(file_data))
+            for filename, contents in self.archive_file_iterator():
+                info = TarInfo(filename)
+                info.size = len(contents)
+                tar_file.addfile(info, BytesIO(contents))
 
         # Reset the buffer to the beginning for reading
         tar_buffer.seek(0)

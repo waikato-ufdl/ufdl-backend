@@ -2,6 +2,8 @@ from typing import Set
 
 from django.db import models
 
+from ...util import QueryParameterValue
+
 
 class AsFileModel(models.Model):
     """
@@ -42,7 +44,7 @@ class AsFileModel(models.Model):
         """
         raise NotImplementedError(self.filename_without_extension.__qualname__)
 
-    def as_file(self, file_format: str, **parameters) -> bytes:
+    def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
         """
         Returns the file representation of this model record.
 

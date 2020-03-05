@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from ...models.mixins import AsFileModel
 from ...renderers import BinaryFileRenderer
+from ...util import format_query_params
 from ._RoutedViewSet import RoutedViewSet
 
 # The name of the parameter specifying the file-format
@@ -55,15 +56,14 @@ class DownloadableViewSet(RoutedViewSet):
             raise TypeError(f"Object-type '{type(obj).__name__}' cannot be exported as a file")
 
         # Get the parameters
-        parameters = dict(**request.query_params)
+        parameters = format_query_params(request)
 
         # Get the format to send the file as
-        file_format = parameters.pop(FILE_FORMAT_PARAMETER, [obj.default_format()])
+        file_format = parameters.pop(FILE_FORMAT_PARAMETER, obj.default_format())
 
         # Must specify exactly one format
-        if len(file_format) > 1:
+        if isinstance(file_format, list):
             raise ValueError(f"Multiple file formats specified")
-        file_format = file_format[0]
 
         # The object must support the file format
         if not obj.supports_file_format(file_format):

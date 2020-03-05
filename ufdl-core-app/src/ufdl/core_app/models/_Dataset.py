@@ -7,6 +7,7 @@ from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDele
 
 from ..apps import UFDLCoreAppConfig
 from ..exceptions import UnknownParameters, BadName
+from ..util import QueryParameterValue
 from .mixins import PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel
 
 
@@ -92,7 +93,7 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
     def filename_without_extension(self) -> str:
         return f"{self.name}.v{self.version}"
 
-    def as_file(self, file_format: str, **parameters) -> bytes:
+    def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
         if file_format == "zip":
             # Shouldn't be any parameters
             if len(parameters) > 0:

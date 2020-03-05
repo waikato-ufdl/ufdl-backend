@@ -1,10 +1,10 @@
 from typing import List
 
+from ufdl.annotation_utils import image_from_file
+
 from ufdl.core_app.models import Dataset, DatasetQuerySet
 
 from ufdl.json.object_detection import AnnotationsFile, Annotation
-
-from ..util import image_from_named_file
 
 
 class ObjectDetectionDatasetQuerySet(DatasetQuerySet):
@@ -90,7 +90,7 @@ class ObjectDetectionDataset(Dataset):
         if len(annotations) > 0:
             # Create the property if not already existing
             if not annotations_file.has_property(filename):
-                annotations_file.set_property(filename, image_from_named_file(file))
+                annotations_file.set_property(filename, image_from_file(file.filename, file.get_data()))
 
             # Replace the annotations for the image
             annotations_file[filename].annotations = annotations

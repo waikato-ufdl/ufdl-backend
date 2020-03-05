@@ -96,13 +96,13 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
     def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
         if file_format == "zip":
             # Shouldn't be any parameters
-            if len(parameters) > 0:
-                raise UnknownParameters(parameters)
+            UnknownParameters.ensure_empty(parameters)
+
             return self.as_zip()
         elif file_format == "tar.gz":
             # Shouldn't be any parameters
-            if len(parameters) > 0:
-                raise UnknownParameters(parameters)
+            UnknownParameters.ensure_empty(parameters)
+
             return self.as_tar_gz()
 
     def as_zip(self) -> bytes:

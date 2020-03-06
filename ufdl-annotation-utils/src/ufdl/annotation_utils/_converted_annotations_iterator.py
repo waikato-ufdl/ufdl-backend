@@ -32,7 +32,7 @@ def converted_annotations_iterator(
 
     # Add a dummy output option if none is supplied
     if "-o" not in args and "--output" not in args:
-        args += ["-o", "doesn't matter"]
+        args += ["-o", "annotations"]
 
     # Get the converter and writer for the annotations format
     converter_factory = get_internal_format_converter_factory(format)

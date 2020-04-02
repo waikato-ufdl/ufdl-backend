@@ -4,7 +4,7 @@ from setuptools import setup, find_namespace_packages
 
 
 setup(
-    name="ufdl.annotation_utils",
+    name="ufdl-annotation-utils",
     description="Tools for interoperating between UFDL and wai.annotations.",
     url="https://github.com/waikato-ufdl/ufdl-backend",
     classifiers=[
@@ -25,9 +25,9 @@ setup(
     author='Corey Sterling',
     author_email='coreytsterling@gmail.com',
     install_requires=[
-        "wai.common",
-        "wai.json",
-        "wai.annotations",
-        "ufdl.json"
+        "wai.common==0.0.31",
+        "wai.json==0.0.5",
+        "wai.annotations==0.3.5",
+        "ufdl-json-messages"
     ]
 )

@@ -4,7 +4,7 @@ from setuptools import setup, find_namespace_packages
 
 
 setup(
-    name="ufdl.json",
+    name="ufdl-json-messages",
     description="Definitions of JSON messages used by UFDL",
     url="https://github.com/waikato-ufdl/ufdl-backend",
     classifiers=[
@@ -25,6 +25,7 @@ setup(
     author='Corey Sterling',
     author_email='coreytsterling@gmail.com',
     install_requires=[
-        "wai.json"
+        "wai.common==0.0.31",
+        "wai.json==0.0.5"
     ]
 )

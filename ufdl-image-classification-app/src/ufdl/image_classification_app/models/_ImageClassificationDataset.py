@@ -5,6 +5,8 @@ from ufdl.core_app.models import Dataset, DatasetQuerySet
 
 from ufdl.json.image_classification import CategoriesFile
 
+from wai.common.iterate import count
+
 
 class ImageClassificationDatasetQuerySet(DatasetQuerySet):
     pass
@@ -92,7 +94,7 @@ class ImageClassificationDataset(Dataset):
                     additions[image] = categories_to_add
 
         # If there are additions to be made, make them
-        if sum(1 for _ in additions.properties()) > 0:  # TODO: Replace with wai.common.iterate.count when released
+        if count(additions.properties()) > 0:
             # Add the additions
             for image in additions:
                 categories_file[image] += additions[image]

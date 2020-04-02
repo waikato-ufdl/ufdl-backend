@@ -1,9 +1,7 @@
-from itertools import chain
 from typing import List, Tuple, Iterator
 
 from ufdl.annotation_utils import image_from_file, converted_annotations_iterator
 
-from ufdl.core_app.exceptions import *
 from ufdl.core_app.models import Dataset, DatasetQuerySet
 from ufdl.core_app.util import QueryParameterValue
 
@@ -29,27 +27,26 @@ class ObjectDetectionDataset(Dataset):
         AnnotationsFile.validate_json_string(self.unstructured)
 
     def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
-        # Extract the annotations format parameter
-        annotations_format = MissingParameter.attempt_pop("annotations_format", parameters)
-        if isinstance(annotations_format, list):
-            raise ValueError(f"Multiple annotations formats specified")  # TODO: Error type
-
         # Extract the optional annotations arguments parameter
-        annotations_args = parameters.pop("annotations_args", [])
+        annotations_args = parameters.pop("annotations_args", None)
         if isinstance(annotations_args, str):
             annotations_args = [annotations_args]
 
         # Create and store an annotations configuration for use in archive_file_iterator
-        setattr(self, "__annotations_configuration", (annotations_format, annotations_args))
+        setattr(self, "__annotations_args", annotations_args)
 
         return super().as_file(file_format, **parameters)
 
     def archive_file_iterator(self) -> Iterator[Tuple[str, bytes]]:
-        # Retrieve the previously-created annotations converter
-        annotations_format, annotations_args = getattr(self, "__annotations_configuration")
+        # Retrieve the annotations arguments
+        annotations_args = getattr(self, "__annotations_args")
 
         # Reference no longer needed after this method returns
-        delattr(self, "__annotations_configuration")
+        delattr(self, "__annotations_args")
+
+        # If no annotations arguments supplied, just return the files
+        if annotations_args is None:
+            return super().archive_file_iterator()
 
         # Define the image-data supplier function for converted_annotations_iterator
         def image_data_supplier(filename: str) -> bytes:
@@ -60,7 +57,6 @@ class ObjectDetectionDataset(Dataset):
         annotations_file_iterator = converted_annotations_iterator(
             self.get_annotations(),
             image_data_supplier,
-            annotations_format,
             *annotations_args
         )
 
@@ -69,7 +65,7 @@ class ObjectDetectionDataset(Dataset):
         annotations_file_iterator = ((filename, file.read()) for filename, file in annotations_file_iterator)
 
         # Chain the converted annotations files with the dataset images
-        return chain(super().archive_file_iterator(), annotations_file_iterator)
+        return annotations_file_iterator
 
     def delete_file(self, filename: str):
         # Delete the file as usual

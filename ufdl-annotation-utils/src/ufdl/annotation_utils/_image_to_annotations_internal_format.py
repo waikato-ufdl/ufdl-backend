@@ -21,7 +21,7 @@ def image_to_annotations_internal_format(image: Image, filename: str, data: byte
     # Get the size of the image from the record
     size = None if image.dimensions is Absent else (image.width, image.height)
 
-    return (
+    return AnnotationsInternalFormat(
         ImageInfo(filename, data, ImageFormat.for_extension(image.format), size),
         LocatedObjects(map(located_object_from_annotation, image.annotations))
     )

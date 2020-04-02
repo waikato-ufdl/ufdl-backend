@@ -2,14 +2,16 @@
 Script to delete and re-create the database.
 """
 # Remove the database
-DB_PATH = "ufdl-api-site/src/ufdl/db.sqlite3"
 import os
+DB_PATH = os.path.join(os.path.dirname(__file__), "db.sqlite3")
 if os.path.exists(DB_PATH):
     os.remove(DB_PATH)
 
 # Remove the file-system
-FS_PATH = "fs"
 import shutil
+from ufdl.core_app.settings import ufdl_settings
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ufdl.api_site.settings')
+FS_PATH = ufdl_settings.LOCAL_DISK_FILE_DIRECTORY
 if os.path.exists(FS_PATH):
     shutil.rmtree(FS_PATH)
 

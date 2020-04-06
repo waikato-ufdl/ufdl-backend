@@ -8,7 +8,7 @@ class IsPublic(permissions.BasePermission):
     """
     def has_object_permission(self, request, view, obj):
         # Local imports to avoid circular references
-        from ..mixins import PublicModel
+        from ..models.mixins import PublicModel
 
         # Make sure the object is a dataset
         ensure_model(obj, PublicModel)

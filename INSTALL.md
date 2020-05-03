@@ -19,7 +19,7 @@ cd ufdl-backend
 python3.7 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
-pip install -- upgrade setuptools
+pip install --upgrade setuptools
 ```
 
 ## Install Specific Dependencies

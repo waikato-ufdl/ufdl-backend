@@ -32,6 +32,8 @@ pip install Cython
 pip install numpy
 ```
 
+Tensorflow is required for wai-annotations (a dependency of UFDL):
+
 ```
 pip install tensorflow
 ```

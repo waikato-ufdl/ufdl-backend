@@ -48,7 +48,7 @@ Order is important here.
 
 ```
 pip install ufdl-json-messages/
-pip install ufdl-annotations-utils/
+pip install ufdl-annotation-utils/
 pip install ufdl-core-app/
 pip install ufdl-image-classification-app/
 pip install ufdl-object-detection-app/

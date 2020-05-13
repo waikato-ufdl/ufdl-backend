@@ -35,7 +35,8 @@ class Project(TeamOwnedModel, SoftDeleteModel):
     def pre_delete(self):
         self.datasets.all().delete()
 
-    def pre_delete_bulk(self, query_set):
+    @classmethod
+    def pre_delete_bulk(cls, query_set):
         # Local imports to prevent circular reference errors
         from ._Dataset import Dataset
 

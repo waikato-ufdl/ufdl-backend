@@ -6,10 +6,11 @@
 * Development headers (python3.7-dev) (Windows only?)
 * Compiler e.g. gcc (exported as CC) (Windows only?)
 
-## Checkout Source from Git
+## Checkout Sources from Git
 
 ```
 git clone https://github.com/waikato-ufdl/ufdl-backend.git
+git clone https://github.com/waikato-ufdl/ufdl-json-messages.git
 cd ufdl-backend
 ```
 
@@ -47,7 +48,7 @@ pip install tensorflow-gpu
 Order is important here.
 
 ```
-pip install ufdl-json-messages/
+pip install ../ufdl-json-messages/
 pip install ufdl-annotation-utils/
 pip install ufdl-core-app/
 pip install ufdl-image-classification-app/

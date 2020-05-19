@@ -23,16 +23,10 @@ class FileContainerViewSet(RoutedViewSet):
         return [
             routers.Route(
                 url=r'^{prefix}/{lookup}/files/(?P<fn>.*)$',
-                mapping={'post': 'add_file'},
-                name='{basename}-file-container-new',
-                detail=True,
-                initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.MODE_KEYWORD}
-            ),
-            routers.Route(
-                url=r'^{prefix}/{lookup}/files/(?P<fn>.+)$',
-                mapping={'get': 'get_file',
+                mapping={'post': 'add_file',
+                         'get': 'get_file',
                          'delete': 'delete_file'},
-                name='{basename}-file-container-existing',
+                name='{basename}-file-container',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.MODE_KEYWORD}
             )

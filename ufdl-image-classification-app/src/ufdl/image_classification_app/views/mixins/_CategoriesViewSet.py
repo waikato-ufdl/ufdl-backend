@@ -25,8 +25,7 @@ class CategoriesViewSet(RoutedViewSet):
             routers.Route(
                 url=r'^{prefix}/{lookup}/categories{trailing_slash}$',
                 mapping={'get': 'get_categories',
-                         'post': 'add_categories',
-                         'delete': 'remove_categories'},
+                         'patch': 'modify_categories'},
                 name='{basename}-categories',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: CategoriesViewSet.MODE_KEYWORD}
@@ -51,9 +50,9 @@ class CategoriesViewSet(RoutedViewSet):
         # Return the categories
         return Response(dataset.get_categories().to_raw_json())
 
-    def add_categories(self, request: Request, pk=None):
+    def modify_categories(self, request: Request, pk=None):
         """
-        Adds categories to a data-set.
+        Modifies categories of a data-set.
 
         :param request:     The request containing the category data.
         :param pk:          The primary key of the data-set being accessed.
@@ -69,27 +68,10 @@ class CategoriesViewSet(RoutedViewSet):
         if not isinstance(dataset, ImageClassificationDataset):
             raise TypeError(f"Object {dataset} is not a dataset")
 
-        return Response(dataset.add_categories(mod_spec.images, mod_spec.categories).to_raw_json())
+        # Get the modification method
+        method = dataset.add_categories if mod_spec.method == "add" else dataset.remove_categories
 
-    def remove_categories(self, request: Request, pk=None):
-        """
-        Removes categories to a data-set.
-
-        :param request:     The request containing the category data.
-        :param pk:          The primary key of the data-set being accessed.
-        :return:            The response containing the categories that were removed.
-        """
-        # Get the image/category lists from the request
-        mod_spec = self._parse_parameters(request)
-
-        # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, ImageClassificationDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
-
-        return Response(dataset.remove_categories(mod_spec.images, mod_spec.categories).to_raw_json())
+        return Response(method(mod_spec.images, mod_spec.categories).to_raw_json())
 
     @classmethod
     def _parse_parameters(cls, request: Request) -> CategoriesModSpec:

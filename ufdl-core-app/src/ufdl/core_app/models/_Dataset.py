@@ -81,6 +81,7 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
                                  licence=self.licence,
                                  tags=self.tags,
                                  creator=creator,
+                                 is_public=self.is_public,
                                  unstructured=self.unstructured)
 
         # Save the dataset

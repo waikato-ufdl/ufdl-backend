@@ -76,6 +76,7 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
         # Create the new dataset
         new_dataset = type(self)(name=new_name if new_name is not None else self.name,
                                  version=1 if new_name is not None else self.version + 1,
+                                 description=self.description,
                                  project=self.project,
                                  licence=self.licence,
                                  tags=self.tags,

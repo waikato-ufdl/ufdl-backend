@@ -23,6 +23,9 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
     # The version of the dataset
     version = models.IntegerField(default=1)
 
+    # A description of the dataset's purpose and/or differences from previous versions
+    description = models.TextField()
+
     # The project the dataset belongs to
     project = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Project",
                                 on_delete=models.DO_NOTHING,

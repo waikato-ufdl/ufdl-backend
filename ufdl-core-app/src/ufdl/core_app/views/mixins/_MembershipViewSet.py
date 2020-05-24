@@ -4,23 +4,16 @@ from rest_framework import routers
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from simple_django_teams.models import Membership
+from simple_django_teams.models import Membership, Team
+
+from ufdl.json.core import MembershipModSpec
+
+from wai.json.raw import RawJSONObject
 
 from ...exceptions import *
 from ...models import User
 from ...serialisers import MembershipSerialiser
 from ._RoutedViewSet import RoutedViewSet
-
-# Translates the possible values for the permissions parameter into the
-# form expected by the membership model
-PERMISSIONS_TRANSLATION_TABLE = {
-    "READ": Membership.PERMISSION_READ,
-    "R": Membership.PERMISSION_READ,
-    "WRITE": Membership.PERMISSION_WRITE,
-    "W": Membership.PERMISSION_WRITE,
-    "ADMIN": Membership.PERMISSION_ADMIN,
-    "A": Membership.PERMISSION_ADMIN
-}
 
 
 class MembershipViewSet(RoutedViewSet):
@@ -35,15 +28,15 @@ class MembershipViewSet(RoutedViewSet):
     def get_routes(cls) -> List[routers.Route]:
         return [
             routers.Route(
-                url=r'^{prefix}/{lookup}/add-member{trailing_slash}$',
-                mapping={'post': 'add_member'},
-                name='{basename}-add-member',
+                url=r'^{prefix}/{lookup}/memberships{trailing_slash}$',
+                mapping={'patch': 'modify_memberships'},
+                name='{basename}-memberships',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: MembershipViewSet.MODE_KEYWORD}
             )
         ]
 
-    def add_member(self, request: Request, pk=None):
+    def modify_memberships(self, request: Request, pk=None):
         """
         Action to add a member to a team.
 
@@ -51,54 +44,93 @@ class MembershipViewSet(RoutedViewSet):
         :param pk:          The primary key of the team being accessed.
         :return:            The response containing the new membership record.
         """
-        # Get the parameters from the request
-        parameters = dict(request.data)
-
-        # Make sure the username argument was supplied
-        if "username" not in parameters:
-            raise MissingParameter("username")
-
-        # Extract the parameter values
-        username = parameters.pop("username")
-        permissions = parameters.pop("permissions", Membership.PERMISSION_READ)  # Default to read-only permission
-
-        # Make sure no other parameters are provided
-        if len(parameters) > 0:
-            raise UnknownParameters(parameters)
-
-        # Make sure the permissions argument is a string
-        if not isinstance(permissions, str):
-            raise BadArgumentType("add-member",
-                                  "permissions",
-                                  "string",
-                                  permissions)
-
-        # Make the case insensitive
-        permissions = permissions.upper()
-
-        # Make sure the permissions argument is one of the allowed values
-        if permissions not in PERMISSIONS_TRANSLATION_TABLE:
-            raise BadArgumentValue("add-member",
-                                   "permissions",
-                                   permissions,
-                                   ", ".join(PERMISSIONS_TRANSLATION_TABLE.keys()))
+        # Get the mod-spec from the request
+        mod_spec = JSONParseFailure.attempt(dict(request.data), MembershipModSpec)
 
         # Get the User record for the username
-        user = User.objects.filter(username=username).first()
+        user = User.objects.filter(username=mod_spec.username).first()
 
         # If the user doesn't exist, error
         if user is None:
-            raise BadName(username, "No user with this username exists")
+            raise BadName(mod_spec.username, "No user with this username exists")
 
         # If the user is deleted, error
         if not user.is_active:
-            raise BadName(username, "This user is no longer active")
+            raise BadName(mod_spec.username, "This user is no longer active")
 
-        # Add the user to the team
+        # Get the method to use to make the modification
+        if mod_spec.method == "add":
+            method = self.add_membership
+        elif mod_spec.method == "remove":
+            method = self.remove_membership
+        else:  # mod_spec.method == "update"
+            method = self.update_membership
+
+        return Response(method(self.get_object(), user, mod_spec.permissions, request.user))
+
+    @staticmethod
+    def add_membership(team: Team, user: User, permissions: str, modifier: User) -> RawJSONObject:
+        """
+        Adds a membership between the given user and team, with the given permissions.
+
+        :param team:            The team to add the membership to.
+        :param user:            The user becoming a member.
+        :param permissions:     The permissions to give the user.
+        :param modifier:        The user making the modification.
+        :return:                The JSON representation of the membership.
+        """
+        # Create the membership
         membership = Membership(user=user,
-                                team=self.get_object(),
+                                team=team,
                                 permissions=permissions,
-                                creator=request.user)
+                                creator=modifier)
         membership.save()
 
-        return Response(MembershipSerialiser().to_representation(membership))
+        return MembershipSerialiser().to_representation(membership)
+
+    @staticmethod
+    def remove_membership(team: Team, user: User, permissions: str, modifier: User) -> RawJSONObject:
+        """
+        Removes a membership between the given user and team.
+
+        :param team:            The team to remove the membership from.
+        :param user:            The user losing membership status.
+        :param permissions:     Unused.
+        :param modifier:        The user making the modification.
+        :return:                The JSON representation of the membership.
+        """
+        # Find the membership
+        membership = Membership.objects.filter(Membership.active_Q, team=team, user=user).first()
+
+        # If there is no membership, raise an error
+        if membership is None:
+            raise BadName(user.username, f"This user is not a member of team {team.name}")
+
+        # Delete the membership
+        membership.delete()
+
+        return MembershipSerialiser().to_representation(membership)
+
+    @staticmethod
+    def update_membership(team: Team, user: User, permissions: str, modifier: User) -> RawJSONObject:
+        """
+        Modifies the permissions of a membership.
+
+        :param team:            The team the membership is to.
+        :param user:            The user whose membership it is.
+        :param permissions:     The new permissions for the user.
+        :param modifier:        The user making the modification.
+        :return:                The JSON representation of the membership.
+        """
+        # Find the membership
+        membership = Membership.objects.filter(Membership.active_Q, team=team, user=user).first()
+
+        # If there is no membership, raise an error
+        if membership is None:
+            raise BadName(user.username, f"This user is not a member of team {team.name}")
+
+        # Modify the permissions of the membership
+        membership.permissions = permissions
+        membership.save()
+
+        return MembershipSerialiser().to_representation(membership)

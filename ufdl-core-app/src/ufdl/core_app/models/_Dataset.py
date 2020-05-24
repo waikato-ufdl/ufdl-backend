@@ -21,7 +21,7 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
     name = models.CharField(max_length=200)
 
     # The version of the dataset
-    version = models.IntegerField(default=1)
+    version = models.IntegerField(default=1, editable=False)
 
     # A description of the dataset's purpose and/or differences from previous versions
     description = models.TextField()

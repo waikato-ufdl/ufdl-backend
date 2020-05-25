@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('deletion_time', models.DateTimeField(default=None, editable=False, null=True)),
                 ('is_public', models.BooleanField(default=False)),
                 ('name', models.CharField(max_length=200)),
-                ('version', models.IntegerField(default=1)),
+                ('version', models.IntegerField(default=1, editable=False)),
                 ('description', models.TextField()),
                 ('tags', models.TextField()),
                 ('unstructured', models.TextField()),

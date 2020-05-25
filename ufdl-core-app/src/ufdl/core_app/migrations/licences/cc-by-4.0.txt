@@ -1,0 +1,11 @@
+p:Commercial use
+p:Modification
+p:Distribution
+p:Private use
+l:Liability
+l:Trademark use
+l:Patent use
+l:Warranty
+c:License and copyright notice
+c:State changes
+u:https://github.com/creativecommons/team-open/blob/master/LICENSE

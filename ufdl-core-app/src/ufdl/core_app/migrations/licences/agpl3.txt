@@ -1,0 +1,13 @@
+p:Commercial use
+p:Modification
+p:Distribution
+p:Patent use
+p:Private use
+l:Liability
+l:Warranty
+c:License and copyright notice
+c:State changes
+c:Disclose source
+c:Network use is distribution
+c:Same license
+u:https://github.com/openscoring/openscoring/blob/master/LICENSE.txt

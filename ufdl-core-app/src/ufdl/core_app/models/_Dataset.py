@@ -32,7 +32,9 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
                                 related_name="datasets")
 
     # The licence type for this dataset
-    licence = models.CharField(max_length=200, default="proprietary")
+    licence = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Licence",
+                                on_delete=models.DO_NOTHING,
+                                related_name="datasets")
 
     # The tags applied to this dataset
     tags = models.TextField()

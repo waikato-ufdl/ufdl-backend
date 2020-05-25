@@ -7,3 +7,6 @@ from ._User import User
 
 # Include all of the file models as well
 from .files import *
+
+# And the licence models
+from .licences import *

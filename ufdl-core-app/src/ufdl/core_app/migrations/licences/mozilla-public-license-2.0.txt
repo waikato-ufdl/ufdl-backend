@@ -1,0 +1,12 @@
+p:Commercial use
+p:Distribution
+p:Modification
+p:Patent use
+p:Private use
+c:Disclose source
+c:License and copyright notice
+c:Same license (file)
+l:Liability
+l:Trademark use
+l:Warranty
+u:https://choosealicense.com/licenses/mpl-2.0/

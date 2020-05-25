@@ -1,0 +1,12 @@
+p:Commercial use
+p:Modification
+p:Distribution
+p:Patent use
+p:Private use
+l:Liability
+l:Warranty
+c:License and copyright notice
+c:Disclose source
+c:State changes
+c:Same license (library)
+u:https://github.com/EpistasisLab/tpot/blob/master/LICENSE

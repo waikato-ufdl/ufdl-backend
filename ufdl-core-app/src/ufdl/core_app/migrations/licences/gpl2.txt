@@ -1,0 +1,11 @@
+p:Commercial use
+p:Modification
+p:Distribution
+p:Private use
+l:Liability
+l:Warranty
+c:License and copyright notice
+c:State changes
+c:Disclose source
+c:Same license
+u:https://github.com/creativecommons/wp-plugin-creativecommons/blob/master/license.txt

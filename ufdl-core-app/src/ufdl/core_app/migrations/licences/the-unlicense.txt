@@ -1,0 +1,7 @@
+p:Commercial use
+p:Distribution
+p:Modification
+p:Private use
+l:Liability
+l:Warranty
+u:https://choosealicense.com/licenses/unlicense/

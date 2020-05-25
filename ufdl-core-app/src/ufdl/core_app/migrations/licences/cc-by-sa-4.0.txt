@@ -1,0 +1,12 @@
+p:Commercial use
+p:Distribution
+p:Modification
+p:Private use
+c:License and copyright notice
+c:Same license
+c:State changes
+l:Liability
+l:Patent use
+l:Trademark use
+l:Warranty
+u:https://choosealicense.com/licenses/cc-by-sa-4.0/

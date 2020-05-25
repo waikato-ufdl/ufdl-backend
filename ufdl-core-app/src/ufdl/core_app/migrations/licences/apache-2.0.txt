@@ -1,0 +1,11 @@
+p:Commercial use
+p:Modification
+p:Distribution
+p:Patent use
+p:Private use
+l:Trademark use
+l:Liability
+l:Warranty
+c:License and copyright notice
+c:State changes
+u:https://github.com/fracpete/bootstrapp/blob/master/LICENSE

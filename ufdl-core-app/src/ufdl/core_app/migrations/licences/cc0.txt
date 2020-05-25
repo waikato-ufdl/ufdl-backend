@@ -1,0 +1,9 @@
+p:Commercial use
+p:Modification
+p:Distribution
+p:Private use
+l:Liability
+l:Trademark use
+l:Patent use
+l:Warranty
+u:https://github.com/benedekrozemberczki/awesome-decision-tree-papers/blob/master/LICENSE

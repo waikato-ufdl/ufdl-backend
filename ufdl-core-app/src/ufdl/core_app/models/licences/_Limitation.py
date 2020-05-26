@@ -1,19 +1,23 @@
 from django.db import models
 
+from ..mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet
 
-class LimitationQuerySet(models.QuerySet):
+
+class LimitationQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySet):
     """
     A query-set of data-set licence limitations.
     """
     pass
 
 
-class Limitation(models.Model):
+class Limitation(DeleteOnNoRemainingReferencesOnlyModel):
     """
     A limitation that a data-set licence can impose on use of the data-set.
     """
     # The name of the limitation
     name = models.CharField(max_length=100)
+
+    objects = LimitationQuerySet.as_manager()
 
     class Meta:
         constraints = [

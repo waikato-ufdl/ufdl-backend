@@ -18,5 +18,6 @@ class UFDLRouter(routers.DefaultRouter):
             CopyableViewSet.get_routes() +
             DownloadableViewSet.get_routes() +
             FileContainerViewSet.get_routes() +
-            MembershipViewSet.get_routes()
+            MembershipViewSet.get_routes() +
+            LicenceSubdescriptorViewSet.get_routes()
     )

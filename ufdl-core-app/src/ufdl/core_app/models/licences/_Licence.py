@@ -32,6 +32,8 @@ class Licence(models.Model):
     conditions = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.Condition",
                                         related_name="+")
 
+    objects = LicenceQuerySet.as_manager()
+
     class Meta:
         constraints = [
             # Ensure that each licence has a unique name

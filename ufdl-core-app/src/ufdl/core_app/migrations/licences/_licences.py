@@ -42,17 +42,20 @@ def get_licence_subdescriptors(licence_name: str) -> Tuple[Set[str], Set[str], S
     with open(os.path.join(ROOT, licence_filename), "r") as licence_file:
         # Process each line in turn
         for line in licence_file:
+            # Get the sub-descriptor
+            subdescriptor = line[2:].strip()
+
             # If the line starts with 'p:', it's a permission of the licence
             if line.startswith("p:"):
-                permissions.add(line[2:])
+                permissions.add(subdescriptor)
 
             # If the line starts with 'l:', it's a limitation of the licence
             elif line.startswith("l:"):
-                limitations.add(line[2:])
+                limitations.add(subdescriptor)
 
             # If the line starts with 'c:', it's a condition of the licence
             elif line.startswith("c:"):
-                conditions.add(line[2:])
+                conditions.add(subdescriptor)
 
     return permissions, limitations, conditions
 

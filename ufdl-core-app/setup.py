@@ -15,10 +15,14 @@ setup(
     package_dir={
         '': 'src'
     },
+    package_data={
+        '': ['*.csv', '*.txt']
+    },
     packages=find_namespace_packages(where='src'),
     namespace_packages=[
         "ufdl"
     ],
+    include_package_data=True,
     version="0.0.1",
     author='Corey Sterling',
     author_email='coreytsterling@gmail.com',

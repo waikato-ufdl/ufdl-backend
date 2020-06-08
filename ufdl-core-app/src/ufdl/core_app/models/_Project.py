@@ -5,7 +5,7 @@ from simple_django_teams.models import Team
 
 class ProjectQuerySet(SoftDeleteQuerySet):
     """
-    Custom query-set for qorking with groups of projects.
+    Custom query-set for working with groups of projects.
     """
     pass
 

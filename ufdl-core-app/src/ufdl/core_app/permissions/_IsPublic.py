@@ -10,7 +10,7 @@ class IsPublic(permissions.BasePermission):
         # Local imports to avoid circular references
         from ..models.mixins import PublicModel
 
-        # Make sure the object is a dataset
+        # Make sure the object is a public model
         ensure_model(obj, PublicModel)
 
         return obj.is_public

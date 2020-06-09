@@ -2,6 +2,7 @@
 Package defining the relational models for the UFDL API.
 """
 from ._Dataset import Dataset, DatasetQuerySet
+from ._LogEntry import LogEntry, LogEntryQuerySet
 from ._Project import Project, ProjectQuerySet
 from ._User import User
 

@@ -11,6 +11,7 @@ router.register("teams", views.TeamViewSet)
 router.register("projects", views.ProjectViewSet)
 router.register("users", views.UserViewSet)
 router.register("licences", views.LicenceViewSet)
+router.register("log", views.LogEntryViewSet)
 
 # The final set of URLs routed by this app
 urlpatterns = [

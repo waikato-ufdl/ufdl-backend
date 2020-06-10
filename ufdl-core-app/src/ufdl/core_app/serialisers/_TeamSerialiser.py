@@ -6,7 +6,10 @@ from .mixins import SoftDeleteModelSerialiser
 
 class TeamSerialiser(SoftDeleteModelSerialiser):
     # Members has to be explicitly specified to use the slug
-    members = serializers.SlugRelatedField("username", many=True, read_only=True)
+    members = serializers.SlugRelatedField("username",
+                                           source="active_members",
+                                           many=True,
+                                           read_only=True)
 
     class Meta:
         model = Team

@@ -48,15 +48,10 @@ class ObjectDetectionDataset(Dataset):
         if annotations_args is None:
             return super().archive_file_iterator()
 
-        # Define the image-data supplier function for converted_annotations_iterator
-        def image_data_supplier(filename: str) -> bytes:
-            # Get the data from our files
-            return self.files.all().with_filename(filename).first().get_data()
-
         # Convert our annotations
         annotations_file_iterator = converted_annotations_iterator(
             self.get_annotations(),
-            image_data_supplier,
+            self.get_file,
             *annotations_args
         )
 

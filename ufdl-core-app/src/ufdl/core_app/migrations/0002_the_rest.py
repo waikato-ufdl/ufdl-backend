@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
             name='FileReference',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('metadata', models.TextField(default=None, null=True)),
+                ('metadata', models.TextField(default="", blank=True)),
             ],
         ),
         migrations.CreateModel(

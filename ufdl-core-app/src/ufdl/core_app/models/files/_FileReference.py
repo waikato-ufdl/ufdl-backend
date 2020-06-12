@@ -18,7 +18,7 @@ class FileReference(models.Model):
                              related_name="file_references")
 
     # Any meta-data to associate with the file
-    metadata = models.TextField(null=True, default=None)
+    metadata = models.TextField(default="", blank=True)
 
     objects = FileReferenceQuerySet.as_manager()
 

@@ -90,8 +90,11 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
         new_dataset.save()
 
         # Add our files to the new dataset
-        for file in self.files.all():
-            new_dataset.files.add(file)
+        from .files import FileReference
+        for reference in self.files.all():
+            new_reference = FileReference(file=reference.file, metadata=reference.metadata)
+            new_reference.save()
+            new_dataset.files.add(new_reference)
 
         return new_dataset
 
@@ -122,7 +125,8 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
 
         :return:    An iterator of filename, file-contents pairs.
         """
-        return ((file.filename, file.get_data()) for file in self.files.all())
+        return ((file_reference.file.filename, file_reference.file.get_data())
+                for file_reference in self.files.all())
 
     def as_zip(self) -> bytes:
         """

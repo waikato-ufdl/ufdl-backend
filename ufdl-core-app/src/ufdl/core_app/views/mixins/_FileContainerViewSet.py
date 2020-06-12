@@ -5,6 +5,9 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from ufdl.json.core import FileMetadata
+
+from ...exceptions import JSONParseFailure
 from ...renderers import BinaryFileRenderer
 from ...models.mixins import FileContainerModel
 from ...serialisers import NamedFileSerialiser
@@ -16,7 +19,10 @@ class FileContainerViewSet(RoutedViewSet):
     Mixin for view-sets which can upload/download/delete contained files.
     """
     # The keyword used to specify when the view-set is in file-container mode
-    MODE_KEYWORD: str = "file-container"
+    FILE_MODE_KEYWORD: str = "file-container"
+
+    # The keyword used to specify when the view-set is in file-container mode
+    METADATA_MODE_KEYWORD: str = "file-metadata"
 
     @classmethod
     def get_routes(cls) -> List[routers.Route]:
@@ -28,23 +34,46 @@ class FileContainerViewSet(RoutedViewSet):
                          'delete': 'delete_file'},
                 name='{basename}-file-container',
                 detail=True,
-                initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.MODE_KEYWORD}
+                initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.FILE_MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/metadata/(?P<fn>.*)$',
+                mapping={'post': 'set_metadata',
+                         'get': 'get_metadata'},
+                name='{basename}-file-metadata',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.METADATA_MODE_KEYWORD}
             )
         ]
 
     def get_parsers(self):
         # If not posting a file, return the standard parsers
-        if self.mode != FileContainerViewSet.MODE_KEYWORD or self.request.method != 'POST':
+        if self.mode != FileContainerViewSet.FILE_MODE_KEYWORD or self.request.method != 'POST':
             return super().get_parsers()
 
         return [FileUploadParser()]
 
     def get_renderers(self):
         # If not getting a file, return the standard renderers
-        if self.mode != FileContainerViewSet.MODE_KEYWORD or self.request.method != 'GET':
+        if self.mode != FileContainerViewSet.FILE_MODE_KEYWORD or self.request.method != 'GET':
             return super().get_renderers()
 
         return [BinaryFileRenderer()]
+
+    def get_container(self) -> FileContainerModel:
+        """
+        Gets the file-container that the view is displaying.
+
+        :return:     The container object.
+        """
+        # Get the container object
+        container = self.get_object()
+
+        # Check it is a container model
+        if not isinstance(container, FileContainerModel):
+            raise TypeError(f"{type(container).__name__} is not a file-container model")
+
+        return container
 
     def add_file(self, request: Request, pk=None, fn=None):
         """
@@ -56,11 +85,7 @@ class FileContainerViewSet(RoutedViewSet):
         :return:            The response containing the file record.
         """
         # Get the container object
-        container = self.get_object()
-
-        # Must be a container model
-        if not isinstance(container, FileContainerModel):
-            raise TypeError(f"{type(container).__name__} is not a file-container model")
+        container = self.get_container()
 
         # Create the file record from the data
         record = container.add_file(fn, request.data['file'].file.read())
@@ -77,11 +102,7 @@ class FileContainerViewSet(RoutedViewSet):
         :return:            The response containing the file.
         """
         # Get the container object
-        container = self.get_object()
-
-        # Must be a container model
-        if not isinstance(container, FileContainerModel):
-            raise TypeError(f"{type(container).__name__} is not a file-container model")
+        container = self.get_container()
 
         return Response(container.get_file(fn))
 
@@ -95,13 +116,48 @@ class FileContainerViewSet(RoutedViewSet):
         :return:            The response containing the disk-file record.
         """
         # Get the container object
-        container = self.get_object()
-
-        # Must be a container model
-        if not isinstance(container, FileContainerModel):
-            raise TypeError(f"{type(container).__name__} is not a file-container model")
+        container = self.get_container()
 
         # Delete the file
         record = container.delete_file(fn)
 
         return Response(NamedFileSerialiser().to_representation(record))
+
+    def set_metadata(self, request: Request, pk=None, fn=None):
+        """
+        Action to set the meta-data of a file.
+
+        :param request:     The request containing the file meta-data.
+        :param pk:          The primary key of the file-container being accessed.
+        :param fn:          The filename of the file being modified.
+        :return:            A response containing the set meta-data.
+        """
+
+        print(f"Dict: {dict(request.data)}")
+        # Get the container object
+        container = self.get_container()
+
+        # Get the meta-data from the request
+        metadata = JSONParseFailure.attempt(dict(request.data), FileMetadata)
+
+        # Set the metadata of the file
+        container.set_file_metadata(fn, metadata.metadata)
+
+        return Response(metadata.to_raw_json())
+
+    def get_metadata(self, request: Request, pk=None, fn=None):
+        """
+        Action to retrieve the meta-data of a file.
+
+        :param request:     The request.
+        :param pk:          The primary key of the file-container being accessed.
+        :param fn:          The filename of the file being accessed.
+        :return:            A response containing the file's meta-data.
+        """
+        # Get the container object
+        container = self.get_container()
+
+        # Get the meta-data from the container
+        metadata = container.get_file_metadata(fn)
+
+        return Response(FileMetadata(metadata=metadata).to_raw_json())

@@ -20,5 +20,7 @@ class DatasetViewSet(DownloadableViewSet, CopyableViewSet, FileContainerViewSet,
         "add_file": [AllowAny],  # TODO: Change to a proper level of authorisation
         "get_file": [AllowAny],  # TODO: Change to a proper level of authorisation
         "delete_file": [AllowAny],  # TODO: Change to a proper level of authorisation
+        "set_metadata": [AllowAny],  # TODO: Change to a proper level of authorisation
+        "get_metadata": [AllowAny],  # TODO: Change to a proper level of authorisation
         "copy": [AllowAny],  # TODO: Change to a proper level of authorisation
     }

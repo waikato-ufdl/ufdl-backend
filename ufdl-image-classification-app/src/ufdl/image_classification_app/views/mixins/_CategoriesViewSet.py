@@ -16,7 +16,7 @@ class CategoriesViewSet(RoutedViewSet):
     """
     Mixin for view-sets which allow the adding/removing of categories from files.
     """
-    # The keyword used to specify when the view-set is in copyable mode
+    # The keyword used to specify when the view-set is in categories mode
     MODE_KEYWORD: str = "categories"
 
     @classmethod

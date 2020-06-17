@@ -51,6 +51,23 @@ class FileContainerModel(models.Model):
 
         return association
 
+    def has_file(self, filename: str, throw: bool = False) -> bool:
+        """
+        Checks if the container has the a file with the given filename.
+
+        :param filename:    The filename to check for.
+        :param throw:       Whether to raise a BadName error if it doesn't exist.
+        :return:            Whether the filename exists.
+        """
+        # Get the (possible) file reference with the given name
+        file_exists = self.files.all().with_filename(filename).exists()  # TODO: Remove unnecessary? all() call
+
+        # If the file doesn't exist, raise an error if selected
+        if not file_exists and throw:
+            raise BadName(filename, "Doesn't exist")
+
+        return file_exists
+
     def get_file_reference(self, filename: str) -> 'FileReference':
         """
         Gets a reference to the file with the given filename

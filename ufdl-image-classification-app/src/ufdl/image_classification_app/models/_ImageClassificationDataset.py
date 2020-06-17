@@ -42,15 +42,15 @@ class ImageClassificationDataset(Dataset):
         # Return all the regular files
         yield from super().archive_file_iterator()
 
-        # Find an unused filename for the transcription file
+        # Find an unused filename for the categories file
         counter = 1
-        transcriptions_filename = "transcriptions.json"
-        while self.has_file(transcriptions_filename):
-            transcriptions_filename = f"transcriptions-{counter}.json"
+        categories_filename = "categories.json"
+        while self.has_file(categories_filename):
+            categories_filename = f"categories-{counter}.json"
             counter += 1
 
-        # Add the transcriptions as a file as well
-        yield transcriptions_filename, self.get_categories().to_json_string(indent=2).encode("utf-8")
+        # Add the categories as a file as well
+        yield categories_filename, self.get_categories().to_json_string(indent=2).encode("utf-8")
 
     def get_categories(self) -> CategoriesFile:
         """

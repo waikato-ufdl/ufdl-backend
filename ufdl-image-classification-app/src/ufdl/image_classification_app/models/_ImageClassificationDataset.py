@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Iterator, Tuple
 
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.models import Dataset, DatasetQuerySet
@@ -37,6 +37,20 @@ class ImageClassificationDataset(Dataset):
             self.set_categories(categories)
 
         return file
+
+    def archive_file_iterator(self) -> Iterator[Tuple[str, bytes]]:
+        # Return all the regular files
+        yield from super().archive_file_iterator()
+
+        # Find an unused filename for the transcription file
+        counter = 1
+        transcriptions_filename = "transcriptions.json"
+        while self.has_file(transcriptions_filename):
+            transcriptions_filename = f"transcriptions-{counter}.json"
+            counter += 1
+
+        # Add the transcriptions as a file as well
+        yield transcriptions_filename, self.get_categories().to_json_string(indent=2).encode("utf-8")
 
     def get_categories(self) -> CategoriesFile:
         """

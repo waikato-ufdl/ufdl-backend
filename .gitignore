@@ -111,6 +111,3 @@ secret.py
 
 # Test filesystem
 /fs
-
-# for
-*.sh

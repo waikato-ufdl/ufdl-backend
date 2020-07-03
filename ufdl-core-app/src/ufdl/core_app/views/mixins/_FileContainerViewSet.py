@@ -60,21 +60,6 @@ class FileContainerViewSet(RoutedViewSet):
 
         return [BinaryFileRenderer()]
 
-    def get_container(self) -> FileContainerModel:
-        """
-        Gets the file-container that the view is displaying.
-
-        :return:     The container object.
-        """
-        # Get the container object
-        container = self.get_object()
-
-        # Check it is a container model
-        if not isinstance(container, FileContainerModel):
-            raise TypeError(f"{type(container).__name__} is not a file-container model")
-
-        return container
-
     def add_file(self, request: Request, pk=None, fn=None):
         """
         Action to add a file to a object.
@@ -85,7 +70,7 @@ class FileContainerViewSet(RoutedViewSet):
         :return:            The response containing the file record.
         """
         # Get the container object
-        container = self.get_container()
+        container = self.get_object_of_type(FileContainerModel)
 
         # Create the file record from the data
         record = container.add_file(fn, request.data['file'].file.read())
@@ -102,7 +87,7 @@ class FileContainerViewSet(RoutedViewSet):
         :return:            The response containing the file.
         """
         # Get the container object
-        container = self.get_container()
+        container = self.get_object_of_type(FileContainerModel)
 
         return Response(container.get_file(fn))
 
@@ -116,7 +101,7 @@ class FileContainerViewSet(RoutedViewSet):
         :return:            The response containing the disk-file record.
         """
         # Get the container object
-        container = self.get_container()
+        container = self.get_object_of_type(FileContainerModel)
 
         # Delete the file
         record = container.delete_file(fn)
@@ -133,7 +118,7 @@ class FileContainerViewSet(RoutedViewSet):
         :return:            A response containing the set meta-data.
         """
         # Get the container object
-        container = self.get_container()
+        container = self.get_object_of_type(FileContainerModel)
 
         # Get the meta-data from the request
         metadata = JSONParseFailure.attempt(dict(request.data), FileMetadata)
@@ -153,7 +138,7 @@ class FileContainerViewSet(RoutedViewSet):
         :return:            A response containing the file's meta-data.
         """
         # Get the container object
-        container = self.get_container()
+        container = self.get_object_of_type(FileContainerModel)
 
         # Get the meta-data from the container
         metadata = container.get_file_metadata(fn)

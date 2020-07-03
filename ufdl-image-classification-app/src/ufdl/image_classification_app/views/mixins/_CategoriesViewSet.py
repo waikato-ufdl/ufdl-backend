@@ -41,11 +41,7 @@ class CategoriesViewSet(RoutedViewSet):
         :return:            The response containing the categories.
         """
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, ImageClassificationDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(ImageClassificationDataset)
 
         # Return the categories
         return Response(dataset.get_categories().to_raw_json())
@@ -62,11 +58,7 @@ class CategoriesViewSet(RoutedViewSet):
         mod_spec = self._parse_parameters(request)
 
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, ImageClassificationDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(ImageClassificationDataset)
 
         # Get the modification method
         method = dataset.add_categories if mod_spec.method == "add" else dataset.remove_categories

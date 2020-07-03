@@ -49,11 +49,7 @@ class DownloadableViewSet(RoutedViewSet):
         :return:            The response containing the file data.
         """
         # Get the instance
-        obj = self.get_object()
-
-        # The object must be able to be converted to a file
-        if not isinstance(obj, AsFileModel):
-            raise TypeError(f"Object-type '{type(obj).__name__}' cannot be exported as a file")
+        obj = self.get_object_of_type(AsFileModel)
 
         # Get the parameters
         parameters = format_query_params(request)

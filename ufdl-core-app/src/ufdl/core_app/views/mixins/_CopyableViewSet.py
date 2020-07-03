@@ -4,6 +4,7 @@ from rest_framework import routers
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from ...models.mixins import CopyableModel
 from ._RoutedViewSet import RoutedViewSet
 
 
@@ -35,6 +36,6 @@ class CopyableViewSet(RoutedViewSet):
         :return:            The response containing the new dataset record.
         """
         # Copy the object
-        new_object = self.get_object().copy(creator=request.user, **request.data)
+        new_object = self.get_object_of_type(CopyableModel).copy(creator=request.user, **request.data)
 
         return Response(self.get_serializer().to_representation(new_object))

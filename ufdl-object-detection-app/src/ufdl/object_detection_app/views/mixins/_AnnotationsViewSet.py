@@ -49,11 +49,7 @@ class AnnotationsViewSet(RoutedViewSet):
         :return:            The response containing the annotations.
         """
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, ObjectDetectionDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(ObjectDetectionDataset)
 
         # Return the annotations
         return Response(dataset.get_annotations().to_raw_json())
@@ -68,11 +64,7 @@ class AnnotationsViewSet(RoutedViewSet):
         :return:            The response containing the annotations.
         """
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, ObjectDetectionDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(ObjectDetectionDataset)
 
         # Get the annotations
         annotations = dataset.get_annotations_for_image(fn)
@@ -90,11 +82,7 @@ class AnnotationsViewSet(RoutedViewSet):
         :return:            The response.
         """
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, ObjectDetectionDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(ObjectDetectionDataset)
 
         # Get the annotations from the request
         annotations = JSONParseFailure.attempt(dict(request.data), AnnotationsModSpec).annotations
@@ -115,11 +103,7 @@ class AnnotationsViewSet(RoutedViewSet):
         :return:            The response.
         """
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling categories
-        if not isinstance(dataset, ObjectDetectionDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(ObjectDetectionDataset)
 
         # Set the annotations
         dataset.set_annotations_for_image(fn, [])

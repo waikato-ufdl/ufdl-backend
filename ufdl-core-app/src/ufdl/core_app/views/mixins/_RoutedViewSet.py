@@ -1,7 +1,14 @@
-from typing import Optional, List
+from typing import Optional, List, TypeVar, Type
+
+from django.db.models import Model
 
 from rest_framework import routers
 from rest_framework import viewsets
+
+from ...exceptions import BadModelType
+
+# Expected type of model
+ModelType = TypeVar("ModelType", bound=Model)
 
 
 class RoutedViewSet(viewsets.ModelViewSet):
@@ -29,3 +36,19 @@ class RoutedViewSet(viewsets.ModelViewSet):
         :return:    The mixin's route.
         """
         raise NotImplementedError(cls.get_routes.__qualname__)
+
+    def get_object_of_type(self, required_type: Type[ModelType]) -> ModelType:
+        """
+        Gets the current object, ensuring it is of the required type of model.
+
+        :param required_type:   The required type of model.
+        :return:                The current object.
+        """
+        # Get the object
+        obj = self.get_object()
+
+        # Check the object is of the required type
+        if not isinstance(obj, required_type):
+            raise BadModelType(required_type, type(obj))
+
+        return obj

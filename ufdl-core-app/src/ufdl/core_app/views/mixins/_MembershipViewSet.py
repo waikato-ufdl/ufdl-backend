@@ -66,7 +66,7 @@ class MembershipViewSet(RoutedViewSet):
         else:  # mod_spec.method == "update"
             method = self.update_membership
 
-        return Response(method(self.get_object(), user, mod_spec.permissions, request.user))
+        return Response(method(self.get_object_of_type(Team), user, mod_spec.permissions, request.user))
 
     @staticmethod
     def add_membership(team: Team, user: User, permissions: str, modifier: User) -> RawJSONObject:

@@ -48,7 +48,7 @@ class LicenceSubdescriptorViewSet(RoutedViewSet):
         # Get the method to use to make the modification
         method = self.add_subdescriptors if mod_spec.method == "add" else self.remove_subdescriptors
 
-        return Response(method(self.get_object(), mod_spec.type, mod_spec.names))
+        return Response(method(self.get_object_of_type(Licence), mod_spec.type, mod_spec.names))
 
     def add_subdescriptors(self, licence: Licence, type: str, values: List[Union[int, str]]) -> RawJSONObject:
         """

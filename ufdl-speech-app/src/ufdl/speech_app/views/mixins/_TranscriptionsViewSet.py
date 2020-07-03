@@ -48,11 +48,7 @@ class TranscriptionsViewSet(RoutedViewSet):
         :return:            The response containing the transcriptions.
         """
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling transcriptions
-        if not isinstance(dataset, SpeechDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(SpeechDataset)
 
         # Return the transcriptions
         return Response(dataset.get_transcriptions().to_raw_json())
@@ -67,11 +63,7 @@ class TranscriptionsViewSet(RoutedViewSet):
         :return:            The response containing the transcription.
         """
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling transcriptions
-        if not isinstance(dataset, SpeechDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(SpeechDataset)
 
         # Return the transcriptions
         return Response(dataset.get_transcription(fn).to_raw_json())
@@ -86,11 +78,7 @@ class TranscriptionsViewSet(RoutedViewSet):
         :return:            The response containing the transcription.
         """
         # Get the data-set
-        dataset = self.get_object()
-
-        # Make sure the dataset is capable of handling transcriptions
-        if not isinstance(dataset, SpeechDataset):
-            raise TypeError(f"Object {dataset} is not a dataset")
+        dataset = self.get_object_of_type(SpeechDataset)
 
         # Parse the transcription
         transcription = JSONParseFailure.attempt(dict(request.data), Transcription)

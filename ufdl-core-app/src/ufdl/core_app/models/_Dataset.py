@@ -49,8 +49,9 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
     class Meta(SoftDeleteModel.Meta):
         constraints = [
             # Ensure that each dataset has a unique name/version pair for the project
-            models.UniqueConstraint(name="unique_datasets_per_project",
-                                    fields=["name", "version", "project"])
+            models.UniqueConstraint(name="unique_active_datasets_per_project",
+                                    fields=["name", "version", "project"],
+                                    condition=SoftDeleteModel.active_Q)
         ]
 
     def copy(self, *, creator=None, new_name=None, **kwargs) -> 'Dataset':

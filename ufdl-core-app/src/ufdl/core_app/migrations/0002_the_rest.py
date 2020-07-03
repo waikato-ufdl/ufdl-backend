@@ -220,6 +220,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='dataset',
-            constraint=models.UniqueConstraint(fields=('name', 'version', 'project'), name='unique_datasets_per_project'),
+            constraint=models.UniqueConstraint(condition=models.Q(deletion_time__isnull=True), fields=('name', 'version', 'project'), name='unique_active_datasets_per_project'),
         ),
     ]

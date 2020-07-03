@@ -132,8 +132,6 @@ class FileContainerViewSet(RoutedViewSet):
         :param fn:          The filename of the file being modified.
         :return:            A response containing the set meta-data.
         """
-
-        print(f"Dict: {dict(request.data)}")
         # Get the container object
         container = self.get_container()
 

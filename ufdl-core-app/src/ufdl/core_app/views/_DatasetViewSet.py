@@ -3,11 +3,11 @@ from rest_framework.permissions import AllowAny
 from ..models import Dataset
 from ..serialisers import DatasetSerialiser
 from ..permissions import MemberHasWritePermission, IsMember, IsPublic, IsAdminUser
-from .mixins import DownloadableViewSet, CopyableViewSet, FileContainerViewSet
+from .mixins import DownloadableViewSet, CopyableViewSet, FileContainerViewSet, SoftDeleteViewSet
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class DatasetViewSet(DownloadableViewSet, CopyableViewSet, FileContainerViewSet, UFDLBaseViewSet):
+class DatasetViewSet(DownloadableViewSet, CopyableViewSet, FileContainerViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
     queryset = Dataset.objects.all()
     serializer_class = DatasetSerialiser
 

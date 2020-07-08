@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('ufdl-core', '0003_standard_licences'),
+        ('ufdl-core', '0002_the_rest'),
     ]
 
     operations = [

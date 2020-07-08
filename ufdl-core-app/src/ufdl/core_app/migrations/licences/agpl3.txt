@@ -10,4 +10,6 @@ c:State changes
 c:Disclose source
 c:Network use is distribution
 c:Same license
+d:Software
+d:Models
 u:https://github.com/openscoring/openscoring/blob/master/LICENSE.txt

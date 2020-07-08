@@ -9,4 +9,6 @@ c:License and copyright notice
 c:Disclose source
 c:State changes
 c:Same license (library)
+d:Software
+d:Models
 u:https://github.com/EpistasisLab/tpot/blob/master/LICENSE

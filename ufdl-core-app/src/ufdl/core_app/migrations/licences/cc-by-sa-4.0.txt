@@ -9,4 +9,6 @@ l:Liability
 l:Patent use
 l:Trademark use
 l:Warranty
+d:Data
+d:Models
 u:https://choosealicense.com/licenses/cc-by-sa-4.0/

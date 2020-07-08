@@ -6,4 +6,6 @@ l:Liability
 l:Trademark use
 l:Patent use
 l:Warranty
+d:Data
+d:Models
 u:https://github.com/benedekrozemberczki/awesome-decision-tree-papers/blob/master/LICENSE

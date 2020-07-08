@@ -5,4 +5,6 @@ p:Private use
 l:Liability
 l:Warranty
 c:License and copyright notice
+d:Software
+d:Models
 u:https://github.com/fracpete/python-pulse-profiles/blob/master/LICENSE

@@ -8,4 +8,6 @@ l:Patent use
 l:Warranty
 c:License and copyright notice
 c:State changes
+d:Data
+d:Models
 u:https://github.com/creativecommons/team-open/blob/master/LICENSE

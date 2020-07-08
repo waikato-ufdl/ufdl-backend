@@ -8,4 +8,6 @@ l:Liability
 l:Warranty
 c:License and copyright notice
 c:State changes
+d:Software
+d:Models
 u:https://github.com/fracpete/bootstrapp/blob/master/LICENSE

@@ -9,4 +9,6 @@ c:License and copyright notice
 c:State changes
 c:Disclose source
 c:Same license
+d:Software
+d:Models
 u:https://github.com/fracpete/rsync4j/blob/master/LICENSE

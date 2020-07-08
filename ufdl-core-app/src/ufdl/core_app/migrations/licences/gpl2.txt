@@ -8,4 +8,6 @@ c:License and copyright notice
 c:State changes
 c:Disclose source
 c:Same license
+d:Software
+d:Models
 u:https://github.com/creativecommons/wp-plugin-creativecommons/blob/master/license.txt

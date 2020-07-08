@@ -4,4 +4,6 @@ p:Modification
 p:Private use
 l:Liability
 l:Warranty
+d:Software
+d:Models
 u:https://choosealicense.com/licenses/unlicense/

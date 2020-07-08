@@ -7,6 +7,7 @@ class LicenceSerialiser(serializers.ModelSerializer):
     permissions = serializers.SlugRelatedField("name", many=True, read_only=True)
     conditions = serializers.SlugRelatedField("name", many=True, read_only=True)
     limitations = serializers.SlugRelatedField("name", many=True, read_only=True)
+    domains = serializers.SlugRelatedField("name", many=True, read_only=True)
 
     class Meta:
         model = Licence
@@ -15,4 +16,5 @@ class LicenceSerialiser(serializers.ModelSerializer):
                   "url",
                   "permissions",
                   "conditions",
-                  "limitations"]
+                  "limitations",
+                  "domains"]

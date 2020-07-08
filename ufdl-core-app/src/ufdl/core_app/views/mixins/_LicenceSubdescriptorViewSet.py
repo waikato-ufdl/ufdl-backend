@@ -10,7 +10,7 @@ from ufdl.json.core import LicenceSubdescriptorModSpec
 from wai.json.raw import RawJSONObject
 
 from ...exceptions import *
-from ...models.licences import Licence, Permission, Condition, Limitation
+from ...models.licences import Licence, Permission, Condition, Limitation, Domain
 from ...serialisers import LicenceSerialiser
 from ._RoutedViewSet import RoutedViewSet
 
@@ -135,6 +135,8 @@ class LicenceSubdescriptorViewSet(RoutedViewSet):
             return Condition
         elif type == "limitations":
             return Limitation
+        elif type == "domains":
+            return Domain
         else:
             raise BadArgumentValue(self.action, "type", type, "permissions, limitations, conditions")
 

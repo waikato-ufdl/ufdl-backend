@@ -47,13 +47,14 @@ def add_licence(apps, licence_name, licence_url):
     :param licence_name:    The name of the licence.
     :param licence_url:     The URL to the licence's homepage.
     """
-    # Get the permissions, limitations and conditions of the licence
-    permissions, limitations, conditions = get_licence_subdescriptors(licence_name)
+    # Get the permissions, limitations, conditions and domains of the licence
+    permissions, limitations, conditions, domains = get_licence_subdescriptors(licence_name)
 
     # Create table entries for each sub-descriptor
     permissions = create_licence_subdescriptors(apps, "Permission", permissions)
     conditions = create_licence_subdescriptors(apps, "Condition", conditions)
     limitations = create_licence_subdescriptors(apps, "Limitation", limitations)
+    domains = create_licence_subdescriptors(apps, "Domain", domains)
 
     # Create an entry for the licence
     licence_model = apps.get_model(UFDLCoreAppConfig.label, "Licence")
@@ -64,6 +65,7 @@ def add_licence(apps, licence_name, licence_url):
     licence.permissions.add(*permissions)
     licence.limitations.add(*limitations)
     licence.conditions.add(*conditions)
+    licence.domains.add(*domains)
     licence.save()
 
 

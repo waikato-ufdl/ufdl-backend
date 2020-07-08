@@ -32,6 +32,10 @@ class Licence(models.Model):
     conditions = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.Condition",
                                         related_name="+")
 
+    # The domains of the licence
+    domains = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.Domain",
+                                     related_name="+")
+
     objects = LicenceQuerySet.as_manager()
 
     class Meta:

@@ -25,15 +25,15 @@ def iterate_licences() -> Iterator[Tuple[str, str]]:
             yield licence_name, licence_url
 
 
-def get_licence_subdescriptors(licence_name: str) -> Tuple[Set[str], Set[str], Set[str]]:
+def get_licence_subdescriptors(licence_name: str) -> Tuple[Set[str], Set[str], Set[str], Set[str]]:
     """
-    Gets the permissions, limitations and conditions from a licence file.
+    Gets the permissions, limitations, conditions and domains from a licence file.
 
     :param licence_name:    The name of the licence.
-    :return:                The permissions, limitations and conditions of the licence.
+    :return:                The permissions, limitations, conditions and domains of the licence.
     """
     # Create the empty return sets
-    permissions, limitations, conditions = set(), set(), set()
+    permissions, limitations, conditions, domains = set(), set(), set(), set()
 
     # Get the filename for the licence
     licence_filename = licence_name_to_file_name(licence_name)
@@ -57,7 +57,11 @@ def get_licence_subdescriptors(licence_name: str) -> Tuple[Set[str], Set[str], S
             elif line.startswith("c:"):
                 conditions.add(subdescriptor)
 
-    return permissions, limitations, conditions
+            # If the line starts with 'd:', it's a domain of the licence
+            elif line.startswith("d:"):
+                domains.add(subdescriptor)
+
+    return permissions, limitations, conditions, domains
 
 
 def licence_name_to_file_name(licence_name: str) -> str:

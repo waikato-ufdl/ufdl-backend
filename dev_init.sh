@@ -1,20 +1,41 @@
 #!/bin/bash
 
-if [ ! -x "/usr/bin/virtualenv" ]
-then
-  echo "virtualenv executable not present!"
-  echo "Install on Debian systems with:"
-  echo "sudo apt-get install virtualenv"
-  exit 1
-fi
+function check_executable()
+{
+  if [ ! -x "/usr/bin/$EXEC" ]
+  then
+    echo	  
+    echo "$EXEC executable not present!"
+    echo "Install on Debian systems with:"
+    echo "sudo apt-get install $EXEC $ADDITIONAL"
+    echo	  
+    exit 1
+  fi
+}
 
-if [ ! -x "/usr/bin/python3.7" ]
-then
-  echo "python3.7 executable not present!"
-  echo "Install on Debian systems with:"
-  echo "sudo apt-get install python3.7"
-  exit 1
-fi
+function check_repository()
+{
+  if [ ! -d "../$REPO" ]
+  then
+    echo	  
+    echo "Directory ../$REPO does not exist!"
+    echo "Check out repo as follows:"
+    echo "cd .."
+    echo "git clone https://github.com/waikato-ufdl/$REPO.git"
+    echo	  
+    exit 2
+  fi
+}
+
+EXEC="virtualenv"
+ADDITIONAL=""
+check_executable
+EXEC="python3.7"
+ADDITIONAL="python3.7-dev"
+check_executable
+
+REPO="ufdl-json-messages"
+check_repository
 
 echo "Press any key to start setup of 'venv.dev' for running UFDL backend"
 read -s -n 1 key

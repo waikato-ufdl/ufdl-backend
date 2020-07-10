@@ -1,5 +1,21 @@
 #!/bin/bash
 
+if [ ! -x "/usr/bin/virtualenv" ]
+then
+  echo "virtualenv executable not present!"
+  echo "Install on Debian systems with:"
+  echo "sudo apt-get install virtualenv"
+  exit 1
+fi
+
+if [ ! -x "/usr/bin/python3.7" ]
+then
+  echo "python3.7 executable not present!"
+  echo "Install on Debian systems with:"
+  echo "sudo apt-get install python3.7"
+  exit 1
+fi
+
 echo "Press any key to start setup of 'venv.dev' for running UFDL backend"
 read -s -n 1 key
 

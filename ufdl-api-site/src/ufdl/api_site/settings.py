@@ -22,22 +22,24 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Auto-generate a secret key (and a JWT signing key)
 # Based on: https://stackoverflow.com/a/4674143
 try:
-    from .secret import SECRET_KEY, JWT_SIGNING_KEY
+    from .secret import SECRET_KEY, JWT_SIGNING_KEY, DEBUG, ALLOWED_HOSTS
 except ImportError:
     from django.core.management.utils import get_random_secret_key
     current_dir = os.path.abspath(os.path.dirname(__file__))
     with open(os.path.join(current_dir, "secret.py"), "w") as file:
         file.write(f"SECRET_KEY='{get_random_secret_key()}'\n")
         file.write(f"JWT_SIGNING_KEY='{get_random_secret_key()}'\n")
+        file.write(f"DEBUG=True\n")
+        file.write(f"ALLOWED_HOSTS=['localhost', '127.0.0.1']\n")
     from .secret import SECRET_KEY, JWT_SIGNING_KEY
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-]
+    
+    # SECURITY WARNING: don't run with debug turned on in production!
+    DEBUG = True
+    
+    ALLOWED_HOSTS = [
+        "localhost",
+        "127.0.0.1",
+    ]
 
 
 # Application definition

@@ -1,6 +1,7 @@
-import csv
 import os
 from typing import Iterator, Tuple, Set
+
+from .._util import iterate_csv_file
 
 # The data directory containing the licence definitions
 ROOT = os.path.split(__file__)[0]
@@ -12,17 +13,7 @@ def iterate_licences() -> Iterator[Tuple[str, str]]:
 
     :return:    An iterator over the licence names and URLs.
     """
-    # Process the licences in the licences file
-    with open(os.path.join(ROOT, "licenses.csv"), "r", newline='') as licences_file:
-        # Consume the header
-        licences_file.readline()
-
-        # Attach a CSV parser to the file
-        csv_reader = csv.reader(licences_file)
-
-        # Process each licence in the file
-        for licence_name, licence_url in csv_reader:
-            yield licence_name, licence_url
+    yield from iterate_csv_file(os.path.join(ROOT, "licenses.csv"))
 
 
 def get_licence_subdescriptors(licence_name: str) -> Tuple[Set[str], Set[str], Set[str], Set[str]]:

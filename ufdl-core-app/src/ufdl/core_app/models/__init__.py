@@ -11,3 +11,6 @@ from .files import *
 
 # And the licence models
 from .licences import *
+
+# And the node models
+from .nodes import *

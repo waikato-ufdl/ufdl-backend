@@ -22,10 +22,10 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
     version = models.CharField(max_length=32)
 
     # The URL of the image
-    url = models.URLField()
+    url = models.CharField(max_length=200)
 
     # The URL of the registry in which the image is situated
-    registry_url = models.URLField()
+    registry_url = models.CharField(max_length=200)
 
     # The username to use to access the registry, or null if none needed
     registry_username = models.CharField(max_length=64, null=True)

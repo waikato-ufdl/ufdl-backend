@@ -7,8 +7,12 @@ from ..util import for_user
 
 class UFDLBaseViewSet(ModelViewSet):
     """
-    Modifies the permissions of a model view-set so that
-    they can be defined per-action (list, create, etc.).
+    Modifies the permissions of a model view-set so that they can be defined per-action (list, create, etc.).
+
+    Inheritors of this class should define 3 sets of permissions:
+     - admin_permission_class: The class of permissions that give access to all methods.
+     - permission_classes: A dictionary of action-names to permissions classes for those actions.
+     - default_permissions: The class of permissions to apply to actions not found in permissions_classes.
     """
     # The permissions to use when an action isn't listed in the permission_classes dictionary
     default_permissions = [~AllowAny]

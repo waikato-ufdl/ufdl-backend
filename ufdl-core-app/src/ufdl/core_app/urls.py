@@ -12,6 +12,9 @@ router.register("projects", views.ProjectViewSet)
 router.register("users", views.UserViewSet)
 router.register("licences", views.LicenceViewSet)
 router.register("log", views.LogEntryViewSet)
+router.register("hardware", views.nodes.HardwareViewSet)
+router.register("cuda", views.nodes.CUDAVersionViewSet)
+router.register("docker", views.nodes.DockerImageViewSet)
 
 # The final set of URLs routed by this app
 urlpatterns = [

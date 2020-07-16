@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 
+from ..logging import get_backend_logger
 from ..permissions import IsAdminUser
 from ..util import for_user
 
@@ -13,6 +14,8 @@ class UFDLBaseViewSet(ModelViewSet):
      - admin_permission_class: The class of permissions that give access to all methods.
      - permission_classes: A dictionary of action-names to permissions classes for those actions.
      - default_permissions: The class of permissions to apply to actions not found in permissions_classes.
+
+    Automatically logs requests/responses to the database log.
     """
     # The permissions to use when an action isn't listed in the permission_classes dictionary
     default_permissions = [~AllowAny]
@@ -51,3 +54,50 @@ class UFDLBaseViewSet(ModelViewSet):
             query_set = for_user(query_set, self.request.user)
 
         return query_set
+
+    def initial(self, request, *args, **kwargs):
+        # Run the initialisation of the request as usual
+        try:
+            super().initial(request, *args, **kwargs)
+
+        # If an error occurs during initialisation, log it
+        except Exception as e:
+            get_backend_logger().exception(self.format_request_log_message(request), exc_info=e)
+            raise
+
+        # Otherwise log the request
+        get_backend_logger().info(self.format_request_log_message(request))
+
+    def format_request_log_message(self, request) -> str:
+        """
+        Formats the automatic logging message from the request.
+
+        :param request:     The current request.
+        :return:            The logging message.
+        """
+        return (
+            f"URI='{request.get_raw_uri()}'\n"
+            f"METHOD='{request.method}'\n"
+            f"ACTION='{self.action}'\n"
+            f"DATA={request.data}\n"
+            f"USER={request.user}\n"
+        )
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        # Log the response
+        get_backend_logger().info(self.format_response_log_message(response))
+
+        # Finalise the response as normal
+        return super().finalize_response(request, response, *args, **kwargs)
+
+    def format_response_log_message(self, response):
+        """
+        Formats the automatic logging message for the response.
+
+        :param response:    The response to the current request.
+        :return:            The log message for the response.
+        """
+        return (
+            f"STATUS={response.status_code}\n"
+            f"DATA={response.data if not isinstance(response.data, bytes) else '<binary data>'}"
+        )

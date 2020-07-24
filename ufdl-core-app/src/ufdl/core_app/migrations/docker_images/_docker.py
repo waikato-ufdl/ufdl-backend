@@ -24,5 +24,6 @@ def iterate_docker_images() -> Iterator[Tuple[Optional[str], ...]]:
                  - domain
                  - task
                  - minimum hardware generation
+                 - cpu
     """
     yield from iterate_csv_file(os.path.join(ROOT, "docker_images.csv"))

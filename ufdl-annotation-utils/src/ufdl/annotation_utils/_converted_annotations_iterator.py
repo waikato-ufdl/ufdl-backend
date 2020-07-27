@@ -1,6 +1,7 @@
+from itertools import chain
 from typing import Callable, Iterator, Tuple, IO
 
-from wai.annotations.main.parsing import MainParserConfigurer
+from wai.annotations.core.chain import ConversionChain
 
 from ufdl.json.object_detection import AnnotationsFile
 
@@ -25,14 +26,32 @@ def converted_annotations_iterator(
     # Make the arguments mutable
     args = list(args)
 
+    # Split of any global options
+    global_args, args = ConversionChain.split_global_options(args)
+
+    # Not allowed to provide global arguments
+    if len(global_args) > 0:
+        raise ValueError("Not allowed to use global options")
+
+    # Split the options into stages
+    stage_args = ConversionChain.split_options(args)
+
+    # Create a conversion chain with all stages except the last
+    conversion_chain = ConversionChain.from_options(list(chain(*stage_args[:-1])))
+
+    # Make sure the chain doesn't have an input
+    if conversion_chain.has_input:
+        raise ValueError(f"wai.annotations arguments specify an input stage ({stage_args[0][0]})")
+
     # Add a dummy output option if none is supplied
-    if "-o" not in args and "--output" not in args:
-        args += ["-o", "annotations"]
+    if "-o" not in stage_args[-1] and "--output" not in stage_args[-1]:
+        stage_args[-1] += ["-o", "annotations"]
 
-    # Parse the args and retrieve the output chain
-    main_settings, input_side, output_side = MainParserConfigurer(no_input=True).parse(args)
-    assert output_side is not None
-    output_chain = output_side[1]
+    # Add the output stage to the conversion chain
+    conversion_chain.add_stage(stage_args[-1][0], stage_args[-1][1:])
 
-    # Return a function which invokes the conversion components
-    return output_chain.file_iterator(annotations_iterator(annotations_file, image_data_supplier))
+    # Make sure the conversion chain actually has an output stage now
+    if not conversion_chain.has_output:
+        raise ValueError("No output stage specified")
+
+    return conversion_chain.file_iterator(annotations_iterator(annotations_file, image_data_supplier))

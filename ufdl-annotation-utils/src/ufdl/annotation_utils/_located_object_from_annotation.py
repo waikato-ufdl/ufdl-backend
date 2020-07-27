@@ -1,6 +1,6 @@
 from ufdl.json.object_detection import Annotation
 
-from wai.annotations.core.utils import set_object_label, set_object_prefix
+from wai.annotations.domain.image.object_detection.util import set_object_label, set_object_prefix
 
 from wai.common.adams.imaging.locateobjects import LocatedObject
 

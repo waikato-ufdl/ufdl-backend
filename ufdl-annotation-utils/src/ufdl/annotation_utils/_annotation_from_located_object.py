@@ -1,6 +1,6 @@
 from ufdl.json.object_detection import Annotation, Polygon
 
-from wai.annotations.core.utils import get_object_prefix, get_object_label
+from wai.annotations.domain.image.object_detection.util import get_object_prefix, get_object_label
 
 from wai.common.adams.imaging.locateobjects import LocatedObject
 

@@ -20,7 +20,7 @@ def add_initial_docker_images(apps, schema_editor):
 
     # Add each Docker image to the database
     for (name, version, url, registry_url, registry_username, registry_password, cuda_version,
-         framework, framework_version, domain, task, min_hardware_generation) in iterate_docker_images():
+         framework, framework_version, domain, task, min_hardware_generation, cpu) in iterate_docker_images():
         docker_image = docker_image_model(
             name=name,
             version=version,

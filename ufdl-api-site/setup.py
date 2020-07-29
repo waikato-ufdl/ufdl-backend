@@ -25,7 +25,7 @@ setup(
     author='Corey Sterling',
     author_email='coreytsterling@gmail.com',
     install_requires=[
-        "Django>=2.2.6,<3",
+        "Django>=2.2.13,<3",
         "djangorestframework-simplejwt>=4.3.0,<5",
         "django-cors-headers>=3.2.1,<4",
         "ufdl-core-app",

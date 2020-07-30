@@ -33,6 +33,13 @@ class MembershipViewSet(RoutedViewSet):
                 name='{basename}-memberships',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: MembershipViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/permissions/(?P<un>.*){trailing_slash}$',
+                mapping={'get': 'get_permissions_for_user'},
+                name='{basename}-permissions',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: MembershipViewSet.MODE_KEYWORD}
             )
         ]
 
@@ -134,3 +141,32 @@ class MembershipViewSet(RoutedViewSet):
         membership.save()
 
         return MembershipSerialiser().to_representation(membership)
+
+    def get_permissions_for_user(self, request: Request, pk=None, un=None):
+        """
+        Gets the permissions a user has with respect to this team.
+
+        :param request:     The request.
+        :param pk:          The primary key of the team being accessed.
+        :param un:          The username of the user to get the permissions of.
+        :return:            The response containing the new membership record.
+        """
+        # Get the User record for the username
+        user = User.objects.filter(username=un).first()
+
+        # If the user doesn't exist, error
+        if user is None:
+            raise BadName(un, "No user with this username exists")
+
+        # Get the detailed team
+        team = self.get_object_of_type(Team)
+
+        # Find the membership
+        membership = Membership.objects.filter(Membership.active_Q, team=team, user=user).first()
+
+        # If there is no membership, raise an error
+        if membership is None:
+            raise BadName(user.username, f"This user is not a current member of team {team.name}")
+
+        # Return the permissions
+        return Response(membership.permissions)

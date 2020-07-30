@@ -48,7 +48,7 @@ class UFDLBaseViewSet(ModelViewSet):
     def get_queryset(self):
         query_set = super().get_queryset()
 
-        # Use the full query-set for most actions, but list can't only
+        # Use the full query-set for most actions, but list only
         # those objects that the user has permissions for.
         if self.action == "list":
             query_set = for_user(query_set, self.request.user)

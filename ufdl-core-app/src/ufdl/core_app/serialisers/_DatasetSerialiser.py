@@ -13,6 +13,7 @@ class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
         fields = ["pk",
                   "name",
                   "version",
+                  "previous_version",
                   "description",
                   "project",
                   "licence",

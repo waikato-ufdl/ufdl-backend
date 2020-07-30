@@ -13,7 +13,22 @@ from .mixins import PublicModel, PublicQuerySet, AsFileModel, CopyableModel, Fil
 
 
 class DatasetQuerySet(PublicQuerySet, SoftDeleteQuerySet):
-    pass
+    def with_name(self, name: str):
+        """
+        Filters the query-set to those data-sets with a given name.
+
+        :param name:    The name to filter to.
+        :return:        The resulting query-set.
+        """
+        return self.filter(name=name)
+
+    def max_version(self) -> int:
+        """
+        Gets the largest version number in all of the datasets.
+
+        :return:    The version number.
+        """
+        return self.aggregate(models.Max('version'))['version__max']
 
 
 class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
@@ -22,6 +37,9 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
 
     # The version of the dataset
     version = models.IntegerField(default=1, editable=False)
+
+    # The version of the dataset that this version was copied from
+    previous_version = models.IntegerField(default=-1, editable=False)
 
     # A description of the dataset's purpose and/or differences from previous versions
     description = models.TextField(blank=True)
@@ -76,9 +94,15 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
         if len(kwargs) > 0:
             raise UnknownParameters(kwargs)
 
+        # Find the next available version number to give the copy
+        new_version = 1
+        if new_name is None:
+            new_version = self.project.datasets.with_name(self.name).active().max_version() + 1
+
         # Create the new dataset
         new_dataset = type(self)(name=new_name if new_name is not None else self.name,
-                                 version=1 if new_name is not None else self.version + 1,
+                                 version=new_version,
+                                 previous_version=-1 if new_name is not None else self.version,
                                  description=self.description,
                                  project=self.project,
                                  licence=self.licence,

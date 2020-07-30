@@ -42,6 +42,7 @@ class Migration(migrations.Migration):
                 ('is_public', models.BooleanField(default=False)),
                 ('name', models.CharField(max_length=200)),
                 ('version', models.IntegerField(default=1, editable=False)),
+                ('previous_version', models.IntegerField(default=-1, editable=False)),
                 ('description', models.TextField(blank=True)),
                 ('tags', models.TextField()),
                 ('unstructured', models.TextField()),

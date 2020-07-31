@@ -1,6 +1,10 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 
+from ufdl.json.core.filter import FilterSpec
+
+from ..exceptions import JSONParseFailure
+from ..filter import filter_list_request
 from ..logging import get_backend_logger
 from ..permissions import IsAdminUser
 from ..util import for_user
@@ -52,6 +56,11 @@ class UFDLBaseViewSet(ModelViewSet):
         # those objects that the user has permissions for.
         if self.action == "list":
             query_set = for_user(query_set, self.request.user)
+
+            # Further filter the query-set with any filter arguments
+            # supplied with the request
+            filter_spec = JSONParseFailure.attempt(dict(self.request.data), FilterSpec)
+            query_set = filter_list_request(query_set, filter_spec)
 
         return query_set
 

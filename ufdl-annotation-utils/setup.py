@@ -25,7 +25,7 @@ setup(
     author='Corey Sterling',
     author_email='coreytsterling@gmail.com',
     install_requires=[
-        "wai.common==0.0.31",
+        "wai.common>=0.0.31",
         "wai.json==0.0.5",
         "wai.annotations==0.4.4",
         "ufdl-json-messages"

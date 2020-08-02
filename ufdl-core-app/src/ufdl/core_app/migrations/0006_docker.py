@@ -6,6 +6,20 @@ from ..apps import UFDLCoreAppConfig
 from .docker_images import iterate_docker_images
 
 
+def validate_docker_image_values(
+        name, version, url, registry_url, registry_username, registry_password, cuda_version,
+        framework, framework_version, domain, task, min_hardware_generation, cpu
+):
+    """
+    Validates the valuse in the docker CSV file.
+    """
+    # Validate the cpu value
+    if cpu not in {"true", "false"}:
+        raise Exception(f"cpu value must be 'true' or 'false': got {cpu}")
+
+    # TODO: The rest
+
+
 def add_initial_docker_images(apps, schema_editor):
     """
     Adds the standard Docker images to the database.
@@ -21,6 +35,13 @@ def add_initial_docker_images(apps, schema_editor):
     # Add each Docker image to the database
     for (name, version, url, registry_url, registry_username, registry_password, cuda_version,
          framework, framework_version, domain, task, min_hardware_generation, cpu) in iterate_docker_images():
+
+        # Validation of the CSV file values
+        validate_docker_image_values(
+            name, version, url, registry_url, registry_username, registry_password, cuda_version,
+            framework, framework_version, domain, task, min_hardware_generation, cpu
+        )
+
         docker_image = docker_image_model(
             name=name,
             version=version,
@@ -33,7 +54,8 @@ def add_initial_docker_images(apps, schema_editor):
             framework_version=framework_version,
             domain=domain,
             task=task,
-            min_hardware_generation=hardware_model.objects.filter(generation=min_hardware_generation).first()
+            min_hardware_generation=hardware_model.objects.filter(generation=min_hardware_generation).first(),
+            cpu=False if cpu == 'false' else True
         )
         docker_image.save()
 

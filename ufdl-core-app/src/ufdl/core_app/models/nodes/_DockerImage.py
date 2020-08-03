@@ -55,6 +55,9 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
                                                 on_delete=models.DO_NOTHING,
                                                 related_name="+")
 
+    # Whether the Docker image can run on a CPU-only machine (no GPU)
+    cpu = models.BooleanField(default=False)
+
     objects = DockerImageQuerySet.as_manager()
 
     class Meta:

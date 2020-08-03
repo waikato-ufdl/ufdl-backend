@@ -21,4 +21,5 @@ class DockerImageSerialiser(serializers.ModelSerializer):
                   "framework_version",
                   "domain",
                   "task",
-                  "min_hardware_generation"]
+                  "min_hardware_generation",
+                  "cpu"]

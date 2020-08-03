@@ -248,7 +248,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dockerimage',
             name='min_hardware_generation',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Hardware'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Hardware', null=True),
         ),
         migrations.AddField(
             model_name='dataset',

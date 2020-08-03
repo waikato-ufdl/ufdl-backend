@@ -5,7 +5,7 @@ from ...models.nodes import DockerImage, CUDAVersion, Hardware
 class DockerImageSerialiser(serializers.ModelSerializer):
     # Slug fields require explicit definition
     cuda_version = serializers.SlugRelatedField("full_version", queryset=CUDAVersion.objects)
-    min_hardware_generation = serializers.SlugRelatedField("generation", queryset=Hardware.objects)
+    min_hardware_generation = serializers.SlugRelatedField("generation", queryset=Hardware.objects, allow_null=True)
 
     class Meta:
         model = DockerImage

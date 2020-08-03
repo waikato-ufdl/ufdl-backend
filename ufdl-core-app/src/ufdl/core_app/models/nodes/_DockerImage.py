@@ -53,7 +53,8 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
     # The minimum hardware generation required to run the image
     min_hardware_generation = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Hardware",
                                                 on_delete=models.DO_NOTHING,
-                                                related_name="+")
+                                                related_name="+",
+                                                null=True)
 
     # Whether the Docker image can run on a CPU-only machine (no GPU)
     cpu = models.BooleanField(default=False)
@@ -66,3 +67,10 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
             models.UniqueConstraint(name="unique_docker_images",
                                     fields=["name", "version"])
         ]
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        # Check that the 'min_hardware_generation' is only null if 'cpu' is true
+        if self.min_hardware_generation is None and not self.cpu:
+            raise Exception(f"min_hardware_generation can't be null is cpu is false (for '{self.name}')")
+
+        super().save(force_insert, force_update, using, update_fields)

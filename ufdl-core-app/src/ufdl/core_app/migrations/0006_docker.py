@@ -17,6 +17,10 @@ def validate_docker_image_values(
     if cpu not in {"true", "false"}:
         raise Exception(f"cpu value must be 'true' or 'false': got {cpu}")
 
+    # Make sure the min_hardware_generation is only missing when cpu is true
+    if min_hardware_generation == "" and cpu == "false":
+        raise Exception(f"min_hardware_generation can't be empty is cpu is false (for '{name}')")
+
     # TODO: The rest
 
 
@@ -54,7 +58,9 @@ def add_initial_docker_images(apps, schema_editor):
             framework_version=framework_version,
             domain=domain,
             task=task,
-            min_hardware_generation=hardware_model.objects.filter(generation=min_hardware_generation).first(),
+            min_hardware_generation=(hardware_model.objects.filter(generation=min_hardware_generation).first()
+                                     if min_hardware_generation != ""
+                                     else None),
             cpu=False if cpu == 'false' else True
         )
         docker_image.save()

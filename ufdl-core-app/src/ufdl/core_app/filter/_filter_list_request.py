@@ -16,10 +16,12 @@ def filter_list_request(query_set: QuerySet, filter_spec: FilterSpec) -> QuerySe
     :param filter_spec:     A filter-spec object specifying how to filter.
     :return:                The filtered query-set.
     """
+    # If filter expressions are provided, filter by them
     if filter_spec.expressions is not Absent:
         for q in generate_qs(filter_spec.expressions):
             query_set = query_set.filter(q)
 
+    # If order-by expressions are provided, order by them
     if filter_spec.order_by is not Absent:
         query_set = order_by(query_set, filter_spec.order_by)
 

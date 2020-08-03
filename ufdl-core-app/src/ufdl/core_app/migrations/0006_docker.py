@@ -11,7 +11,7 @@ def validate_docker_image_values(
         framework, framework_version, domain, task, min_hardware_generation, cpu
 ):
     """
-    Validates the valuse in the docker CSV file.
+    Validates the values in the docker CSV file.
     """
     # Validate the cpu value
     if cpu not in {"true", "false"}:

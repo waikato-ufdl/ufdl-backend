@@ -1,9 +1,12 @@
-from typing import Iterator, Tuple
+from typing import Iterator
 
-from ufdl.core_app.exceptions import *
+from ufdl.annotation_utils.speech import annotations_iterator
+
 from ufdl.core_app.models import Dataset, DatasetQuerySet
 
 from ufdl.json.speech import TranscriptionsFile, Transcription
+
+from wai.annotations.domain.audio.speech import SpeechInstance
 
 
 class SpeechDatasetQuerySet(DatasetQuerySet):
@@ -36,19 +39,18 @@ class SpeechDataset(Dataset):
 
         return file
 
-    def archive_file_iterator(self) -> Iterator[Tuple[str, bytes]]:
-        # Return all the regular files
-        yield from super().archive_file_iterator()
+    def get_annotations_iterator(self) -> Iterator[SpeechInstance]:
+        # Get the transcriptions file
+        transcriptions_file = self.get_transcriptions()
 
-        # Find an unused filename for the transcription file
-        counter = 1
-        transcriptions_filename = "transcriptions.json"
-        while self.has_file(transcriptions_filename):
-            transcriptions_filename = f"transcriptions-{counter}.json"
-            counter += 1
+        # Create a transcription supplier function
+        def get_transcription(filename: str) -> str:
+            if not transcriptions_file.has_property(filename):
+                return ""
 
-        # Add the transcriptions as a file as well
-        yield transcriptions_filename, self.get_transcriptions().to_json_string(indent=2).encode("utf-8")
+            return transcriptions_file[filename].transcription
+
+        return annotations_iterator(self.iterate_filenames(), get_transcription, self.get_file)
 
     def get_transcriptions(self) -> TranscriptionsFile:
         """

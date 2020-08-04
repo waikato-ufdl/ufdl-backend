@@ -1,9 +1,13 @@
-from typing import List, Iterator, Tuple
+from typing import List, Iterator
+
+from ufdl.annotation_utils.image_classification import annotations_iterator
 
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.models import Dataset, DatasetQuerySet
 
 from ufdl.json.image_classification import CategoriesFile
+
+from wai.annotations.domain.image.classification import ImageClassificationInstance
 
 from wai.common.iterate import count
 
@@ -38,19 +42,11 @@ class ImageClassificationDataset(Dataset):
 
         return file
 
-    def archive_file_iterator(self) -> Iterator[Tuple[str, bytes]]:
-        # Return all the regular files
-        yield from super().archive_file_iterator()
+    def get_annotations_iterator(self) -> Iterator[ImageClassificationInstance]:
+        # Get the categories file
+        categories_file = self.get_categories()
 
-        # Find an unused filename for the categories file
-        counter = 1
-        categories_filename = "categories.json"
-        while self.has_file(categories_filename):
-            categories_filename = f"categories-{counter}.json"
-            counter += 1
-
-        # Add the categories as a file as well
-        yield categories_filename, self.get_categories().to_json_string(indent=2).encode("utf-8")
+        return annotations_iterator(self.iterate_filenames(), categories_file.get_property, self.get_file)
 
     def get_categories(self) -> CategoriesFile:
         """

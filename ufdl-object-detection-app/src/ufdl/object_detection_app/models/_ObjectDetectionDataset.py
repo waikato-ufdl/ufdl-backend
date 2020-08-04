@@ -1,11 +1,12 @@
-from typing import List, Tuple, Iterator
+from typing import List, Optional, Iterator
 
-from ufdl.annotation_utils import image_from_file, converted_annotations_iterator
+from ufdl.annotation_utils.object_detection import image_from_file, annotations_iterator
 
 from ufdl.core_app.models import Dataset, DatasetQuerySet
-from ufdl.core_app.util import QueryParameterValue
 
-from ufdl.json.object_detection import AnnotationsFile, Annotation
+from ufdl.json.object_detection import AnnotationsFile, Annotation, Image
+
+from wai.annotations.core.instance import Instance
 
 
 class ObjectDetectionDatasetQuerySet(DatasetQuerySet):
@@ -26,42 +27,6 @@ class ObjectDetectionDataset(Dataset):
         # Make sure the unstructured data is valid
         AnnotationsFile.validate_json_string(self.unstructured)
 
-    def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
-        # Extract the optional annotations arguments parameter
-        annotations_args = parameters.pop("annotations_args", None)
-        if isinstance(annotations_args, str):
-            annotations_args = [annotations_args]
-
-        # Create and store an annotations configuration for use in archive_file_iterator
-        setattr(self, "__annotations_args", annotations_args)
-
-        return super().as_file(file_format, **parameters)
-
-    def archive_file_iterator(self) -> Iterator[Tuple[str, bytes]]:
-        # Retrieve the annotations arguments
-        annotations_args = getattr(self, "__annotations_args")
-
-        # Reference no longer needed after this method returns
-        delattr(self, "__annotations_args")
-
-        # If no annotations arguments supplied, just return the files
-        if annotations_args is None:
-            return super().archive_file_iterator()
-
-        # Convert our annotations
-        annotations_file_iterator = converted_annotations_iterator(
-            self.get_annotations(),
-            self.get_file,
-            *annotations_args
-        )
-
-        # Converted annotations files are supplied as streams, but we are required
-        # to return the file contents as bytes, so do a complete read
-        annotations_file_iterator = ((filename, file.read()) for filename, file in annotations_file_iterator)
-
-        # Chain the converted annotations files with the dataset images
-        return annotations_file_iterator
-
     def delete_file(self, filename: str):
         # Delete the file as usual
         file = super().delete_file(filename)
@@ -73,6 +38,19 @@ class ObjectDetectionDataset(Dataset):
             self.set_annotations(annotations)
 
         return file
+
+    def get_annotations_iterator(self) -> Optional[Iterator[Instance]]:
+        # Get the annotations file
+        annotations_file = self.get_annotations()
+
+        # Create a supplier function for getting the image description for a file
+        def get_image(filename: str) -> Optional[Image]:
+            if not annotations_file.has_property(filename):
+                return None
+
+            return annotations_file[filename]
+
+        return annotations_iterator(self.iterate_filenames(), get_image, self.get_file)
 
     def get_annotations(self) -> AnnotationsFile:
         """

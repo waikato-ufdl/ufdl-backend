@@ -1,25 +1,18 @@
 from itertools import chain
-from typing import Callable, Iterator, Tuple, IO
+from typing import Iterator, Tuple, IO
 
 from wai.annotations.core.chain import ConversionChain
-
-from ufdl.json.object_detection import AnnotationsFile
-
-from ._annotations_iterator import annotations_iterator
+from wai.annotations.core.component import LocalWriter
+from wai.annotations.core.instance import Instance
 
 
-def converted_annotations_iterator(
-        annotations_file: AnnotationsFile,
-        image_data_supplier: Callable[[str], bytes],
-        *args: str) -> Iterator[Tuple[str, IO[bytes]]]:
+def converted_annotations_iterator(instances: Iterator[Instance],
+                                   *args: str) -> Iterator[Tuple[str, IO[bytes]]]:
     """
-    Similar to annotations_iterator, except takes a wai.annotations format and
-    command-line arguments, and returns an iterator over the annotations files
-    produced by converting the annotations using wai.annotations.
+    Uses wai.annotations to convert a stream of instances into an iterator
+    over the converted files produced by the conversion.
 
-    :param annotations_file:        The annotations file.
-    :param image_data_supplier:     A callable that takes the filename of an image and returns
-                                    the image's data.
+    :param instances:               The instances to convert.
     :param args:                    Any command-line arguments to wai.annotations.
     :return:                        An iterator of filename, file-contents pairs.
     """
@@ -31,7 +24,7 @@ def converted_annotations_iterator(
 
     # Not allowed to provide global arguments
     if len(global_args) > 0:
-        raise ValueError("Not allowed to use global options")
+        raise ValueError(f"Not allowed to use global options; found {', '.join(global_args)}")
 
     # Split the options into stages
     stage_args = ConversionChain.split_options(args)
@@ -54,4 +47,8 @@ def converted_annotations_iterator(
     if not conversion_chain.has_output:
         raise ValueError("No output stage specified")
 
-    return conversion_chain.file_iterator(annotations_iterator(annotations_file, image_data_supplier))
+    # Make sure the output stage is a local writer (required for file iterator)
+    if not isinstance(conversion_chain._output_stage.writer, LocalWriter):
+        raise TypeError("Output stage of annotations conversion chain is not a local writer")
+
+    return conversion_chain.file_iterator(instances)

@@ -1,10 +1,15 @@
 from io import BytesIO
-from typing import Iterator, Tuple
+from typing import Iterator, Tuple, Optional
 from zipfile import ZipFile
 from tarfile import TarFile, TarInfo
 
 from django.db import models
+
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
+
+from ufdl.annotation_utils import converted_annotations_iterator
+
+from wai.annotations.core.instance import Instance
 
 from ..apps import UFDLCoreAppConfig
 from ..exceptions import *
@@ -130,6 +135,14 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
         return f"{self.name}.v{self.version}"
 
     def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
+        # Extract the optional annotations arguments parameter
+        annotations_args = parameters.pop("annotations_args", None)
+        if isinstance(annotations_args, str):
+            annotations_args = [annotations_args]
+
+        # Create and store an annotations configuration for use in archive_file_iterator
+        setattr(self, "__annotations_args", annotations_args)
+
         if file_format == "zip":
             # Shouldn't be any parameters
             UnknownParameters.ensure_empty(parameters)
@@ -150,8 +163,36 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
 
         :return:    An iterator of filename, file-contents pairs.
         """
-        return ((file_reference.file.filename, file_reference.file.get_data())
-                for file_reference in self.files.all())
+        # Retrieve the annotations arguments
+        annotations_args = getattr(self, "__annotations_args")
+
+        # Reference no longer needed after this method returns
+        delattr(self, "__annotations_args")
+
+        # If no annotations arguments supplied, just return the files
+        if annotations_args is None:
+            return ((file_reference.file.filename, file_reference.file.get_data())
+                    for file_reference in self.files.all())
+
+        # Convert our annotations
+        annotations_file_iterator = converted_annotations_iterator(
+            self.get_annotations_iterator(),
+            *annotations_args
+        )
+
+        # Converted annotations files are supplied as streams, but we are required
+        # to return the file contents as bytes, so do a complete read
+        return ((filename, file.read()) for filename, file in annotations_file_iterator)
+
+    def get_annotations_iterator(self) -> Optional[Iterator[Instance]]:
+        """
+        Gets an iterator over the instances in this dataset in
+        the domain format used by wai.annotations.
+
+        :return:    The instance iterator
+        """
+        # Returns None by default, sub-types should override this
+        return None
 
     def as_zip(self) -> bytes:
         """

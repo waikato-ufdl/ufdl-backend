@@ -1,4 +1,5 @@
 import os
+from typing import Iterator
 
 from django.db import models
 
@@ -17,6 +18,12 @@ class FileContainerModel(models.Model):
 
     class Meta:
         abstract = True
+
+    def iterate_filenames(self) -> Iterator[str]:
+        """
+        Iterates over all filenames contained by this model.
+        """
+        return (file.filename for file in self.files)
 
     def add_file(self, filename: str, data: bytes) -> 'NamedFile':
         """

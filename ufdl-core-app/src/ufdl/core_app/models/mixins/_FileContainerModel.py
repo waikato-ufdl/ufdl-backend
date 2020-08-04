@@ -23,7 +23,7 @@ class FileContainerModel(models.Model):
         """
         Iterates over all filenames contained by this model.
         """
-        return (file.filename for file in self.files)
+        return (file.filename for file in self.files.all())
 
     def add_file(self, filename: str, data: bytes) -> 'NamedFile':
         """

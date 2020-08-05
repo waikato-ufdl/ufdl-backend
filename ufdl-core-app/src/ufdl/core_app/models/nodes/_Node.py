@@ -3,7 +3,7 @@ from django.db import models
 from ...apps import UFDLCoreAppConfig
 
 
-class NodeQuerySet(models.Model):
+class NodeQuerySet(models.QuerySet):
     """
     A query-set over worker nodes.
     """

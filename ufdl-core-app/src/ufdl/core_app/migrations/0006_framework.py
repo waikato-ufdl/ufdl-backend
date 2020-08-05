@@ -14,7 +14,7 @@ def add_initial_frameworks(apps, schema_editor):
     # Get the Framework model
     framework_model = apps.get_model(UFDLCoreAppConfig.label, "Framework")
 
-    # Add each CUDA version to the database
+    # Add each framework version to the database
     for name, version in iterate_frameworks():
         framework = framework_model(name=name, version=version)
         framework.save()

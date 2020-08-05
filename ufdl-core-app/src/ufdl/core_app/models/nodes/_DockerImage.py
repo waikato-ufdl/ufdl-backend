@@ -59,6 +59,10 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
     # Whether the Docker image can run on a CPU-only machine (no GPU)
     cpu = models.BooleanField(default=False)
 
+    @property
+    def name_and_version(self) -> str:
+        return f"{self.name} v{self.version}"
+
     objects = DockerImageQuerySet.as_manager()
 
     class Meta:

@@ -31,6 +31,6 @@ setup(
         "Django>=2.2.6,<3",
         "djangorestframework>=3.10.3,<4",
         "simple-django-teams==0.0.4",
-        "ufdl-json-messages==0.0.1"
+        "ufdl.json-messages==0.0.1"
     ]
 )

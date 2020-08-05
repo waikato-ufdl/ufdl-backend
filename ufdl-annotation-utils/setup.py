@@ -28,6 +28,6 @@ setup(
         "wai.common>=0.0.35",
         "wai.json==0.0.5",
         "wai.annotations==0.4.6",
-        "ufdl-json-messages"
+        "ufdl.json-messages"
     ]
 )

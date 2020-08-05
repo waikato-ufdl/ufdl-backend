@@ -35,6 +35,7 @@ def add_initial_docker_images(apps, schema_editor):
     hardware_model = apps.get_model(UFDLCoreAppConfig.label, "Hardware")
     cuda_model = apps.get_model(UFDLCoreAppConfig.label, "CUDAVersion")
     docker_image_model = apps.get_model(UFDLCoreAppConfig.label, "DockerImage")
+    framework_model = apps.get_model(UFDLCoreAppConfig.label, "Framework")
 
     # Add each Docker image to the database
     for (name, version, url, registry_url, registry_username, registry_password, cuda_version,
@@ -54,8 +55,7 @@ def add_initial_docker_images(apps, schema_editor):
             registry_username=registry_username if (registry_username != '') else None,
             registry_password=registry_password if (registry_password != '') else None,
             cuda_version=cuda_model.objects.filter(version=Decimal(cuda_version)).first(),
-            framework=framework,
-            framework_version=framework_version,
+            framework=framework_model.objects.filter(name=framework, version=framework_version).first(),
             domain=domain,
             task=task,
             min_hardware_generation=(hardware_model.objects.filter(generation=min_hardware_generation).first()
@@ -72,7 +72,8 @@ class Migration(migrations.Migration):
     """
     dependencies = [
         ('ufdl-core', '0004_hardware'),
-        ('ufdl-core', '0005_cuda')
+        ('ufdl-core', '0005_cuda'),
+        ('ufdl-core', '0006_framework')
     ]
 
     operations = [

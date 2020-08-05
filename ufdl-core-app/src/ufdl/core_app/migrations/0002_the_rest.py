@@ -63,8 +63,6 @@ class Migration(migrations.Migration):
                 ('registry_url', models.CharField(max_length=200)),
                 ('registry_username', models.CharField(max_length=64, null=True)),
                 ('registry_password', models.CharField(max_length=64, null=True)),
-                ('framework', models.CharField(max_length=32)),
-                ('framework_version', models.CharField(max_length=16)),
                 ('domain', models.CharField(max_length=32)),
                 ('task', models.CharField(max_length=16)),
                 ('cpu', models.BooleanField(default=False)),
@@ -244,6 +242,11 @@ class Migration(migrations.Migration):
             model_name='dockerimage',
             name='cuda_version',
             field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl-core.CUDAVersion'),
+        ),
+        migrations.AddField(
+            model_name='dockerimage',
+            name='framework',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl-core.Framework'),
         ),
         migrations.AddField(
             model_name='dockerimage',

@@ -38,11 +38,10 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
                                      on_delete=models.DO_NOTHING,
                                      related_name="docker_images")
 
-    # The name of the model framework the image is for
-    framework = models.CharField(max_length=32)
-
-    # The version of the framework
-    framework_version = models.CharField(max_length=16)
+    # The framework the image is for
+    framework = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Framework",
+                                  on_delete=models.DO_NOTHING,
+                                  related_name="docker_images")
 
     # The domain of the image
     domain = models.CharField(max_length=32)

@@ -13,6 +13,9 @@ class ModelSerialiser(SoftDeleteModelSerialiser):
     domain = serializers.SlugRelatedField("name", queryset=DataDomain.objects)
     licence = serializers.SlugRelatedField("name", queryset=Licence.objects)
 
+    # Getting/setting data is doen separately, just indicate if there is data
+    data = serializers.BooleanField(read_only=True, source='has_data')
+
     class Meta:
         model = Model
         fields = ["pk"] + SoftDeleteModelSerialiser.base_fields

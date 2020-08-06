@@ -7,3 +7,4 @@ from ._DeleteOnNoRemainingReferencesOnlyModel import DeleteOnNoRemainingReferenc
     DeleteOnNoRemainingReferencesOnlyQuerySet
 from ._FileContainerModel import FileContainerModel
 from ._PublicModel import PublicModel, PublicQuerySet
+from ._SetFileModel import SetFileModel

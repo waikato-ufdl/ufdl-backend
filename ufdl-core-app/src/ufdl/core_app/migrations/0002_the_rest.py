@@ -373,7 +373,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='model',
             name='data',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.FileReference'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.File'),
         ),
         migrations.AddConstraint(
             model_name='limitation',

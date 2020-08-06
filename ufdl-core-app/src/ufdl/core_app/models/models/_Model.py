@@ -1,7 +1,11 @@
+from typing import Optional
+
 from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet
 
 from ...apps import UFDLCoreAppConfig
+from ...util import QueryParameterValue
+from ..mixins import AsFileModel, SetFileModel
 
 
 class ModelQuerySet(SoftDeleteQuerySet):
@@ -11,7 +15,7 @@ class ModelQuerySet(SoftDeleteQuerySet):
     pass
 
 
-class Model(SoftDeleteModel):
+class Model(SetFileModel, AsFileModel, SoftDeleteModel):
     """
     A deep-learning model.
 
@@ -33,8 +37,43 @@ class Model(SoftDeleteModel):
                                 related_name="models")
 
     # The data of the model
-    data = models.ForeignKey(f"{UFDLCoreAppConfig.label}.FileReference",
+    data = models.ForeignKey(f"{UFDLCoreAppConfig.label}.File",
                              on_delete=models.DO_NOTHING,
-                             related_name="+")
+                             related_name="+",
+                             null=True,
+                             default=None)
+
+    @property
+    def has_data(self) -> bool:
+        return self.data is not None
 
     objects = ModelQuerySet.as_manager()
+
+    def supports_file_format(self, file_format: str):
+        return file_format == 'data'
+
+    def default_format(self) -> str:
+        return 'data'
+
+    def filename_without_extension(self) -> str:
+        return 'model'
+
+    def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
+        return self.data.get_data() if self.data is not None else b''
+
+    def set_file(self, data: Optional[bytes]):
+        # Local import to avoid dependency cycles
+        from ..files import File
+
+        # Get the current file
+        current = self.data
+
+        # If the file is present, delete it
+        if current is not None:
+            current.delete()
+
+        # Set the new file to the given data
+        self.data = File.get_reference_from_backend(data) if data is not None else None
+
+        # Save
+        self.save(update_fields="data")

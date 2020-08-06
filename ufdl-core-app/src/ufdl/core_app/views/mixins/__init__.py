@@ -7,4 +7,5 @@ from ._FileContainerViewSet import FileContainerViewSet
 from ._LicenceSubdescriptorViewSet import LicenceSubdescriptorViewSet
 from ._MembershipViewSet import MembershipViewSet
 from ._RoutedViewSet import RoutedViewSet
+from ._SetFileViewSet import SetFileViewSet
 from ._SoftDeleteViewSet import SoftDeleteViewSet

@@ -14,7 +14,6 @@ class JobTemplateSerialiser(SoftDeleteModelSerialiser):
     inputs = serializers.SlugRelatedField("signature", many=True, read_only=True)
     parameters = serializers.SlugRelatedField("signature", many=True, read_only=True)
 
-
     class Meta:
         model = JobTemplate
         fields = ["pk",

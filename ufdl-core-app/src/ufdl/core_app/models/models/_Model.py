@@ -32,4 +32,9 @@ class Model(SoftDeleteModel):
                                 on_delete=models.DO_NOTHING,
                                 related_name="models")
 
+    # The data of the model
+    data = models.ForeignKey(f"{UFDLCoreAppConfig.label}.FileReference",
+                             on_delete=models.DO_NOTHING,
+                             related_name="+")
+
     objects = ModelQuerySet.as_manager()

@@ -370,6 +370,11 @@ class Migration(migrations.Migration):
             name='licence',
             field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl-core.Licence'),
         ),
+        migrations.AddField(
+            model_name='model',
+            name='data',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.FileReference'),
+        ),
         migrations.AddConstraint(
             model_name='limitation',
             constraint=models.UniqueConstraint(fields=('name',), name='unique_limitation_names'),

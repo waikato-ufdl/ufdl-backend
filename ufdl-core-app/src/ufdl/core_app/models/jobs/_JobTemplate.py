@@ -41,14 +41,6 @@ class JobTemplate(SoftDeleteModel):
                              on_delete=models.DO_NOTHING,
                              related_name="job_templates")
 
-    # The inputs to the job
-    inputs = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.Input",
-                                    related_name="job_templates")
-
-    # The parameters to the job
-    parameters = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.Parameter",
-                                        related_name="job_templates")
-
     # The name of the job's Executor class
     executor_class = models.CharField(max_length=128)
 

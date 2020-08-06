@@ -11,8 +11,8 @@ class JobTemplateSerialiser(SoftDeleteModelSerialiser):
     framework = serializers.SlugRelatedField("name_and_version", queryset=Framework.objects)
     domain = serializers.SlugRelatedField("name", queryset=DataDomain.objects)
     type = serializers.SlugRelatedField("name", queryset=JobType.objects)
-    inputs = serializers.SlugRelatedField("signature", queryset=Input.objects, many=True)
-    parameters = serializers.SlugRelatedField("signature", queryset=Parameter.objects, many=True)
+    inputs = serializers.SlugRelatedField("signature", queryset=Input.objects, many=True, read_only=True)
+    parameters = serializers.SlugRelatedField("signature", queryset=Parameter.objects, many=True, read_only=True)
 
 
     class Meta:

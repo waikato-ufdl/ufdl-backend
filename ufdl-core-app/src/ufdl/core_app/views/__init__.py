@@ -1,3 +1,4 @@
+from ._DataDomainViewSet import DataDomainViewSet
 from ._DatasetViewSet import DatasetViewSet
 from ._LicenceViewSet import LicenceViewSet
 from ._LogEntryViewSet import LogEntryViewSet

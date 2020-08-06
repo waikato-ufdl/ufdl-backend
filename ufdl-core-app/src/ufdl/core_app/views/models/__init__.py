@@ -1,3 +1,2 @@
-from ._FinalModelViewSet import FinalModelViewSet
 from ._ModelViewSet import ModelViewSet
 from ._PreTrainedModelViewSet import PreTrainedModelViewSet

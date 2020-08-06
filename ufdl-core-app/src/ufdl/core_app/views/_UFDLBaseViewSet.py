@@ -2,7 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from ufdl.json.core.filter import FilterSpec
 
-from ..exceptions import JSONParseFailure
+from ..exceptions import JSONParseFailure, PermissionsUndefined
 from ..filter import filter_list_request
 from ..logging import get_backend_logger
 from ..permissions import IsAdminUser
@@ -20,9 +20,6 @@ class UFDLBaseViewSet(ModelViewSet):
 
     Automatically logs requests/responses to the database log.
     """
-    # The permissions to use when an action isn't listed in the permission_classes dictionary
-    default_permissions = []
-
     # The admin permission (override access to any action)
     admin_permission_class = IsAdminUser
 
@@ -34,9 +31,12 @@ class UFDLBaseViewSet(ModelViewSet):
         # If defined as a dict from action to permissions, apply the
         # correct permissions for the current action
         if isinstance(self.permission_classes, dict):
-            permission_classes = (self.permission_classes[self.action]
-                                  if self.action in self.permission_classes
-                                  else self.default_permissions)
+            # Make sure the permissions for the action have been explicitly stated
+            if self.action not in self.permission_classes:
+                raise PermissionsUndefined(self.action)
+
+            # Get the defined permission classes
+            permission_classes = self.permission_classes[self.action]
 
             # If no permissions defined, require admin permissions
             if len(permission_classes) == 0:

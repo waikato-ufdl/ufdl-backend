@@ -10,7 +10,6 @@ class ProjectViewSet(SoftDeleteViewSet, UFDLBaseViewSet):
     serializer_class = ProjectSerialiser
 
     admin_permission_class = IsAdminUser | MemberHasWritePermission
-    default_permissions = []
 
     permission_classes = {
         "list": [IsAuthenticated],

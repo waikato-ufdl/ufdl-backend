@@ -11,7 +11,6 @@ class TeamViewSet(MembershipViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
     serializer_class = TeamSerialiser
 
     admin_permission_class = IsAdminUser | MemberHasAdminPermission
-    default_permissions = []
 
     permission_classes = {
         "list": [IsAuthenticated],

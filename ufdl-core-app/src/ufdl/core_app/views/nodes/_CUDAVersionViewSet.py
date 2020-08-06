@@ -9,7 +9,6 @@ class CUDAVersionViewSet(UFDLBaseViewSet):
     serializer_class = CUDAVersionSerialiser
 
     admin_permission_class = IsAdminUser
-    default_permissions = []
 
     permission_classes = {
         "list": [IsAuthenticated],

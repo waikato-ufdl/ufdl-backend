@@ -5,7 +5,7 @@ from ufdl.json.core.filter import FilterSpec
 from ..exceptions import JSONParseFailure
 from ..filter import filter_list_request
 from ..logging import get_backend_logger
-from ..permissions import IsAdminUser, AllowNone
+from ..permissions import IsAdminUser
 from ..util import for_user
 
 
@@ -21,7 +21,7 @@ class UFDLBaseViewSet(ModelViewSet):
     Automatically logs requests/responses to the database log.
     """
     # The permissions to use when an action isn't listed in the permission_classes dictionary
-    default_permissions = [AllowNone]
+    default_permissions = []
 
     # The admin permission (override access to any action)
     admin_permission_class = IsAdminUser

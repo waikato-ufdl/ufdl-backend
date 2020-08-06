@@ -15,3 +15,4 @@ class NodeSerialiser(serializers.ModelSerializer):
                   "cpu_mem",
                   "last_seen",
                   "current_job"]
+        read_only_fields = ["last_seen"]

@@ -1,6 +1,7 @@
 """
 Package of mixin functionality for view-sets.
 """
+from ._AddJobOutputViewSet import AddJobOutputViewSet
 from ._CopyableViewSet import CopyableViewSet
 from ._DownloadableViewSet import DownloadableViewSet
 from ._FileContainerViewSet import FileContainerViewSet

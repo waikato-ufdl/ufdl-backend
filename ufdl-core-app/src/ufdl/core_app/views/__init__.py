@@ -6,4 +6,6 @@ from ._TeamViewSet import TeamViewSet
 from ._ProjectViewSet import ProjectViewSet
 from ._UserViewSet import UserViewSet
 
+from . import jobs
+from . import models
 from . import nodes

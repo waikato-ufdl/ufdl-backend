@@ -323,7 +323,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='node',
             name='current_job',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Job'),
+            field=models.ForeignKey(null=True, default=None, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Job'),
         ),
         migrations.AddField(
             model_name='node',

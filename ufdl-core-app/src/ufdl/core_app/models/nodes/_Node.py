@@ -40,7 +40,8 @@ class Node(models.Model):
     current_job = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Job",
                                     on_delete=models.DO_NOTHING,
                                     related_name="+",
-                                    null=True)
+                                    null=True,
+                                    default=None)
 
     objects = NodeQuerySet.as_manager()
 

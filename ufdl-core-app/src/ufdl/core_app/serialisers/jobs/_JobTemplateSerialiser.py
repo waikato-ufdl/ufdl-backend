@@ -19,6 +19,10 @@ class JobTemplateSerialiser(SoftDeleteModelSerialiser):
                   "version",
                   "scope",
                   "framework",
+                  "domain",
+                  "type",
                   "executor_class",
                   "required_packages",
-                  "body"] + SoftDeleteModelSerialiser.base_fields
+                  "body",
+                  "inputs",
+                  "parameters"] + SoftDeleteModelSerialiser.base_fields

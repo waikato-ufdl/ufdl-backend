@@ -26,7 +26,8 @@ class Job(SoftDeleteModel):
                                      related_name="jobs")
 
     # The time the job was started
-    start_time = models.DateTimeField(auto_now_add=True,
+    start_time = models.DateTimeField(null=True,
+                                      default=None,
                                       editable=False)
 
     # The time the job was finished

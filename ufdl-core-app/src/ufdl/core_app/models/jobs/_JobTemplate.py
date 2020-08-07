@@ -45,7 +45,7 @@ class JobTemplate(SoftDeleteModel):
     executor_class = models.CharField(max_length=128)
 
     # The dependencies required by the job
-    required_packages = models.TextField()
+    required_packages = models.TextField(blank=True)
 
     # The body of the job template itself (interpreted by the Executor class)
     body = models.TextField()

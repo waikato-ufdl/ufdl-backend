@@ -179,7 +179,7 @@ class Migration(migrations.Migration):
                 ('version', models.IntegerField(default=1)),
                 ('scope', models.CharField(max_length=16)),
                 ('executor_class', models.CharField(max_length=128)),
-                ('required_packages', models.TextField()),
+                ('required_packages', models.TextField(blank=True)),
                 ('body', models.TextField()),
             ],
         ),

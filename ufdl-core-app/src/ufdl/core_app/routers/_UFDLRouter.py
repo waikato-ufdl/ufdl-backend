@@ -15,10 +15,14 @@ class UFDLRouter(routers.DefaultRouter):
 
     routes = (
             routers.DefaultRouter.routes +
+            AddJobOutputViewSet.get_routes() +
             CopyableViewSet.get_routes() +
+            CreateJobViewSet.get_routes() +
             DownloadableViewSet.get_routes() +
             FileContainerViewSet.get_routes() +
-            MembershipViewSet.get_routes() +
+            InputsParametersViewSet.get_routes() +
             LicenceSubdescriptorViewSet.get_routes() +
+            MembershipViewSet.get_routes() +
+            SetFileViewSet.get_routes() +
             SoftDeleteViewSet.get_routes()
     )

@@ -26,7 +26,8 @@ class Job(SoftDeleteModel):
                                      related_name="jobs")
 
     # The time the job was started
-    start_time = models.DateTimeField(auto_now_add=True,
+    start_time = models.DateTimeField(null=True,
+                                      default=None,
                                       editable=False)
 
     # The time the job was finished
@@ -47,6 +48,7 @@ class Job(SoftDeleteModel):
     node = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Node",
                              on_delete=models.DO_NOTHING,
                              related_name="jobs",
-                             null=True)
+                             null=True,
+                             default=None)
 
     objects = JobQuerySet.as_manager()

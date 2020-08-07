@@ -1,3 +1,4 @@
+from ._AllowNone import AllowNone
 from ._IsAdminUser import IsAdminUser
 from ._IsAuthenticated import IsAuthenticated
 from ._IsMember import IsMember

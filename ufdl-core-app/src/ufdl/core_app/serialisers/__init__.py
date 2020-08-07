@@ -1,6 +1,7 @@
 """
 Package for serialisers of models.
 """
+from ._DataDomainSerialiser import DataDomainSerialiser
 from ._DatasetSerialiser import DatasetSerialiser
 from ._LicenceSerialiser import LicenceSerialiser
 from ._LogEntrySerialiser import LogEntrySerialiser

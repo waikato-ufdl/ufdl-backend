@@ -9,7 +9,6 @@ class DockerImageViewSet(UFDLBaseViewSet):
     serializer_class = DockerImageSerialiser
 
     admin_permission_class = IsAdminUser
-    default_permissions = []
 
     permission_classes = {
         "list": [IsAuthenticated],

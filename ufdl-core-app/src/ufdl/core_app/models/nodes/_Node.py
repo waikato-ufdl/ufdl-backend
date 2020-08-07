@@ -34,13 +34,14 @@ class Node(models.Model):
     cpu_mem = models.PositiveIntegerField()
 
     # The timestamp when the node last made contact
-    last_seen = models.DateTimeField()
+    last_seen = models.DateTimeField(null=True, default=None)
 
     # The job the node is currently working on
     current_job = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Job",
                                     on_delete=models.DO_NOTHING,
                                     related_name="+",
-                                    null=True)
+                                    null=True,
+                                    default=None)
 
     objects = NodeQuerySet.as_manager()
 

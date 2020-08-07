@@ -9,7 +9,6 @@ class HardwareViewSet(UFDLBaseViewSet):
     serializer_class = HardwareSerialiser
 
     admin_permission_class = IsAdminUser
-    default_permissions = []
 
     permission_classes = {
         "list": [IsAuthenticated],

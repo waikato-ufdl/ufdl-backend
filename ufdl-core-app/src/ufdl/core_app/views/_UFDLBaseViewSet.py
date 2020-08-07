@@ -1,5 +1,4 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import AllowAny
 
 from ufdl.json.core.filter import FilterSpec
 
@@ -22,7 +21,7 @@ class UFDLBaseViewSet(ModelViewSet):
     Automatically logs requests/responses to the database log.
     """
     # The permissions to use when an action isn't listed in the permission_classes dictionary
-    default_permissions = [~AllowAny]
+    default_permissions = []
 
     # The admin permission (override access to any action)
     admin_permission_class = IsAdminUser

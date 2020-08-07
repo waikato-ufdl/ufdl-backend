@@ -32,7 +32,7 @@ class JobTemplate(SoftDeleteModel):
                                   related_name="job_templates")
 
     # The domain the jobs operate in
-    domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Domain",
+    domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.DataDomain",
                                on_delete=models.DO_NOTHING,
                                related_name="job_templates")
 
@@ -41,19 +41,11 @@ class JobTemplate(SoftDeleteModel):
                              on_delete=models.DO_NOTHING,
                              related_name="job_templates")
 
-    # The inputs to the job
-    inputs = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.Input",
-                                    related_name="job_templates")
-
-    # The parameters to the job
-    parameters = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.Parameter",
-                                        related_name="job_templates")
-
     # The name of the job's Executor class
     executor_class = models.CharField(max_length=128)
 
     # The dependencies required by the job
-    required_packages = models.TextField()
+    required_packages = models.TextField(blank=True)
 
     # The body of the job template itself (interpreted by the Executor class)
     body = models.TextField()

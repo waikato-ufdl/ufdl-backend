@@ -1,12 +1,12 @@
-from ...models.nodes import CUDAVersion
-from ...serialisers.nodes import CUDAVersionSerialiser
+from ...models.nodes import Framework
+from ...serialisers.nodes import FrameworkSerialiser
 from ...permissions import IsAdminUser, IsAuthenticated
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class CUDAVersionViewSet(UFDLBaseViewSet):
-    queryset = CUDAVersion.objects.all()
-    serializer_class = CUDAVersionSerialiser
+class FrameworkViewSet(UFDLBaseViewSet):
+    queryset = Framework.objects.all()
+    serializer_class = FrameworkSerialiser
 
     admin_permission_class = IsAdminUser
 

@@ -8,7 +8,25 @@ class DockerImageQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySet):
     """
     A query-set of available Docker images.
     """
-    pass
+    def name(self, name: str) -> 'DockerImageQuerySet':
+        """
+        Filters the query-set to those Docker images with the
+        given name.
+
+        :param name:    The name of the Docker images.
+        :return:        The filtered query-set.
+        """
+        return self.filter(name=name)
+
+    def version(self, version: str) -> 'DockerImageQuerySet':
+        """
+        Filters the query-set to those Docker images with the
+        given version.
+
+        :param version:     The version of the Docker images.
+        :return:            The filtered query-set.
+        """
+        return self.filter(version=version)
 
 
 class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):

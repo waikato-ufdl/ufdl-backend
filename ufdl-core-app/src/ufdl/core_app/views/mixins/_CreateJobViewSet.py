@@ -65,7 +65,8 @@ class CreateJobViewSet(RoutedViewSet):
                   input_values=spec.input_values.to_json_string(),
                   parameter_values=(spec.parameter_values.to_json_string()
                                     if spec.parameter_values is not Absent
-                                    else ""))
+                                    else ""),
+                  creator=request.user)
         job.save()
 
         return Response(JobSerialiser().to_representation(job))

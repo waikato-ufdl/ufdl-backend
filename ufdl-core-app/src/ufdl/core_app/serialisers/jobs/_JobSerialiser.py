@@ -13,6 +13,8 @@ class JobSerialiser(SoftDeleteModelSerialiser):
     class Meta:
         model = Job
         fields = ["pk",
+                  "template",
+                  "docker_image",
                   "start_time",
                   "end_time",
                   "error",

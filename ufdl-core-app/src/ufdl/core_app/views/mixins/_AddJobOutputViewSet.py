@@ -10,6 +10,7 @@ from ufdl.json.core.jobs import JobOutputTypeSpec
 from ...exceptions import JSONParseFailure, BadName
 from ...models.files import File
 from ...models.jobs import Job, JobOutput
+from ...renderers import BinaryFileRenderer
 from ...serialisers.jobs import JobOutputSerialiser
 from ._RoutedViewSet import RoutedViewSet
 
@@ -29,7 +30,8 @@ class AddJobOutputViewSet(RoutedViewSet):
                 url=r'^{prefix}/{lookup}/outputs/(?P<name>.+)$',
                 mapping={'post': 'add_output',
                          'patch': 'set_output_type',
-                         'delete': 'delete_output'},
+                         'delete': 'delete_output',
+                         'get': 'get_output'},
                 name='{basename}-job-outputs',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: AddJobOutputViewSet.MODE_KEYWORD}
@@ -42,6 +44,13 @@ class AddJobOutputViewSet(RoutedViewSet):
             return super().get_parsers()
 
         return [FileUploadParser()]
+
+    def get_renderers(self):
+        # If not getting a file, return the standard renderers
+        if self.mode != AddJobOutputViewSet.MODE_KEYWORD or self.request.method != 'GET':
+            return super().get_renderers()
+
+        return [BinaryFileRenderer()]
 
     def add_output(self, request: Request, pk=None, name=None):
         """
@@ -119,3 +128,24 @@ class AddJobOutputViewSet(RoutedViewSet):
         output.delete()
 
         return Response(JobOutputSerialiser().to_representation(output))
+
+    def get_output(self, request: Request, pk=None, name=None):
+        """
+        Action to get the data from a job output.
+
+        :param request:     The request.
+        :param pk:          The primary key of the job.
+        :param name:        The name of the output.
+        :return:            The response containing the output data.
+        """
+        # Get the job the output belongs to
+        job = self.get_object_of_type(Job)
+
+        # Get the named output
+        output = job.outputs.filter(name=name).first()
+
+        # Make sure the output exists
+        if output is None:
+            raise BadName(name, "Job has no output by this name")
+
+        return Response(output.data.get_data())

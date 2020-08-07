@@ -14,6 +14,10 @@ class NodeQuerySet(models.QuerySet):
 class Node(models.Model):
     """
     A worker node.
+
+    TODO: Should a node have a special class of User so that it can
+          automatically register its last_seen timestamp on calls
+          from that user?
     """
     # The IP address of the worker node
     ip = models.CharField(max_length=39)

@@ -1,6 +1,7 @@
 from typing import List
 
 from rest_framework import routers
+from rest_framework.parsers import FileUploadParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -35,6 +36,13 @@ class AddJobOutputViewSet(RoutedViewSet):
             )
         ]
 
+    def get_parsers(self):
+        # If not posting a file, return the standard parsers
+        if self.mode != AddJobOutputViewSet.MODE_KEYWORD or self.request.method != 'POST':
+            return super().get_parsers()
+
+        return [FileUploadParser()]
+
     def add_output(self, request: Request, pk=None, name=None):
         """
         Action to add an output to a job.
@@ -55,7 +63,7 @@ class AddJobOutputViewSet(RoutedViewSet):
         data = request.data['file'].file.read()
 
         # Create the output
-        output = JobOutput(job=job, name=name, type="", data=File.get_reference_from_backend(data))
+        output = JobOutput(job=job, name=name, type="", data=File.get_reference_from_backend(data), creator=request.user)
         output.save()
 
         return Response(JobOutputSerialiser().to_representation(output))

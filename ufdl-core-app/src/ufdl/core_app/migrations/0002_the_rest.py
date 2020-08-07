@@ -343,7 +343,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='model',
             name='domain',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl-core.Domain'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl-core.DataDomain'),
         ),
         migrations.AddField(
             model_name='model',

@@ -27,7 +27,7 @@ class Model(SetFileModel, AsFileModel, SoftDeleteModel):
                                   related_name="models")
 
     # The domain the model operates in
-    domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Domain",
+    domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.DataDomain",
                                on_delete=models.DO_NOTHING,
                                related_name="models")
 

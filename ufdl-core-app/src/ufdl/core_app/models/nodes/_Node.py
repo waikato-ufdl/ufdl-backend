@@ -34,7 +34,7 @@ class Node(models.Model):
     cpu_mem = models.PositiveIntegerField()
 
     # The timestamp when the node last made contact
-    last_seen = models.DateTimeField()
+    last_seen = models.DateTimeField(null=True, default=None)
 
     # The job the node is currently working on
     current_job = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Job",

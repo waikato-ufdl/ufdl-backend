@@ -248,7 +248,7 @@ class Migration(migrations.Migration):
                 ('driver_version', models.CharField(max_length=16)),
                 ('gpu_mem', models.PositiveIntegerField()),
                 ('cpu_mem', models.PositiveIntegerField()),
-                ('last_seen', models.DateTimeField()),
+                ('last_seen', models.DateTimeField(null=True, default=None)),
             ],
         ),
         migrations.CreateModel(

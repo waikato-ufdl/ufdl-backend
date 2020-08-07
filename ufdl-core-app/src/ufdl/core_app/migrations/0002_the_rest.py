@@ -387,7 +387,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='jobtemplate',
             name='domain',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl-core.Domain'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl-core.DataDomain'),
         ),
         migrations.AddField(
             model_name='jobtemplate',

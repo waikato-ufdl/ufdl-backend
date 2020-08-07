@@ -32,7 +32,7 @@ class JobTemplate(SoftDeleteModel):
                                   related_name="job_templates")
 
     # The domain the jobs operate in
-    domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Domain",
+    domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.DataDomain",
                                on_delete=models.DO_NOTHING,
                                related_name="job_templates")
 

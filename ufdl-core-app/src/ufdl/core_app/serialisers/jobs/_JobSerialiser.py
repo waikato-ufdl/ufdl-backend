@@ -7,8 +7,8 @@ from ..mixins import SoftDeleteModelSerialiser
 
 class JobSerialiser(SoftDeleteModelSerialiser):
     # Slug fields require explicit definition
-    template = serializers.SlugRelatedField("name_and_version", queryset=JobTemplate.objects.active())
-    docker_image = serializers.SlugRelatedField("name_and_version", queryset=DockerImage.objects)
+    template = serializers.SlugRelatedField("name_and_version", read_only=True)
+    docker_image = serializers.SlugRelatedField("name_and_version", read_only=True)
 
     class Meta:
         model = Job
@@ -20,7 +20,9 @@ class JobSerialiser(SoftDeleteModelSerialiser):
                   "parameter_values",
                   "node",
                   "outputs"] + SoftDeleteModelSerialiser.base_fields
-        read_only_fields = ["error",
+        read_only_fields = ["start_time",
+                            "end_time",
+                            "error",
                             "input_values",
                             "parameter_values",
                             "node",

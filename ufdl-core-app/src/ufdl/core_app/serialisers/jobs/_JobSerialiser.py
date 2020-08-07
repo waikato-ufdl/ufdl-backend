@@ -9,6 +9,7 @@ class JobSerialiser(SoftDeleteModelSerialiser):
     # Slug fields require explicit definition
     template = serializers.SlugRelatedField("name_and_version", read_only=True)
     docker_image = serializers.SlugRelatedField("name_and_version", read_only=True)
+    outputs = serializers.SlugRelatedField("signature", read_only=True, many=True)
 
     class Meta:
         model = Job

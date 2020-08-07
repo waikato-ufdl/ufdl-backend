@@ -9,7 +9,6 @@ from ..mixins import SoftDeleteModelSerialiser
 
 class ModelSerialiser(SoftDeleteModelSerialiser):
     # Slug fields must be specified explicitly
-    framework = serializers.SlugRelatedField("name_and_version", queryset=Framework.objects)
     domain = serializers.SlugRelatedField("name", queryset=DataDomain.objects)
     licence = serializers.SlugRelatedField("name", queryset=Licence.objects)
 
@@ -18,4 +17,8 @@ class ModelSerialiser(SoftDeleteModelSerialiser):
 
     class Meta:
         model = Model
-        fields = ["pk"] + SoftDeleteModelSerialiser.base_fields
+        fields = ["pk",
+                  "framework",
+                  "domain",
+                  "licence",
+                  "data"] + SoftDeleteModelSerialiser.base_fields

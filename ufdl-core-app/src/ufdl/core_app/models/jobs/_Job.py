@@ -48,6 +48,7 @@ class Job(SoftDeleteModel):
     node = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Node",
                              on_delete=models.DO_NOTHING,
                              related_name="jobs",
-                             null=True)
+                             null=True,
+                             default=None)
 
     objects = JobQuerySet.as_manager()

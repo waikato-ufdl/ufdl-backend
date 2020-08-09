@@ -8,7 +8,33 @@ class JobOutputQuerySet(SoftDeleteQuerySet):
     """
     A query-set over job outputs.
     """
-    pass
+    def with_name(self, name: str) -> 'JobOutputQuerySet':
+        """
+        Filters the query-set to those outputs with a certain name.
+
+        :param name:    The name.
+        :return:        The filtered query-set.
+        """
+        return self.filter(name=name)
+
+    def with_type(self, type: str) -> 'JobOutputQuerySet':
+        """
+        Filters the query-set to those outputs with a certain type.
+
+        :param type:    The type.
+        :return:        The filtered query-set.
+        """
+        return self.filter(type=type)
+
+    def with_signature(self, name: str, type: str) -> 'JobOutputQuerySet':
+        """
+        Filters the query-set to those outputs with a certain name and type.
+
+        :param name:    The name.
+        :param type:    The type.
+        :return:        The filtered query-set.
+        """
+        return self.filter(name=name, type=type)
 
 
 class JobOutput(SoftDeleteModel):

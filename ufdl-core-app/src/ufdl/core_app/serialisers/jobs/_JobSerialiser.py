@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
-from ...models.nodes import DockerImage
-from ...models.jobs import JobTemplate, Job
+from ...models.jobs import Job
 from ..mixins import SoftDeleteModelSerialiser
 
 

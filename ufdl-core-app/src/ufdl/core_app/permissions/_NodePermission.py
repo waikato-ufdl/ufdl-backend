@@ -29,12 +29,12 @@ class NodePermission(BasePermission):
 
         return self.has_node_permission(user, request, view, obj)
 
-    def has_node_permission(self, node, request, view, obj) -> bool:
+    def has_node_permission(self, node_user, request, view, obj) -> bool:
         """
         Checks if the user is allowed to perform the action they are trying
         to perform.
 
-        :param node:        The node user.
+        :param node_user:   The node user.
         :param request:     The request.
         :param view:        The view.
         :param obj:         Optionally the object being operated on.

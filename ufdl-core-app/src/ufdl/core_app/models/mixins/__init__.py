@@ -8,3 +8,4 @@ from ._DeleteOnNoRemainingReferencesOnlyModel import DeleteOnNoRemainingReferenc
 from ._FileContainerModel import FileContainerModel
 from ._PublicModel import PublicModel, PublicQuerySet
 from ._SetFileModel import SetFileModel
+from ._UserRestrictedQuerySet import UserRestrictedQuerySet

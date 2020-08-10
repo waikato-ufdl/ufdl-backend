@@ -10,6 +10,8 @@ def for_user(query_set, user):
     :param user:        The user to filter the results for.
     :return:            The filtered results.
     """
+    from ..models.mixins import UserRestrictedQuerySet
+
     # Non-users can only view public models
     if not user.is_authenticated or not user.is_active:
         from ..models.mixins import PublicQuerySet
@@ -22,26 +24,23 @@ def for_user(query_set, user):
     if user.is_superuser or user.is_staff:
         return query_set.all()
 
-    # Per-model filtering
-    from ..models import Dataset, Project
-    if query_set.model is Dataset:
-        return query_set.filter(
-            models.Q(Dataset.public_Q) |
-            models.Q(project__team__in=for_user(Team.objects, user))
-        )
-
-    elif query_set.model is Project:
-        return query_set.filter(
-            team__in=for_user(Team.objects, user)
-        )
-
-    elif query_set.model is Membership:
-        return query_set.filter(
+    # Per-model filtering (teams and memberships must be done
+    # separately as they aren't controlled by this code-base)
+    if query_set.model is Membership:
+        # Users have access to their own memberships and the memberships
+        # of any teams the user is an admin for
+        query_set = query_set.filter(
             models.Q(user=user) |
             models.Q(team__in=Team.objects.user_is_admin_for(user))
         )
-
     elif query_set.model is Team:
-        return query_set.filter(
+        # Users have access to any team to which they are
+        # an active member
+        query_set = query_set.filter(
             memberships__user=user,
-            memberships__deletion_time__isnull=True)
+            memberships__deletion_time__isnull=True
+        )
+    elif isinstance(query_set, UserRestrictedQuerySet):
+        query_set = query_set.for_user(user)
+
+    return query_set

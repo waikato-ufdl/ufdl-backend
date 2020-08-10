@@ -129,7 +129,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('generation', models.CharField(max_length=32)),
-                ('compute_capability', models.CharField(max_length=8)),
+                ('min_compute_capability', models.FloatField()),
+                ('max_compute_capability', models.FloatField()),
             ],
         ),
         migrations.CreateModel(

@@ -7,4 +7,5 @@ class HardwareSerialiser(serializers.ModelSerializer):
         model = Hardware
         fields = ["pk",
                   "generation",
-                  "compute_capability"]
+                  "min_compute_capability",
+                  "max_compute_capability"]

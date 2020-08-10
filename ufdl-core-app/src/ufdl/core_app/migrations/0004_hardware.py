@@ -15,8 +15,10 @@ def add_initial_hardware(apps, schema_editor):
     hardware_model = apps.get_model(UFDLCoreAppConfig.label, "Hardware")
 
     # Add each standard hardware generation
-    for generation, compute_capability in iterate_hardware():
-        hardware = hardware_model(generation=generation, compute_capability=compute_capability)
+    for generation, min_compute_capability, max_compute_capability in iterate_hardware():
+        hardware = hardware_model(generation=generation,
+                                  min_compute_capability=float(min_compute_capability),
+                                  max_compute_capability=float(max_compute_capability))
         hardware.save()
 
 

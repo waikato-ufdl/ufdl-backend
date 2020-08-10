@@ -1,8 +1,8 @@
-generation,compute_capability
-Fermi,2.x
-Kepler,3.x
-Maxwell,5.x
-Pascal,6.x
-Volta,7.x
-Turing,7.5
-Ampere,8.0
+generation,min_compute_capability,max_compute_capability
+Fermi,2.0,3.0
+Kepler,3.0,5.0
+Maxwell,5.0,6.0
+Pascal,6.0,7.0
+Volta,7.0,7.5
+Turing,7.5,8.0
+Ampere,8.0,9.0

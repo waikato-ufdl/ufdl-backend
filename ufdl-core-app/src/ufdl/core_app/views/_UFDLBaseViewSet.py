@@ -6,6 +6,7 @@ from ..exceptions import JSONParseFailure
 from ..filter import filter_list_request
 from ..logging import get_backend_logger
 from ..permissions import IsAdminUser
+from ..signals import all_requests
 from ..util import for_user
 
 
@@ -75,6 +76,8 @@ class UFDLBaseViewSet(ModelViewSet):
 
         # Otherwise log the request
         get_backend_logger().info(self.format_request_log_message(request))
+
+        all_requests.send(self.__class__, request=request)
 
     def format_request_log_message(self, request) -> str:
         """

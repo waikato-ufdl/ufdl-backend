@@ -371,6 +371,11 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(related_name='_licence_domains_+', to='ufdl-core.Domain'),
         ),
         migrations.AddField(
+            model_name='user',
+            name='node',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='user', to='ufdl-core.Node', null=True, default=None),
+        ),
+        migrations.AddField(
             model_name='licence',
             name='limitations',
             field=models.ManyToManyField(related_name='_licence_limitations_+', to='ufdl-core.Limitation'),

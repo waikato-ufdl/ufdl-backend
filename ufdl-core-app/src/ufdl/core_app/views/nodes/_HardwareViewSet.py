@@ -1,6 +1,8 @@
+from rest_framework.permissions import AllowAny
+
 from ...models.nodes import Hardware
 from ...serialisers.nodes import HardwareSerialiser
-from ...permissions import IsAdminUser, IsAuthenticated
+from ...permissions import IsAdminUser, IsAuthenticated, IsNode
 from ..mixins import GetHardwareGenerationViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
@@ -13,5 +15,6 @@ class HardwareViewSet(GetHardwareGenerationViewSet, UFDLBaseViewSet):
 
     permission_classes = {
         "list": [IsAuthenticated],
-        "retrieve": [IsAuthenticated]
+        "retrieve": [IsAuthenticated],
+        "get_hardware_generation": [IsNode]
     }

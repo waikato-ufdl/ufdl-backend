@@ -1,4 +1,5 @@
 from ..models import User
+from ..permissions import IsSelf
 from ..serialisers import UserSerialiser
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
@@ -6,6 +7,10 @@ from ._UFDLBaseViewSet import UFDLBaseViewSet
 class UserViewSet(UFDLBaseViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerialiser
+
+    permission_classes = {
+        "retrieve": [IsSelf]
+    }
 
     def format_request_log_message(self, request) -> str:
         # Identical to UFDLBaseViewSet.format_request_log_message, but

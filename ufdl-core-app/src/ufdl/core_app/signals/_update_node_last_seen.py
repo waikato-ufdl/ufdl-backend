@@ -10,9 +10,8 @@ def update_node_last_seen(sender, **kwargs):
     """
     Updates the last-seen field of the user's node.
 
-    :param sender:
-    :param kwargs:
-    :return:
+    :param sender:  The sender of the signal (unused).
+    :param kwargs:  The signal arguments (should include a 'request' keyword).
     """
     # Get the request from the keyword arguments
     request = kwargs['request']

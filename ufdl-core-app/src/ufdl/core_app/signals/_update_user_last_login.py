@@ -10,9 +10,8 @@ def update_user_last_login(sender, **kwargs):
     """
     Updates the last-login field of the user.
 
-    :param sender:
-    :param kwargs:
-    :return:
+    :param sender:  The sender of the signal (unused).
+    :param kwargs:  The signal arguments (should include a 'request' keyword).
     """
     # Get the request from the keyword arguments
     request = kwargs['request']

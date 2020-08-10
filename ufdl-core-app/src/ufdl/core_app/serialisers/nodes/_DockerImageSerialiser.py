@@ -18,7 +18,6 @@ class DockerImageSerialiser(serializers.ModelSerializer):
                   "registry_password",
                   "cuda_version",
                   "framework",
-                  "framework_version",
                   "domain",
                   "task",
                   "min_hardware_generation",

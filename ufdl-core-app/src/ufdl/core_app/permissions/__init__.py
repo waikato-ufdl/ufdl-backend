@@ -9,4 +9,5 @@ from ._IsSelf import IsSelf
 from ._MemberHasAdminPermission import MemberHasAdminPermission
 from ._MemberHasWritePermission import MemberHasWritePermission
 from ._MemberPermission import MemberPermission
+from ._NodeOwnsJob import NodeOwnsJob
 from ._NodePermission import NodePermission

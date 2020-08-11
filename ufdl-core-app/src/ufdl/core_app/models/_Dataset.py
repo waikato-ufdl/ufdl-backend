@@ -6,6 +6,7 @@ from tarfile import TarFile, TarInfo
 from django.db import models
 
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
+from simple_django_teams.models import Team
 
 from ufdl.annotation_utils import converted_annotations_iterator
 
@@ -13,11 +14,11 @@ from wai.annotations.core.instance import Instance
 
 from ..apps import UFDLCoreAppConfig
 from ..exceptions import *
-from ..util import QueryParameterValue
-from .mixins import PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel
+from ..util import QueryParameterValue, for_user
+from .mixins import PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel, UserRestrictedQuerySet
 
 
-class DatasetQuerySet(PublicQuerySet, SoftDeleteQuerySet):
+class DatasetQuerySet(UserRestrictedQuerySet, PublicQuerySet, SoftDeleteQuerySet):
     def with_name(self, name: str):
         """
         Filters the query-set to those data-sets with a given name.
@@ -34,6 +35,14 @@ class DatasetQuerySet(PublicQuerySet, SoftDeleteQuerySet):
         :return:    The version number.
         """
         return self.aggregate(models.Max('version'))['version__max']
+
+    def for_user(self, user):
+        # Users can see all public datasets and any datasets belonging to teams
+        # the user is part of
+        return self.filter(
+            models.Q(Dataset.public_Q) |
+            models.Q(project__team__in=for_user(Team.objects, user))
+        )
 
 
 class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):

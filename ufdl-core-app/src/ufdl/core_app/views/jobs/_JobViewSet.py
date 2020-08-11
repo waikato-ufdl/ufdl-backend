@@ -1,11 +1,11 @@
 from ...models.jobs import Job
 from ...serialisers.jobs import JobSerialiser
-from ...permissions import IsAuthenticated, IsAdminUser
-from ..mixins import SoftDeleteViewSet, AddJobOutputViewSet
+from ...permissions import IsAuthenticated, IsAdminUser, NodeOwnsJob, IsNode
+from ..mixins import SoftDeleteViewSet, AddJobOutputViewSet, AcquireJobViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class JobViewSet(AddJobOutputViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
+class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerialiser
 
@@ -13,5 +13,7 @@ class JobViewSet(AddJobOutputViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
 
     permission_classes = {
         "list": [IsAuthenticated],
-        "retrieve": [IsAuthenticated]
+        "retrieve": [IsAuthenticated],
+        "add_output": [NodeOwnsJob],
+        "acquire_job": [IsNode]
     }

@@ -15,6 +15,7 @@ class UFDLRouter(routers.DefaultRouter):
 
     routes = (
             routers.DefaultRouter.routes +
+            AcquireJobViewSet.get_routes() +
             AddJobOutputViewSet.get_routes() +
             CopyableViewSet.get_routes() +
             CreateJobViewSet.get_routes() +

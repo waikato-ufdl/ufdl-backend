@@ -2,12 +2,20 @@ from django.db import models
 from simple_django_teams.mixins import TeamOwnedModel, SoftDeleteModel, SoftDeleteQuerySet
 from simple_django_teams.models import Team
 
+from .mixins import UserRestrictedQuerySet
 
-class ProjectQuerySet(SoftDeleteQuerySet):
+
+class ProjectQuerySet(UserRestrictedQuerySet, SoftDeleteQuerySet):
     """
     Custom query-set for working with groups of projects.
     """
-    pass
+    def for_user(self, user):
+        # Users can see all projects in the teams to
+        # which they are members
+        from ..util import for_user
+        return self.filter(
+            team__in=for_user(Team.objects, user)
+        )
 
 
 class Project(TeamOwnedModel, SoftDeleteModel):

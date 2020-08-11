@@ -6,24 +6,6 @@ from ..apps import UFDLCoreAppConfig
 from .docker_images import iterate_docker_images
 
 
-def validate_docker_image_values(
-        name, version, url, registry_url, registry_username, registry_password, cuda_version,
-        framework, framework_version, domain, task, min_hardware_generation, cpu
-):
-    """
-    Validates the values in the docker CSV file.
-    """
-    # Validate the cpu value
-    if cpu not in {"true", "false"}:
-        raise Exception(f"cpu value must be 'true' or 'false': got {cpu}")
-
-    # Make sure the min_hardware_generation is only missing when cpu is true
-    if min_hardware_generation == "" and cpu == "false":
-        raise Exception(f"min_hardware_generation can't be empty is cpu is false (for '{name}')")
-
-    # TODO: The rest
-
-
 def add_initial_docker_images(apps, schema_editor):
     """
     Adds the standard Docker images to the database.
@@ -41,27 +23,53 @@ def add_initial_docker_images(apps, schema_editor):
     for (name, version, url, registry_url, registry_username, registry_password, cuda_version,
          framework, framework_version, domain, task, min_hardware_generation, cpu) in iterate_docker_images():
 
-        # Validation of the CSV file values
-        validate_docker_image_values(
-            name, version, url, registry_url, registry_username, registry_password, cuda_version,
-            framework, framework_version, domain, task, min_hardware_generation, cpu
-        )
+        # Validate the cpu value
+        if cpu not in {"true", "false"}:
+            raise Exception(f"cpu value must be 'true' or 'false': got {cpu}")
+        else:
+            cpu = False if cpu == 'false' else True
+
+        # Make sure the min_hardware_generation is only missing when cpu is true
+        if min_hardware_generation == "" and cpu == "false":
+            raise Exception(f"min_hardware_generation can't be empty is cpu is false (for '{name}')")
+
+        # Set the registry username/password to null of the empty string is provided
+        if registry_username == '':
+            registry_username = None
+        if registry_password == '':
+            registry_password = None
+
+        # Make sure the CUDA version exists
+        cuda_instance = cuda_model.objects.filter(version=Decimal(cuda_version)).first()
+        if cuda_instance is None:
+            raise Exception(f"Unknown CUDA version {cuda_version}")
+
+        # Make sure the framework exists
+        framework_instance = framework_model.objects.filter(name=framework, version=framework_version).first()
+        if framework_instance is None:
+            raise Exception(f"Unknown framework {framework} v{framework_version}")
+
+        # Make sure the hardware generation exists
+        if min_hardware_generation == '':
+            min_hardware_generation_instance = None
+        else:
+            min_hardware_generation_instance = hardware_model.objects.filter(generation=min_hardware_generation).first()
+            if min_hardware_generation_instance is None:
+                raise Exception(f"Unknown hardware generation {min_hardware_generation}")
 
         docker_image = docker_image_model(
             name=name,
             version=version,
             url=url,
             registry_url=registry_url,
-            registry_username=registry_username if (registry_username != '') else None,
-            registry_password=registry_password if (registry_password != '') else None,
-            cuda_version=cuda_model.objects.filter(version=Decimal(cuda_version)).first(),
-            framework=framework_model.objects.filter(name=framework, version=framework_version).first(),
+            registry_username=registry_username,
+            registry_password=registry_password,
+            cuda_version=cuda_instance,
+            framework=framework_instance,
             domain=domain,
             task=task,
-            min_hardware_generation=(hardware_model.objects.filter(generation=min_hardware_generation).first()
-                                     if min_hardware_generation != ""
-                                     else None),
-            cpu=False if cpu == 'false' else True
+            min_hardware_generation=min_hardware_generation_instance,
+            cpu=cpu
         )
         docker_image.save()
 

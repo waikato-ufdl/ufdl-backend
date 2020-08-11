@@ -66,8 +66,10 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
                                on_delete=models.DO_NOTHING,
                                related_name="docker_images")
 
-    # The type of task the image performs
-    task = models.CharField(max_length=16)
+    # The types of task the image performs
+    tasks = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.JobType",
+                                   related_name="docker_images",
+                                   through=f"{UFDLCoreAppConfig.label}.DockerImageToJobType")
 
     # The minimum hardware generation required to run the image
     min_hardware_generation = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Hardware",

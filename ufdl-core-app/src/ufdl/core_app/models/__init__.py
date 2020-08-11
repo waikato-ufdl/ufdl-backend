@@ -13,3 +13,4 @@ from .jobs import *
 from .licences import *
 from .models import *
 from .nodes import *
+from .through import *

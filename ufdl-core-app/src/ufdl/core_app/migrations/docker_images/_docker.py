@@ -24,7 +24,7 @@ def iterate_docker_images(path: str = os.path.join(ROOT, "docker_images.csv")) -
                  - framework
                  - framework version
                  - domain
-                 - task
+                 - tasks
                  - minimum hardware generation
                  - cpu
     """
@@ -60,10 +60,20 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
     docker_image_model = apps.get_model(UFDLCoreAppConfig.label, "DockerImage")
     framework_model = apps.get_model(UFDLCoreAppConfig.label, "Framework")
     data_domain_model = apps.get_model(UFDLCoreAppConfig.label, "DataDomain")
+    job_type_model = apps.get_model(UFDLCoreAppConfig.label, "JobType")
 
     # Add each Docker image to the database
     for (name, version, url, registry_url, registry_username, registry_password, cuda_version,
-         framework, framework_version, domain, task, min_hardware_generation, cpu) in docker_image_iterator:
+         framework, framework_version, domain, tasks, min_hardware_generation, cpu) in docker_image_iterator:
+
+        # Validate the tasks
+        tasks = tasks.split(",")
+        job_types = []
+        for task in tasks:
+            job_type_instance = job_type_model.objects.filter(name=task).first()
+            if job_type_instance is None:
+                raise Exception(f"Unknown job-type '{task}'")
+            job_types.append(job_type_instance)
 
         # Validate the data-domain
         data_domain_instance = data_domain_model.objects.filter(name=domain).first()
@@ -104,6 +114,7 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
             if min_hardware_generation_instance is None:
                 raise Exception(f"Unknown hardware generation {min_hardware_generation}")
 
+        # Create the Docker image
         docker_image = docker_image_model(
             name=name,
             version=version,
@@ -114,8 +125,11 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
             cuda_version=cuda_instance,
             framework=framework_instance,
             domain=data_domain_instance,
-            task=task,
             min_hardware_generation=min_hardware_generation_instance,
             cpu=cpu
         )
         docker_image.save()
+
+        # Add the job-types
+        for job_type in job_types:
+            docker_image.tasks.add(job_type)

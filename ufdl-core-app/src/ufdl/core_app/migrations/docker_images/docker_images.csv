@@ -1,9 +1,9 @@
 name,version,url,registry_url,registry_user,registry_password,cuda_version,framework_name,framework_version,domain,types,min_hardware_generation,cpu
-tf_deepspeech,0.7.4,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/deepspeech:0.7.4,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.15,speech,"train,predict",Pascal,false
-tf_imageclass,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,classify,"train,predict",Pascal,false
-tf_imageclass_cpu,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,classify,"train,predict",,true
-tf_objdet,1.14.0_2019-08-31,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/object_detection:1.14.0_2019-08-31,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,objbdet,"train,export,predict",Pascal,false
-yolact,2020-02-11,public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp:2020-02-11,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,yolact,2020-02-11,objdet,"train,predict",Pascal,false
-yolact_slim,2020-02-11,public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp_slim:2020-02-11,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,yolact_slim,2020-02-11,objdet,"train,predict",Turing,false
-mmdetection,2020-03-01,public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.1,mmdetection,2020-03-01,objdet,"train,predict",Turing,false
-mmdetection_cuda10,2020-03-01,public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01_cuda10,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.1,mmdetection_cuda10,2020-03-01,objdet,"train,predict",Pascal,false
+tf_deepspeech,0.7.4,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/deepspeech:0.7.4,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.15,sp,"train,predict",Pascal,false
+tf_imageclass,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,ic,"train,predict",Pascal,false
+tf_imageclass_cpu,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,ic,"train,predict",,true
+tf_objdet,1.14.0_2019-08-31,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/object_detection:1.14.0_2019-08-31,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,od,"train,export,predict",Pascal,false
+yolact,2020-02-11,public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp:2020-02-11,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,yolact,2020-02-11,od,"train,predict",Pascal,false
+yolact_slim,2020-02-11,public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp_slim:2020-02-11,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,yolact_slim,2020-02-11,od,"train,predict",Turing,false
+mmdetection,2020-03-01,public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.1,mmdetection,2020-03-01,od,"train,predict",Turing,false
+mmdetection_cuda10,2020-03-01,public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01_cuda10,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.1,mmdetection_cuda10,2020-03-01,od,"train,predict",Pascal,false

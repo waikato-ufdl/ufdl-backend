@@ -62,7 +62,9 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
                                   related_name="docker_images")
 
     # The domain of the image
-    domain = models.CharField(max_length=32)
+    domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.DataDomain",
+                               on_delete=models.DO_NOTHING,
+                               related_name="docker_images")
 
     # The type of task the image performs
     task = models.CharField(max_length=16)

@@ -1,0 +1,2 @@
+name,version,url,registry_url,registry_user,registry_password,cuda_version,framework_name,framework_version,domain,types,min_hardware_generation,cpu
+tf_deepspeech,0.7.4,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/deepspeech:0.7.4,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.15,sp,"train,predict",Pascal,false

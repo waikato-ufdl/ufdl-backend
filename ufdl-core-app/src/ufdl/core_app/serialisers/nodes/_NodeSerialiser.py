@@ -1,11 +1,8 @@
 from rest_framework import serializers
-from ...models.nodes import Node, Hardware
+from ...models.nodes import Node
 
 
 class NodeSerialiser(serializers.ModelSerializer):
-    # Slug fields require explicit definition
-    hardware_generation = serializers.SlugRelatedField("generation", queryset=Hardware.objects, allow_null=True)
-
     class Meta:
         model = Node
         fields = ["pk",

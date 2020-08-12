@@ -1,16 +1,25 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
+
 from simple_django_teams.models import Team
 
+from ..models import User
 from .mixins import SoftDeleteModelSerialiser
 
 
+class MemberSerialiser(ModelSerializer):
+    """
+    Specialised serialiser for serialising the members
+    of a team.
+    """
+    class Meta:
+        model = User
+        fields = ["pk", "username"]
+
+
 class TeamSerialiser(SoftDeleteModelSerialiser):
-    # Members has to be explicitly specified to use the slug
-    members = serializers.SlugRelatedField("username",
-                                           source="active_members",
-                                           many=True,
-                                           read_only=True)
+    members = MemberSerialiser(many=True, read_only=True, source="active_members")
 
     class Meta:
         model = Team
         fields = ["pk", "name", "members"] + SoftDeleteModelSerialiser.base_fields
+        read_only_fields = ["members"]

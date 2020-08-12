@@ -2,15 +2,50 @@ import json
 
 from rest_framework import serializers
 
-from ...models.jobs import Job
+from ...models.jobs import Job, JobTemplate, JobOutput
+from ...models.nodes import DockerImage
 from ..mixins import SoftDeleteModelSerialiser
 
 
+class JobTemplateSerialiser(serializers.ModelSerializer):
+    """
+    Specialised serialiser for serialising the template on
+    which a job is based.
+    """
+    class Meta:
+        model = JobTemplate
+        fields = ["pk",
+                  "name",
+                  "version"]
+
+
+class DockerImageSerialiser(serializers.ModelSerializer):
+    """
+    Specialised serialiser for serialising the Docker image
+    used by a job.
+    """
+    class Meta:
+        model = DockerImage
+        fields = ["pk",
+                  "name",
+                  "version"]
+
+
+class JobOutputSerialiser(serializers.ModelSerializer):
+    """
+    Specialised serialiser for serialising the outputs
+    of a job.
+    """
+    class Meta:
+        model = JobOutput
+        fields = ["name",
+                  "type"]
+
+
 class JobSerialiser(SoftDeleteModelSerialiser):
-    # Slug fields require explicit definition
-    template = serializers.SlugRelatedField("name_and_version", read_only=True)
-    docker_image = serializers.SlugRelatedField("name_and_version", read_only=True)
-    outputs = serializers.SlugRelatedField("signature", read_only=True, many=True)
+    template = JobTemplateSerialiser(read_only=True)
+    docker_image = DockerImageSerialiser(read_only=True)
+    outputs = JobOutputSerialiser(many=True, read_only=True)
 
     def to_representation(self, instance):
         # Get the representation as normal
@@ -35,7 +70,9 @@ class JobSerialiser(SoftDeleteModelSerialiser):
                   "parameter_values",
                   "node",
                   "outputs"] + SoftDeleteModelSerialiser.base_fields
-        read_only_fields = ["start_time",
+        read_only_fields = ["template",
+                            "docker_image",
+                            "start_time",
                             "end_time",
                             "error",
                             "input_values",

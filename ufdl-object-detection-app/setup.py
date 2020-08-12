@@ -17,6 +17,9 @@ setup(
     package_dir={
         '': 'src'
     },
+    package_data={
+        '': ['*.csv', '*.txt']
+    },
     packages=find_namespace_packages(where='src'),
     namespace_packages=[
         "ufdl"

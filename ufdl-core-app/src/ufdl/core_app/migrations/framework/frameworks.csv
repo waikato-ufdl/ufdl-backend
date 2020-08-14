@@ -5,3 +5,4 @@ yolact,2020-02-11
 yolact_slim,2020-02-11
 mmdetection,2020-03-01
 mmdetection_cuda10,2020-03-01
+pytorch,1.2

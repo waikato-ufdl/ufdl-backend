@@ -16,7 +16,7 @@ setup(
         '': 'src'
     },
     package_data={
-        '': ['*.csv', '*.txt']
+        '': ['*.csv', '*.txt', '*.json']
     },
     packages=find_namespace_packages(where='src'),
     namespace_packages=[

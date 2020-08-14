@@ -1,3 +1,3 @@
-name,version,url,registry_url,registry_user,registry_password,cuda_version,framework_name,framework_version,domain,types,min_hardware_generation,cpu
-tf_imageclass,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,ic,"train,predict",Pascal,false
-tf_imageclass_cpu,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,ic,"train,predict",,true
+name,version,url,registry_url,registry_user,registry_password,cuda_version,framework_name,framework_version,domain,types,min_hardware_generation,cpu,license
+tf_imageclass,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,ic,"train,predict",Pascal,false,Apache 2.0
+tf_imageclass_cpu,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,ic,"train,predict",,true,Apache 2.0

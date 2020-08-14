@@ -27,6 +27,7 @@ def iterate_docker_images(path: str = os.path.join(ROOT, "docker_images.csv")) -
                  - tasks
                  - minimum hardware generation
                  - cpu
+                 - license
     """
     yield from iterate_csv_file(path)
 
@@ -64,7 +65,7 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
 
     # Add each Docker image to the database
     for (name, version, url, registry_url, registry_username, registry_password, cuda_version,
-         framework, framework_version, domain, tasks, min_hardware_generation, cpu) in docker_image_iterator:
+         framework, framework_version, domain, tasks, min_hardware_generation, cpu, license) in docker_image_iterator:
 
         # Validate the tasks
         tasks = tasks.split(",")

@@ -79,7 +79,7 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
         # Validate the data-domain
         data_domain_instance = data_domain_model.objects.filter(name=domain).first()
         if data_domain_instance is None:
-            raise Exception(f"Unknown data-domain '{cuda_version}'")
+            raise Exception(f"Unknown data-domain '{domain}'")
 
         # Validate the cpu value
         if cpu not in {"true", "false"}:

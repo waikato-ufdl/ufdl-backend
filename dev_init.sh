@@ -105,6 +105,7 @@ echo "Installing dependencies..."
 ./venv.dev/bin/pip install --upgrade setuptools
 ./venv.dev/bin/pip install Cython
 ./venv.dev/bin/pip install numpy
+./venv.dev/bin/pip install "opencv-python<4.2.0"
 # check for nvidia-smi and install GPU version
 if [ -f "/usr/bin/nvidia-smi" ]
 then

@@ -288,7 +288,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('model_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Model')),
                 ('url', models.CharField(max_length=200)),
-                ('description', models.CharField(max_length=200)),
+                ('description', models.CharField(max_length=200, blank=True)),
                 ('name', models.CharField(max_length=64)),
             ],
             options={

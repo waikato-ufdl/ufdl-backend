@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Union
 
 from django.db import models
 
@@ -11,7 +11,7 @@ class SetFileModel(models.Model):
     class Meta:
         abstract = True
 
-    def set_file(self, data: Optional[bytes]):
+    def set_file(self, data: Union[None, str, bytes]):
         """
         Sets the file for the model to the given data.
 

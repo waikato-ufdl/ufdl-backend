@@ -32,5 +32,6 @@ setup(
         "djangorestframework>=3.10.3,<4",
         "simple-django-teams==0.0.5",
         "ufdl.json-messages==0.0.1"
+        "requests-file>=1.5,<1.6"
     ]
 )

@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Union
 
 from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet
@@ -37,7 +37,7 @@ class Model(SetFileModel, AsFileModel, SoftDeleteModel):
                                 related_name="models")
 
     # The data of the model
-    data = models.ForeignKey(f"{UFDLCoreAppConfig.label}.File",
+    data = models.ForeignKey(f"{UFDLCoreAppConfig.label}.NamedFile",
                              on_delete=models.DO_NOTHING,
                              related_name="+",
                              null=True,
@@ -61,9 +61,9 @@ class Model(SetFileModel, AsFileModel, SoftDeleteModel):
     def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
         return self.data.get_data() if self.data is not None else b''
 
-    def set_file(self, data: Optional[bytes]):
+    def set_file(self, data: Union[None, str, bytes]):
         # Local import to avoid dependency cycles
-        from ..files import File
+        from ..files import NamedFile
 
         # Get the current file
         current = self.data
@@ -73,7 +73,7 @@ class Model(SetFileModel, AsFileModel, SoftDeleteModel):
             current.delete()
 
         # Set the new file to the given data
-        self.data = File.get_reference_from_backend(data) if data is not None else None
+        self.data = NamedFile.get_association("model.data", data) if data is not None else None
 
         # Save
-        self.save(update_fields="data")
+        self.save(update_fields=("data",))

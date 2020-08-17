@@ -1,5 +1,5 @@
 import os
-from typing import Iterator
+from typing import Iterator, Union
 
 from django.db import models
 
@@ -25,12 +25,12 @@ class FileContainerModel(models.Model):
         """
         return (file.filename for file in self.files.all())
 
-    def add_file(self, filename: str, data: bytes) -> 'NamedFile':
+    def add_file(self, filename: str, data: Union[bytes, str]) -> 'NamedFile':
         """
         Adds a file to the container.
 
         :param filename:    The filename to save the file under.
-        :param data:        The file data.
+        :param data:        The file data, or a canonical source to the data.
         :return:            The file association.
         """
         # Validate the filename

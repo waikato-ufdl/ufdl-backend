@@ -333,7 +333,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='namedfile',
             name='file',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.File'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.File', null=True, default=None),
+        ),
+        migrations.AddField(
+            model_name='namedfile',
+            name='canonical_source',
+            field=models.CharField(max_length=256, null=True, default=None),
         ),
         migrations.AddField(
             model_name='namedfile',
@@ -348,7 +353,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='model',
             name='data',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.File'),
+            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.NamedFile'),
         ),
         migrations.AddField(
             model_name='model',
@@ -548,7 +553,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='namedfile',
-            constraint=models.UniqueConstraint(fields=('name', 'file'), name='unique_filename_file_pairs'),
+            constraint=models.UniqueConstraint(fields=('name', 'file'), name='unique_filename_file_pairs', condition=models.Q(canonical_source__isnull=True)),
+        ),
+        migrations.AddConstraint(
+            model_name='namedfile',
+            constraint=models.UniqueConstraint(fields=('name', 'canonical_source'), name='unique_filename_file_pairs_2', condition=models.Q(canonical_source__isnull=False)),
         ),
         migrations.AddConstraint(
             model_name='licence',

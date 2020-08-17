@@ -302,7 +302,7 @@ class Migration(migrations.Migration):
                 ('creation_time', models.DateTimeField(auto_now_add=True)),
                 ('deletion_time', models.DateTimeField(default=None, editable=False, null=True)),
                 ('name', models.CharField(max_length=200)),
-                ('creator', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('creator', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL, null=True)),
                 ('team', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='projects', to='simple_django_teams.Team')),
             ],
             options={
@@ -343,7 +343,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='model',
             name='creator',
-            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL, null=True),
         ),
         migrations.AddField(
             model_name='model',
@@ -397,7 +397,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='jobtemplate',
             name='creator',
-            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL, null=True),
         ),
         migrations.AddField(
             model_name='jobtemplate',
@@ -417,7 +417,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='joboutput',
             name='creator',
-            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL, null=True),
         ),
         migrations.AddField(
             model_name='joboutput',
@@ -432,7 +432,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='job',
             name='creator',
-            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL, null=True),
         ),
         migrations.AddField(
             model_name='job',
@@ -517,7 +517,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dataset',
             name='creator',
-            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL, null=True),
         ),
         migrations.AddField(
             model_name='dataset',

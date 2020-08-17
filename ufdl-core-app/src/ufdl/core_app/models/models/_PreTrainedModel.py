@@ -20,4 +20,7 @@ class PreTrainedModel(Model):
     # The description of the model
     description = models.CharField(max_length=200)
 
+    # A nickname for the model
+    name = models.CharField(max_length=64)
+
     objects = PreTrainedModelQuerySet.as_manager()

@@ -5,4 +5,4 @@ from ._ModelSerialiser import ModelSerialiser
 class PreTrainedModelSerialiser(ModelSerialiser):
     class Meta(ModelSerialiser.Meta):
         model = PreTrainedModel
-        fields = ["url", "description"] + ModelSerialiser.Meta.fields
+        fields = ["url", "description", "name"] + ModelSerialiser.Meta.fields

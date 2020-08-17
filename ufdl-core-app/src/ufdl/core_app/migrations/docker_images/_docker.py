@@ -62,10 +62,16 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
     framework_model = apps.get_model(UFDLCoreAppConfig.label, "Framework")
     data_domain_model = apps.get_model(UFDLCoreAppConfig.label, "DataDomain")
     job_type_model = apps.get_model(UFDLCoreAppConfig.label, "JobType")
+    licence_model = apps.get_model(UFDLCoreAppConfig.label, "Licence")
 
     # Add each Docker image to the database
     for (name, version, url, registry_url, registry_username, registry_password, cuda_version,
          framework, framework_version, domain, tasks, min_hardware_generation, cpu, license) in docker_image_iterator:
+
+        # Validate the licence
+        licence_instance = licence_model.objects.filter(name=license).first()
+        if licence_instance is None:
+            raise Exception(f"Unknown licence '{license}'")
 
         # Validate the tasks
         tasks = tasks.split(",")
@@ -127,7 +133,8 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
             framework=framework_instance,
             domain=data_domain_instance,
             min_hardware_generation=min_hardware_generation_instance,
-            cpu=cpu
+            cpu=cpu,
+            licence=licence_instance
         )
         docker_image.save()
 

@@ -421,6 +421,11 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl-core.JobType'),
         ),
         migrations.AddField(
+            model_name='jobtemplate',
+            name='licence',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl-core.Licence'),
+        ),
+        migrations.AddField(
             model_name='joboutput',
             name='creator',
             field=models.ForeignKey(editable=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to=settings.AUTH_USER_MODEL, null=True),
@@ -514,6 +519,11 @@ class Migration(migrations.Migration):
             model_name='dockerimage',
             name='min_hardware_generation',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Hardware'),
+        ),
+        migrations.AddField(
+            model_name='dockerimage',
+            name='licence',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl-core.Licence'),
         ),
         migrations.AddField(
             model_name='dockerimage',

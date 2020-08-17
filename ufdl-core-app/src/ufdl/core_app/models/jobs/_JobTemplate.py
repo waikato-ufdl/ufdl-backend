@@ -50,6 +50,11 @@ class JobTemplate(SoftDeleteModel):
     # The body of the job template itself (interpreted by the Executor class)
     body = models.TextField()
 
+    # The licence type for this job template
+    licence = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Licence",
+                                on_delete=models.DO_NOTHING,
+                                related_name="job_templates")
+
     @property
     def name_and_version(self) -> str:
         return f"{self.name} v{self.version}"

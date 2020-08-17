@@ -49,4 +49,5 @@ class JobTemplateSerialiser(SoftDeleteModelSerialiser):
                   "required_packages",
                   "body",
                   "inputs",
-                  "parameters"] + SoftDeleteModelSerialiser.base_fields
+                  "parameters",
+                  "licence"] + SoftDeleteModelSerialiser.base_fields

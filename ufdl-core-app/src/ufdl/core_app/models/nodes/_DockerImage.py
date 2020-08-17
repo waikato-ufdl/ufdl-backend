@@ -80,6 +80,11 @@ class DockerImage(DeleteOnNoRemainingReferencesOnlyModel):
     # Whether the Docker image can run on a CPU-only machine (no GPU)
     cpu = models.BooleanField(default=False)
 
+    # The licence type for this Docker image
+    licence = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Licence",
+                                on_delete=models.DO_NOTHING,
+                                related_name="docker_images")
+
     @property
     def name_and_version(self) -> str:
         return f"{self.name} v{self.version}"

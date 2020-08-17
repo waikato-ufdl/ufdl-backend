@@ -30,6 +30,7 @@ setup(
         "django-cors-headers>=3.2.1,<4",
         "ufdl-core-app",
         "ufdl-image-classification-app",
-        "ufdl-object-detection-app"
+        "ufdl-object-detection-app",
+        "ufdl-speech-app",
     ]
 )

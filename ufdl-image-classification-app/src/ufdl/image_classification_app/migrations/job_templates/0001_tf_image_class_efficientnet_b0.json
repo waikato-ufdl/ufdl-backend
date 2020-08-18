@@ -10,13 +10,29 @@
   "required_packages": "",
   "inputs":
   [
-    "data|dataset|to-subdir"
+    {
+      "name": "data",
+      "type": "dataset",
+      "options": "to-subdir"
+    }
   ],
   "parameters":
   [
-    "steps|int|50000",
-    "model|str|https://tfhub.dev/google/efficientnet/b0/feature-vector/1",
-    "generate-stats|bool|false"
+    {
+      "name": "steps",
+      "type": "int",
+      "default": "50000"
+    },
+    {
+      "name": "model",
+      "type": "str",
+      "default": "https://tfhub.dev/google/efficientnet/b0/feature-vector/1"
+    },
+    {
+      "name": "generate-stats",
+      "type": "bool",
+      "default": "false"
+    }
   ],
   "body": "tfic-retrain --image_dir /data --image_lists_dir /output --output_graph /output/graph.pb --output_labels /output/labels.txt --output_info /output/info.json --checkpoint_path /output/retrain_checkpoint --saved_model_dir /output/saved_model --bottleneck_dir /output/bottleneck --intermediate_output_graphs_dir /output/intermediate_graph --summaries_dir /output/retrain_logs --training_steps ${steps} --tfhub_cache_dir /models --tfhub_module ${model}"
 }

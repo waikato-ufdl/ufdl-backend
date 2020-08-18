@@ -1,0 +1,22 @@
+{
+  "name": "tf_image_class_efficientnet_b0",
+  "version": 1,
+  "scope": "public",
+  "domain": "ic",
+  "framework": "tensorflow|1.14",
+  "licence": "Apache 2.0",
+  "job_type": "train",
+  "executor_class": "ufdl.joblauncher.classify.ImageClassificationTrain_TF_1_14",
+  "required_packages": "",
+  "inputs":
+  [
+    "data|dataset|to-subdir"
+  ],
+  "parameters":
+  [
+    "steps|int|50000",
+    "model|model|https://tfhub.dev/google/efficientnet/b0/feature-vector/1",
+    "generate-stats|bool|false"
+  ],
+  "body": "tfic-retrain --image_dir /data --image_lists_dir /output --output_graph /output/graph.pb --output_labels /output/labels.txt --output_info /output/info.json --checkpoint_path /output/retrain_checkpoint --saved_model_dir /output/saved_model --bottleneck_dir /output/bottleneck --intermediate_output_graphs_dir /output/intermediate_graph --summaries_dir /output/retrain_logs --training_steps ${steps} --tfhub_cache_dir /models --tfhub_module ${model}"
+}

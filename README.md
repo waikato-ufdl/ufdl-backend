@@ -31,3 +31,16 @@ User-Friendly Deep Learning (UFDL) - backend system.
 * `dev_start.sh` - launches the developer instance from the `venv.dev` virtual
   environment on [http://localhost:8000](http://localhost:8000), unless the IP
   address and port to bind to is provided as argument (e.g., `0.0.0.0:8000`)
+
+
+## Job templates
+
+* The migrations look for `.json` files in the `migrations/job_templates` directory.
+* Use the [template_to_json.py](ufdl/core_app/migrations/job_templates/raw/template_to_json.py)
+  script to convert any text file into dummy JSON output (`body` element) for copy/pasting into an
+  actual template.
+* Compound fields get split on the `|`:
+
+  * framework: `name|version`
+  * input: `name|type|options`
+  * parameter: `name|type|default`

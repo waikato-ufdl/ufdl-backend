@@ -44,3 +44,14 @@ User-Friendly Deep Learning (UFDL) - backend system.
   * framework: `name|version`
   * input: `name|type|options`
   * parameter: `name|type|default`
+  
+* Currently supported types for compound fields `input` and `parameter`:
+  
+  * bool
+  * int
+  * float
+  * str
+  * model
+  * dataset
+
+  

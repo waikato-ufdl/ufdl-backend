@@ -13,7 +13,8 @@
     {
       "name": "data",
       "type": "dataset",
-      "options": "to-subdir"
+      "options": "to-subdir",
+      "help": "The dataset to use for building the model."
     }
   ],
   "parameters":
@@ -21,17 +22,20 @@
     {
       "name": "steps",
       "type": "int",
-      "default": "50000"
+      "default": "50000",
+      "help": "The number of training steps to perform."
     },
     {
       "name": "model",
       "type": "str",
-      "default": "https://tfhub.dev/google/efficientnet/b0/feature-vector/1"
+      "default": "https://tfhub.dev/google/efficientnet/b0/feature-vector/1",
+      "help": "The pretrained model to download and use as basis; see more at https://tfhub.dev/s?module-type=image-feature-vector"
     },
     {
       "name": "generate-stats",
       "type": "bool",
-      "default": "false"
+      "default": "false",
+      "help": "Whether to generate statistics in JSON format for the train/test/validation splits."
     }
   ],
   "body": "tfic-retrain --image_dir /data --image_lists_dir /output --output_graph /output/graph.pb --output_labels /output/labels.txt --output_info /output/info.json --checkpoint_path /output/retrain_checkpoint --saved_model_dir /output/saved_model --bottleneck_dir /output/bottleneck --intermediate_output_graphs_dir /output/intermediate_graph --summaries_dir /output/retrain_logs --training_steps ${steps} --tfhub_cache_dir /models --tfhub_module ${model}"

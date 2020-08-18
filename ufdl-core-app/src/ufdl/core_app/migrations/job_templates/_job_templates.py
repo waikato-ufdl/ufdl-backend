@@ -93,40 +93,20 @@ def add_initial_job_templates(apps, schema_editor, job_template_iterator: Iterat
         job_template_instance.save()
 
         # Add the inputs
-        for input in job_template.inputs:
-            add_receiver_model(job_template_instance, input_model, input, "name", "type", "options")
+        for input_spec in job_template.inputs:
+            input_model(template=job_template_instance,
+                        name=input_spec.name,
+                        type=input_spec.type,
+                        options=input_spec.options,
+                        help=input_spec.help).save()
 
         # Add the parameters
-        for parameter in job_template.parameters:
-            add_receiver_model(job_template_instance, parameter_model, parameter, "name", "type", "default")
-
-
-def add_receiver_model(job_template, model, spec: str, *fields: str):
-    """
-    Adds an input/parameter to the job template.
-
-    :param job_template:    The job template.
-    :param model:           The model to add.
-    :param spec:            The specification of the input/parameter.
-    :param fields:          The initialiser fields of the model.
-    """
-    # Get the name of the model
-    model_name = model._meta.model_name
-
-    # Split the specification
-    parts = split_multipart_field(spec)
-
-    # Make sure enough parts were specified
-    if len(parts) < 2:
-        raise Exception(f"Couldn't split {model_name} '{spec}' into {', '.join(fields)}"
-                        f" (separate with |)")
-
-    # Apply the parts as arguments to the specified fields
-    kwargs = {field: part for field, part in zip(fields, parts)}
-
-    # Create the input/parameter
-    instance = model(template=job_template, **kwargs)
-    instance.save()
+        for parameter_spec in job_template.parameters:
+            parameter_model(template=job_template_instance,
+                            name=parameter_spec.name,
+                            type=parameter_spec.type,
+                            default=parameter_spec.default,
+                            help=parameter_spec.help).save()
 
 
 def split_multipart_field(field: str) -> List[str]:

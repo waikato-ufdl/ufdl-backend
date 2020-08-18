@@ -19,13 +19,37 @@ Example JSON structure:
   "body": "{}",
   "licence": "Apache 2.0",
   "inputs": [
-    "input1|str|my_options",
-    "input2|dataset"
+    {
+      "name": "input1",
+      "type": "str",
+      "options": "my_options",
+      "help": "The first input"
+    },
+    {
+      "name": "input2",
+      "type": "dataset",
+      "help": "The second input"
+    }
   ],
   "parameters": [
-    "parameter1|int|42",
-    "parameter2|str|this is not a test (yes it is)",
-    "parameter3|bool|False"
+    {
+      "name": "parameter1",
+      "type": "int",
+      "default": "42",
+      "help": "The first parameter"
+    },
+    {
+      "name": "parameter2",
+      "type": "str",
+      "default": "this is not a test (yes it is)",
+      "help": "The second parameter"
+    },
+    {
+      "name": "parameter3",
+      "type": "bool",
+      "default": "False",
+      "help": "The third parameter"
+    }
   ]
 }
 ```

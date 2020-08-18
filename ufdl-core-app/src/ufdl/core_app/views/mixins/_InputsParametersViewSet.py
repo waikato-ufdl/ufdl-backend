@@ -6,6 +6,8 @@ from rest_framework.response import Response
 
 from ufdl.json.core.jobs import InputSpec, ParameterSpec
 
+from wai.json.object import Absent
+
 from ...exceptions import JSONParseFailure, BadName
 from ...models.jobs import JobTemplate, Input, Parameter
 from ...serialisers.jobs import InputSerialiser, ParameterSerialiser
@@ -64,12 +66,15 @@ class InputsParametersViewSet(RoutedViewSet):
 
         # If it doesn't exist, create it
         if existing is None:
-            existing = Input(template=job_template, name=name, type=spec.type, options=spec.options)
+            existing = Input(template=job_template, name=name, type=spec.type, options=spec.options,
+                             help=spec.help if spec.help is not Absent else "")
 
         # If it does exist, update it
         else:
             existing.type = spec.type
             existing.options = spec.options
+            if spec.help is not Absent:
+                existing.help = spec.help
 
         # Save
         existing.save()
@@ -120,12 +125,15 @@ class InputsParametersViewSet(RoutedViewSet):
 
         # If it doesn't exist, create it
         if existing is None:
-            existing = Parameter(template=job_template, name=name, type=spec.type, default=spec.default)
+            existing = Parameter(template=job_template, name=name, type=spec.type, default=spec.default,
+                                 help=spec.help if spec.help is not Absent else "")
 
         # If it does exist, update it
         else:
             existing.type = spec.type
             existing.default = spec.default
+            if spec.help is not Absent:
+                existing.help = spec.help
 
         # Save
         existing.save()

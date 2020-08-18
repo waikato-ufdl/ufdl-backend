@@ -29,6 +29,9 @@ class Input(DeleteOnNoRemainingReferencesOnlyModel):
     # The default value of the parameter
     options = models.TextField(blank=True, default="")
 
+    # Descriptive help text for user interfaces
+    help = models.TextField(blank=True, default="")
+
     @property
     def signature(self) -> str:
         return f"{self.name} : {self.type}" + f" ({self.options})" if self.options != "" else ""

@@ -9,4 +9,5 @@ class ParameterSerialiser(serializers.ModelSerializer):
         fields = ["pk",
                   "name",
                   "type",
-                  "default"]
+                  "default",
+                  "help"]

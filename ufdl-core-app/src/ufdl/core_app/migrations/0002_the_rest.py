@@ -149,6 +149,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=32)),
                 ('type', models.CharField(max_length=32)),
                 ('options', models.TextField(blank=True, default='')),
+                ('help', models.TextField(blank=True, default='')),
             ],
         ),
         migrations.CreateModel(
@@ -268,6 +269,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=32)),
                 ('type', models.CharField(max_length=32)),
                 ('default', models.TextField()),
+                ('help', models.TextField(blank=True, default="")),
             ],
         ),
         migrations.CreateModel(

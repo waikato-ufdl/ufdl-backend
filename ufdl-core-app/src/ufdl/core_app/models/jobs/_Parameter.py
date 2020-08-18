@@ -29,6 +29,9 @@ class Parameter(DeleteOnNoRemainingReferencesOnlyModel):
     # The default value of the parameter
     default = models.TextField()
 
+    # Descriptive help text for user interfaces
+    help = models.TextField(blank=True, default="")
+
     @property
     def signature(self) -> str:
         return f"{self.name} : {self.type} = '{self.default}'"

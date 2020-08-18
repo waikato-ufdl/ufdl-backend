@@ -9,4 +9,5 @@ class InputSerialiser(serializers.ModelSerializer):
         fields = ["pk",
                   "name",
                   "type",
-                  "options"]
+                  "options",
+                  "help"]

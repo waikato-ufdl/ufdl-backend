@@ -14,7 +14,8 @@ class InputSerialiser(serializers.ModelSerializer):
         model = Input
         fields = ["name",
                   "type",
-                  "options"]
+                  "options",
+                  "help"]
 
 
 class ParameterSerialiser(serializers.ModelSerializer):
@@ -26,7 +27,8 @@ class ParameterSerialiser(serializers.ModelSerializer):
         model = Parameter
         fields = ["name",
                   "type",
-                  "default"]
+                  "default",
+                  "help"]
 
 
 class JobTemplateSerialiser(SoftDeleteModelSerialiser):

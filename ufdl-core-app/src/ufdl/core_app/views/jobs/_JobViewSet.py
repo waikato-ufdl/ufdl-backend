@@ -15,5 +15,7 @@ class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDL
         "list": [IsAuthenticated],
         "retrieve": [IsAuthenticated],
         "add_output": [NodeOwnsJob],
-        "acquire_job": [IsNode]
+        "acquire_job": [IsNode],
+        "start_job": [NodeOwnsJob],
+        "finish_job": [NodeOwnsJob]
     }

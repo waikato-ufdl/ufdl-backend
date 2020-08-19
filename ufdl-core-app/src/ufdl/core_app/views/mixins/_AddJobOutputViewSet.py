@@ -5,7 +5,7 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from ...exceptions import BadName
+from ...exceptions import BadName, JobNotStarted, JobFinished
 from ...models.files import File
 from ...models.jobs import Job, JobOutput
 from ...renderers import BinaryFileRenderer
@@ -61,6 +61,14 @@ class AddJobOutputViewSet(RoutedViewSet):
         """
         # Get the job the output is being added to
         job = self.get_object_of_type(Job)
+
+        # Make sure the job has been started
+        if not job.is_started:
+            raise JobNotStarted(self.action)
+
+        # Make sure the job isn't already finished
+        if job.is_finished:
+            raise JobFinished(self.action)
 
         # Make sure the job doesn't already have an output by this name
         if job.outputs.filter(name=name).exists():

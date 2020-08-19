@@ -1,4 +1,8 @@
+from typing import Optional
+
 from django.db import models
+from django.utils.timezone import now
+
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet
 
 from ...apps import UFDLCoreAppConfig
@@ -52,3 +56,41 @@ class Job(SoftDeleteModel):
                              default=None)
 
     objects = JobQuerySet.as_manager()
+
+    @property
+    def is_acquired(self) -> bool:
+        """
+        Whether this job has already been acquired by a node.
+        """
+        return self.node is not None
+
+    @property
+    def is_started(self) -> bool:
+        """
+        Whether the job has been started.
+        """
+        return self.start_time is not None
+
+    @property
+    def is_finished(self) -> bool:
+        """
+        Whether the job is already finished.
+        """
+        return self.end_time is not None
+
+    def start(self):
+        """
+        Starts the job.
+        """
+        self.start_time = now()
+        self.save(update_fields=["start_time"])
+
+    def finish(self, error: Optional[str] = None):
+        """
+        Finishes the job.
+
+        :param error:   Any error that occurred while running the job.
+        """
+        self.end_time = now()
+        self.error = error
+        self.save(update_fields=["end_time", "error"])

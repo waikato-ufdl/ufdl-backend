@@ -539,6 +539,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='dataset',
+            name='domain',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl-core.DataDomain', null=True, editable=False),
+        ),
+        migrations.AddField(
+            model_name='dataset',
             name='files',
             field=models.ManyToManyField(related_name='_dataset_files_+', to='ufdl-core.FileReference'),
         ),

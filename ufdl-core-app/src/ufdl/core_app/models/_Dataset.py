@@ -74,6 +74,13 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
     # Unstructured data (use is determined by the type of dataset)
     unstructured = models.TextField()
 
+    # The data-domain the dataset is in
+    domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.DataDomain",
+                               on_delete=models.DO_NOTHING,
+                               related_name="datasets",
+                               null=True,
+                               editable=False)
+
     objects = DatasetQuerySet.as_manager()
 
     file_formats = {"zip", "tar.gz"}
@@ -85,6 +92,13 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
                                     fields=["name", "version", "project"],
                                     condition=SoftDeleteModel.active_Q)
         ]
+
+    @classmethod
+    def domain_code(cls) -> Optional[str]:
+        """
+        Gets the domain-code for this type of data-set.
+        """
+        return None
 
     def copy(self, *, creator=None, new_name=None, **kwargs) -> 'Dataset':
         """

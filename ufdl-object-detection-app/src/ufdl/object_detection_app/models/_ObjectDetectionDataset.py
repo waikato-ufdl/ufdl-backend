@@ -27,6 +27,10 @@ class ObjectDetectionDataset(Dataset):
         # Make sure the unstructured data is valid
         AnnotationsFile.validate_json_string(self.unstructured)
 
+    @classmethod
+    def domain_code(cls) -> str:
+        return "od"
+
     def delete_file(self, filename: str):
         # Delete the file as usual
         file = super().delete_file(filename)

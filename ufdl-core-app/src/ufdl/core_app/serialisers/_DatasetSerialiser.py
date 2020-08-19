@@ -7,6 +7,7 @@ from .mixins import TeamOwnedModelSerialiser, SoftDeleteModelSerialiser
 class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
     # Files has to be explicitly specified to use the slug
     files = serializers.SlugRelatedField("filename", many=True, read_only=True)
+    domain = serializers.SlugRelatedField("name", read_only=True)
 
     class Meta:
         model = Dataset
@@ -19,6 +20,7 @@ class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
                   "licence",
                   "is_public",
                   "files",
+                  "domain",
                   "tags"] + SoftDeleteModelSerialiser.base_fields
         read_only_fields = ["files"]
         extra_kwargs = {

@@ -29,6 +29,8 @@ def generate_q_from_expression(expression: FilterExpression) -> Q:
         return generate_q_from_contains(expression)
     elif isinstance(expression, Exact):
         return generate_q_from_exact(expression)
+    elif isinstance(expression, IsNull):
+        return generate_q_from_isnull(expression)
     elif isinstance(expression, And):
         return generate_q_from_and(expression)
     elif isinstance(expression, Or):
@@ -66,6 +68,23 @@ def generate_q_from_exact(expression: Exact) -> Q:
 
     # Create the Q object
     q = Q(**{keyword: expression.value})
+
+    # Handle negation and return
+    return handle_negation(expression, q)
+
+
+def generate_q_from_isnull(expression: IsNull) -> Q:
+    """
+    Generates a Q object from an 'isnull' expression.
+
+    :param expression:  The 'isnull' expression.
+    :return:            The Q filter object.
+    """
+    # Generate the keyword expected by the Q constructor
+    keyword = expression.field + "__isnull"
+
+    # Create the Q object
+    q = Q(**{keyword: True})
 
     # Handle negation and return
     return handle_negation(expression, q)

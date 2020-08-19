@@ -24,6 +24,11 @@ def dataset_domains(sender, **kwargs):
     if not isinstance(instance, Dataset):
         return
 
+    # If this is not initial creation of the object (i.e. it is loaded from the database)
+    # then abort
+    if instance.pk is not None:
+        return
+
     # Get the specified default value for the domain from the sub-type
     domain_code: Optional[str] = instance.domain_code()
 

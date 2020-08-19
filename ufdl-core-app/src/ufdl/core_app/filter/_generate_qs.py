@@ -31,12 +31,34 @@ def generate_q_from_expression(expression: FilterExpression) -> Q:
         return generate_q_from_exact(expression)
     elif isinstance(expression, IsNull):
         return generate_q_from_isnull(expression)
+    elif isinstance(expression, Compare):
+        return generate_q_from_compare(expression)
     elif isinstance(expression, And):
         return generate_q_from_and(expression)
     elif isinstance(expression, Or):
         return generate_q_from_or(expression)
     else:
         raise Exception(f"Unsupported filter expression type: {expression.__class__.__name__}")
+
+
+def generate_q_from_compare(expression: Compare) -> Q:
+    """
+    Generates a Q object from a 'compare' expression.
+
+    :param expression:  The 'compare' expression.
+    :return:            The Q filter object.
+    """
+    # Generate the keyword expected by the Q constructor
+    keyword = expression.field + ("__lt" if expression.operator == "<"
+                                  else "__gt" if expression.operator == ">"
+                                  else "__lte" if expression.operator == "<="
+                                  else "__gte")
+
+    # Create the Q object
+    q = Q(**{keyword: expression.value})
+
+    # Handle negation and return
+    return handle_negation(expression, q)
 
 
 def generate_q_from_contains(expression: Contains) -> Q:

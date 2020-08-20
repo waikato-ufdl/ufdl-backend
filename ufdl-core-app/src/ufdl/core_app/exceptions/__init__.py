@@ -12,5 +12,6 @@ from ._JobNotStarted import JobNotStarted
 from ._JobStarted import JobStarted
 from ._JSONParseFailure import JSONParseFailure
 from ._MissingParameter import MissingParameter
+from ._NodeAlreadyWorking import NodeAlreadyWorking
 from ._PermissionsUndefined import PermissionsUndefined
 from ._UnknownParameters import UnknownParameters

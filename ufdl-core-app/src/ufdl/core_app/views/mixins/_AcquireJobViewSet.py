@@ -8,7 +8,7 @@ from ufdl.json.core.jobs import StartJobSpec, FinishJobSpec
 
 from wai.json.object import Absent
 
-from ...exceptions import JSONParseFailure, JobNotStarted, JobFinished, JobStarted, JobAcquired
+from ...exceptions import *
 from ...models import User
 from ...models.jobs import Job
 from ...serialisers.jobs import JobSerialiser
@@ -89,11 +89,26 @@ class AcquireJobViewSet(RoutedViewSet):
         if job.is_started:
             raise JobStarted(self.action)
 
+        # Make sure the user acquiring the job is a node
+        if not isinstance(request.user, User) or request.user.node is None:
+            raise Exception(f"Non-node user attempted to start job: {request.user}")
+
+        # Get the node reference
+        node = request.user.node
+
+        # Make sure the node isn't already working a job
+        if node.is_working_job:
+            raise NodeAlreadyWorking()
+
         # Parse the start-job specification (currently unused)
         start_job_spec = JSONParseFailure.attempt(dict(request.data), StartJobSpec)
 
         # Start the job
         job.start()
+
+        # Set the node's current job
+        node.current_job = job
+        node.save(update_fields=["current_job"])
 
         return Response(JobSerialiser().to_representation(job))
 
@@ -116,11 +131,22 @@ class AcquireJobViewSet(RoutedViewSet):
         if job.is_finished:
             raise JobFinished(self.action)
 
+        # Make sure the user acquiring the job is a node
+        if not isinstance(request.user, User) or request.user.node is None:
+            raise Exception(f"Non-node user attempted to start job: {request.user}")
+
+        # Get the node reference
+        node = request.user.node
+
         # Parse the finish-job specification
         finish_job_spec = JSONParseFailure.attempt(dict(request.data), FinishJobSpec)
 
         # Finish the job
         error = finish_job_spec.error
         job.finish(error if error is not Absent else None)
+
+        # Clear the current job from the node
+        node.current_job = None
+        node.save(update_fields=["current_job"])
 
         return Response(JobSerialiser().to_representation(job))

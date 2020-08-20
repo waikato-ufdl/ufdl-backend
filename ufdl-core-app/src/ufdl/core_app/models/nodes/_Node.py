@@ -49,5 +49,12 @@ class Node(models.Model):
 
     objects = NodeQuerySet.as_manager()
 
+    @property
+    def is_working_job(self) -> bool:
+        """
+        Whether this node is currently working a job.
+        """
+        return self.current_job is not None
+
     def delete(self, using=None, keep_parents=False):
         raise Exception("Can't delete nodes")

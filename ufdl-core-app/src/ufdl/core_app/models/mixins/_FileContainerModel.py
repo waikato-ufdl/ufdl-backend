@@ -1,5 +1,5 @@
 import os
-from typing import Iterator, Union
+from typing import Iterator, Union, Optional
 
 from django.db import models
 
@@ -75,19 +75,20 @@ class FileContainerModel(models.Model):
 
         return file_exists
 
-    def get_file_reference(self, filename: str) -> 'FileReference':
+    def get_file_reference(self, filename: str, throw: bool = False) -> Optional['FileReference']:
         """
         Gets a reference to the file with the given filename
         from our files.
 
         :param filename:    The filename.
+        :param throw:       Whether to raise a BadName error if it doesn't exist.
         :return:            The file reference.
         """
         # Get the (possible) file reference with the given name
         file = self.files.all().with_filename(filename).first()  # TODO: Remove unnecessary? all() call
 
         # If the file doesn't exist, raise an error
-        if file is None:
+        if file is None and throw:
             raise BadName(filename, "Doesn't exist")
 
         return file
@@ -99,7 +100,7 @@ class FileContainerModel(models.Model):
         :param filename:    The filename.
         :return:            The named file record.
         """
-        return self.get_file_reference(filename).file
+        return self.get_file_reference(filename, True).file
 
     def get_file(self, filename: str) -> bytes:
         """
@@ -118,7 +119,7 @@ class FileContainerModel(models.Model):
         :return:            The file association.
         """
         # Get the (possible) reference to the file with the given name
-        reference = self.get_file_reference(filename)
+        reference = self.get_file_reference(filename, True)
 
         # Delete the association
         self.files.remove(reference)
@@ -135,7 +136,7 @@ class FileContainerModel(models.Model):
         :param filename:    The name of the file to get the meta-data for.
         :return:            The meta-data.
         """
-        return self.get_file_reference(filename).metadata
+        return self.get_file_reference(filename, True).metadata
 
     def set_file_metadata(self, filename: str, metadata: str):
         """
@@ -145,7 +146,7 @@ class FileContainerModel(models.Model):
         :return:            The meta-data.
         """
         # Get the file reference
-        reference = self.get_file_reference(filename)
+        reference = self.get_file_reference(filename, True)
 
         # Set its meta-data
         reference.metadata = metadata

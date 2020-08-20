@@ -1,6 +1,7 @@
 from django.db import models
 
 from ...apps import UFDLCoreAppConfig
+from ..mixins import CopyableModel
 
 
 class FileReferenceQuerySet(models.QuerySet):
@@ -11,7 +12,7 @@ class FileReferenceQuerySet(models.QuerySet):
         return self.filter(file__name__filename=filename)
 
 
-class FileReference(models.Model):
+class FileReference(CopyableModel, models.Model):
     # The (named) file that is referred to
     file = models.ForeignKey(f"{UFDLCoreAppConfig.label}.NamedFile",
                              on_delete=models.DO_NOTHING,
@@ -32,3 +33,8 @@ class FileReference(models.Model):
 
         # Provisionally delete the name <-> file association
         self.file.delete()
+
+    def copy(self, *, creator=None, **kwargs) -> 'FileReference':
+        new_reference = FileReference(file=self.file, metadata=self.metadata)
+        new_reference.save()
+        return new_reference

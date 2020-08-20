@@ -143,11 +143,8 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
         new_dataset.save()
 
         # Add our files to the new dataset
-        from .files import FileReference
         for reference in self.files.all():
-            new_reference = FileReference(file=reference.file, metadata=reference.metadata)
-            new_reference.save()
-            new_dataset.files.add(new_reference)
+            new_dataset.files.add(reference.copy())
 
         return new_dataset
 

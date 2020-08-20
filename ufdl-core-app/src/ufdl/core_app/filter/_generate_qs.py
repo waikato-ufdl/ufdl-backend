@@ -49,10 +49,10 @@ def generate_q_from_compare(expression: Compare) -> Q:
     :return:            The Q filter object.
     """
     # Generate the keyword expected by the Q constructor
-    keyword = expression.field + ("__lt" if expression.operator == "<"
-                                  else "__gt" if expression.operator == ">"
-                                  else "__lte" if expression.operator == "<="
-                                  else "__gte")
+    keyword = expand_field(expression.field) + ("__lt" if expression.operator == "<"
+                                                else "__gt" if expression.operator == ">"
+                                                else "__lte" if expression.operator == "<="
+                                                else "__gte")
 
     # Create the Q object
     q = Q(**{keyword: expression.value})
@@ -69,7 +69,7 @@ def generate_q_from_contains(expression: Contains) -> Q:
     :return:            The Q filter object.
     """
     # Generate the keyword expected by the Q constructor
-    keyword = expression.field + ("__icontains" if expression.case_insensitive else "__contains")
+    keyword = expand_field(expression.field) + ("__icontains" if expression.case_insensitive else "__contains")
 
     # Create the Q object
     q = Q(**{keyword: expression.sub_string})
@@ -86,7 +86,7 @@ def generate_q_from_exact(expression: Exact) -> Q:
     :return:            The Q filter object.
     """
     # Generate the keyword expected by the Q constructor
-    keyword = expression.field + ("__iexact" if expression.case_insensitive else "__exact")
+    keyword = expand_field(expression.field) + ("__iexact" if expression.case_insensitive else "__exact")
 
     # Create the Q object
     q = Q(**{keyword: expression.value})
@@ -103,7 +103,7 @@ def generate_q_from_isnull(expression: IsNull) -> Q:
     :return:            The Q filter object.
     """
     # Generate the keyword expected by the Q constructor
-    keyword = expression.field + "__isnull"
+    keyword = expand_field(expression.field) + "__isnull"
 
     # Create the Q object
     q = Q(**{keyword: True})
@@ -162,3 +162,14 @@ def handle_negation(expression: FilterExpression, q: Q) -> Q:
         return ~q
     else:
         return q
+
+
+def expand_field(field: str) -> str:
+    """
+    Converts the dotted field notation expected in JSON
+    field-names into the dunder-style expected by Django.
+
+    :param field:   The dotted field-name.
+    :return:        The dunder-style field-name.
+    """
+    return field.replace(".", "__")

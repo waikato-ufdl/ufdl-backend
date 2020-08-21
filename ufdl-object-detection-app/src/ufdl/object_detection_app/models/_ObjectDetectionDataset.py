@@ -31,6 +31,18 @@ class ObjectDetectionDataset(Dataset):
     def domain_code(cls) -> str:
         return "od"
 
+    def merge_annotations(self, other, files):
+        # Load the annotations files
+        self_annotations_file = self.get_annotations()
+        other_annotations_file = other.get_annotations()
+
+        # Overwrite the annotations for the target files
+        for source_file, target_file in files:
+            self_annotations_file[target_file.filename] = other_annotations_file[source_file.filename]
+
+        # Save the annotations
+        self.set_annotations(self_annotations_file)
+
     def delete_file(self, filename: str):
         # Delete the file as usual
         file = super().delete_file(filename)

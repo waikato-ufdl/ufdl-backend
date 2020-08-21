@@ -46,7 +46,7 @@ class FileContainerModel(models.Model):
 
         # Create the association between name and file
         from ..files import NamedFile
-        association = NamedFile.get_association(filename, data)
+        association = NamedFile.create(filename, data)
 
         # Create a reference to the association
         from ..files import FileReference

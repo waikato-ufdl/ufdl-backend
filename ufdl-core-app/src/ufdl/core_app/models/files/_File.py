@@ -53,7 +53,7 @@ class File(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
         return backend.load(backend.Handle.from_database_string(self.handle))
 
     @classmethod
-    def get_reference_from_backend(cls, data: bytes) -> 'File':
+    def create(cls, data: bytes) -> 'File':
         """
         Stores the given data in the backend file-system and returns
         a reference to it.

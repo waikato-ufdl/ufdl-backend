@@ -30,7 +30,7 @@ class Filename(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
         ]
 
     @classmethod
-    def get_filename_record(cls, filename: str) -> 'Filename':
+    def create(cls, filename: str) -> 'Filename':
         """
         Gets an existing record if one exists for the filename,
         otherwise creates a new one.

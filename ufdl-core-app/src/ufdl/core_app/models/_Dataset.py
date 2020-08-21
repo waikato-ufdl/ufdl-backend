@@ -14,8 +14,11 @@ from wai.annotations.core.instance import Instance
 
 from ..apps import UFDLCoreAppConfig
 from ..exceptions import *
-from ..util import QueryParameterValue, for_user
-from .mixins import PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel, UserRestrictedQuerySet
+from ..util import QueryParameterValue, for_user, format_suffix
+from .mixins import (
+    PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel, UserRestrictedQuerySet,
+    MergableModel
+)
 
 
 class DatasetQuerySet(UserRestrictedQuerySet, PublicQuerySet, SoftDeleteQuerySet):
@@ -45,7 +48,7 @@ class DatasetQuerySet(UserRestrictedQuerySet, PublicQuerySet, SoftDeleteQuerySet
         )
 
 
-class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
+class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, PublicModel, SoftDeleteModel):
     # The name of the dataset
     name = models.CharField(max_length=200)
 
@@ -99,6 +102,65 @@ class Dataset(FileContainerModel, CopyableModel, AsFileModel, TeamOwnedModel, Pu
         Gets the domain-code for this type of data-set.
         """
         return None
+
+    def merge(self, other) -> 'Dataset':
+        # Make sure the other object is the same kind of data-set as we are.
+        if not type(self) is type(other):
+            raise Exception(f"Expected to merge with another {type(self).__name__} but "
+                            f"received a {type(other).__name__} instead")
+
+        # Gather a mapping from source file to new file
+        new_files = []
+
+        # Add the other data-set's file to this one
+        for other_file in other.files.all():
+            # Get the filename of the file
+            filename = other_file.filename
+
+            # See if we have a file by the same name
+            self_file = self.get_file_reference(filename)
+
+            # If we do...
+            if self_file is not None:
+                # If it has different contents, copy it with an extended filename
+                if not self_file.has_same_contents_as(other_file):
+                    # Search for an unused filename
+                    extension = 1
+                    new_filename = format_suffix(filename, extension)
+                    while self.has_file(new_filename):
+                        extension += 1
+                        new_filename = format_suffix(filename, extension)
+
+                    # Create a copy with the new filename
+                    new_file = other_file.copy(new_name=new_filename)
+
+                # If it has the same contents and name, just keep the current file
+                else:
+                    new_file = self_file
+
+            # If we don't have a file by that name, copy the source file
+            else:
+                new_file = other_file.copy()
+
+            # Add the new file if we made a copy of the original
+            if new_file is not self_file:
+                self.files.add(new_file)
+
+            new_files.append((other_file, new_file))
+
+        # Merge any annotations for the files
+        self.merge_annotations(other, new_files)
+
+    def merge_annotations(self, other, files):
+        """
+        Merges the annotations for a particular file in another
+        data-set into this one.
+
+        :param other:   The other data-set.
+        :param files:   A list of pairs of (source_file, target_file).
+        """
+        # Default implementation is to do nothing
+        pass
 
     def copy(self, *, creator=None, new_name=None, **kwargs) -> 'Dataset':
         """

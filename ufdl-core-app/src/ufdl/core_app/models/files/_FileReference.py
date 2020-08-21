@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db import models
 
 from ...apps import UFDLCoreAppConfig
@@ -27,6 +29,18 @@ class FileReference(CopyableModel, models.Model):
     def filename(self) -> str:
         return self.file.filename
 
+    def get_data(self) -> bytes:
+        return self.file.get_data()
+
+    def has_same_data_as(self, other: 'FileReference') -> bool:
+        """
+        Whether this file has identical contents to another.
+
+        :param other:   The other file to compare to.
+        :return:        True if the file contents are the same.
+        """
+        return self.file.has_same_data_as(other.file)
+
     def delete(self, using=None, keep_parents=False):
         # Delete ourselves as normal
         super().delete(using, keep_parents)
@@ -34,7 +48,8 @@ class FileReference(CopyableModel, models.Model):
         # Provisionally delete the name <-> file association
         self.file.delete()
 
-    def copy(self, *, creator=None, **kwargs) -> 'FileReference':
-        new_reference = FileReference(file=self.file, metadata=self.metadata)
+    def copy(self, *, creator=None, new_name: Optional[str] = None, **kwargs) -> 'FileReference':
+        new_reference = FileReference(file=self.file.copy(creator=creator, new_name=new_name, **kwargs),
+                                      metadata=self.metadata)
         new_reference.save()
         return new_reference

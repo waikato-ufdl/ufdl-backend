@@ -3,11 +3,11 @@ from rest_framework.permissions import AllowAny
 from ..models import Dataset
 from ..serialisers import DatasetSerialiser
 from ..permissions import MemberHasWritePermission, IsMember, IsPublic, IsAdminUser
-from .mixins import DownloadableViewSet, CopyableViewSet, FileContainerViewSet, SoftDeleteViewSet
+from .mixins import DownloadableViewSet, CopyableViewSet, FileContainerViewSet, SoftDeleteViewSet, MergeViewSet
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class DatasetViewSet(DownloadableViewSet, CopyableViewSet, FileContainerViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
+class DatasetViewSet(MergeViewSet, DownloadableViewSet, CopyableViewSet, FileContainerViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
     queryset = Dataset.objects.all()
     serializer_class = DatasetSerialiser
 
@@ -23,4 +23,5 @@ class DatasetViewSet(DownloadableViewSet, CopyableViewSet, FileContainerViewSet,
         "set_metadata": [AllowAny],  # TODO: Change to a proper level of authorisation
         "get_metadata": [AllowAny],  # TODO: Change to a proper level of authorisation
         "copy": [AllowAny],  # TODO: Change to a proper level of authorisation
+        "merge": [AllowAny]  # TODO: Change to a proper level of authorisation
     }

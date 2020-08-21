@@ -82,7 +82,7 @@ class AddJobOutputViewSet(RoutedViewSet):
         data = request.data['file'].file.read()
 
         # Create the output
-        output = JobOutput(job=job, name=name, type=type, data=File.get_reference_from_backend(data), creator=request.user)
+        output = JobOutput(job=job, name=name, type=type, data=File.create(data), creator=request.user)
         output.save()
 
         return Response(JobOutputSerialiser().to_representation(output))

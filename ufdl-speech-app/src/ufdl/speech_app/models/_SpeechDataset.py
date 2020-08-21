@@ -31,6 +31,18 @@ class SpeechDataset(Dataset):
     def domain_code(cls) -> str:
         return "sp"
 
+    def merge_annotations(self, other, files):
+        # Load the transcriptions files
+        self_transcriptions_file = self.get_transcriptions()
+        other_transcriptions_file = other.get_transcriptions()
+
+        # Overwrite the transcriptions for the target files
+        for source_file, target_file in files:
+            self_transcriptions_file[target_file.filename] = other_transcriptions_file[source_file.filename]
+
+        # Save the transcriptions
+        self.set_transcriptions(self_transcriptions_file)
+
     def delete_file(self, filename: str):
         # Delete the file as usual
         file = super().delete_file(filename)

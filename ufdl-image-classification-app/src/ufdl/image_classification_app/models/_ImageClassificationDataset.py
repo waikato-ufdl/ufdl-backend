@@ -34,6 +34,18 @@ class ImageClassificationDataset(Dataset):
     def domain_code(cls) -> str:
         return "ic"
 
+    def merge_annotations(self, other, files):
+        # Load the categories files
+        self_categories_file = self.get_categories()
+        other_categories_file = other.get_categories()
+
+        # Overwrite the annotations for the target files
+        for source_file, target_file in files:
+            self_categories_file[target_file.filename] = other_categories_file[source_file.filename]
+
+        # Save the annotations
+        self.set_categories(self_categories_file)
+
     def delete_file(self, filename: str):
         # Delete the file as usual
         file = super().delete_file(filename)

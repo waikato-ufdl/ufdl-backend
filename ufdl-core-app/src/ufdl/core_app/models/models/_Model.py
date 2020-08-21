@@ -73,7 +73,7 @@ class Model(SetFileModel, AsFileModel, SoftDeleteModel):
             current.delete()
 
         # Set the new file to the given data
-        self.data = NamedFile.get_association("model.data", data) if data is not None else None
+        self.data = NamedFile.create("model.data", data) if data is not None else None
 
         # Save
         self.save(update_fields=("data",))

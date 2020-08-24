@@ -7,6 +7,7 @@ from ._IsOwnMembership import IsOwnMembership
 from ._IsPublic import IsPublic
 from ._IsSelf import IsSelf
 from ._MemberHasAdminPermission import MemberHasAdminPermission
+from ._MemberHasExecutePermission import MemberHasExecutePermission
 from ._MemberHasWritePermission import MemberHasWritePermission
 from ._MemberPermission import MemberPermission
 from ._NodeOwnsJob import NodeOwnsJob

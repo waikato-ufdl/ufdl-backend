@@ -1,6 +1,9 @@
+from typing import Optional
+
 from django.db import models
 
 from ...apps import UFDLCoreAppConfig
+from ...exceptions import BadNodeID
 
 
 class NodeQuerySet(models.QuerySet):
@@ -14,13 +17,12 @@ class NodeQuerySet(models.QuerySet):
 class Node(models.Model):
     """
     A worker node.
-
-    TODO: Should a node have a special class of User so that it can
-          automatically register its last_seen timestamp on calls
-          from that user?
     """
     # The IP address of the worker node
     ip = models.CharField(max_length=39)
+
+    # An identifier to disambiguate between multiple nodes on the same system
+    index = models.PositiveSmallIntegerField()
 
     # The NVidia driver version
     driver_version = models.CharField(max_length=16)
@@ -49,6 +51,13 @@ class Node(models.Model):
 
     objects = NodeQuerySet.as_manager()
 
+    class Meta:
+        constraints = [
+            # Ensure each unique node is only registered once
+            models.UniqueConstraint(name="unique_nodes",
+                                    fields=["ip", "index"])
+        ]
+
     @property
     def is_working_job(self) -> bool:
         """
@@ -58,3 +67,33 @@ class Node(models.Model):
 
     def delete(self, using=None, keep_parents=False):
         raise Exception("Can't delete nodes")
+
+    @classmethod
+    def from_request(cls, request) -> Optional['Node']:
+        """
+        Gets the node from the request, if there is one.
+
+        :param request:     The request.
+        :return:            The node, or None if there isn't one.
+        """
+        # Get the node ID from the header if specified
+        node_id = request.headers.get("Node-Id", None)
+
+        # If not specified, return None
+        if node_id is None:
+            return None
+
+        # Attempt to parse the node ID
+        try:
+            node = int(node_id)
+        except ValueError as e:
+            raise BadNodeID(node_id, "Unable to parse into an integer primary-key")
+
+        # Filter the primary-key into a node object
+        node = cls.objects.filter(pk=node).first()
+
+        # If the node doesn't exist, raise an error
+        if node is None:
+            raise BadNodeID(node_id, "No node with this primary-key")
+
+        return node

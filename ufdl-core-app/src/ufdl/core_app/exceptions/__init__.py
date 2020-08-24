@@ -5,6 +5,7 @@ from ._BadArgumentType import BadArgumentType
 from ._BadArgumentValue import BadArgumentValue
 from ._BadModelType import BadModelType
 from ._BadName import BadName
+from ._BadNodeID import BadNodeID
 from ._BadSource import BadSource
 from ._JobAcquired import JobAcquired
 from ._JobFinished import JobFinished

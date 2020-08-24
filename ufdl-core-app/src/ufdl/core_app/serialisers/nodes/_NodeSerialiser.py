@@ -7,6 +7,7 @@ class NodeSerialiser(serializers.ModelSerializer):
         model = Node
         fields = ["pk",
                   "ip",
+                  "index",
                   "driver_version",
                   "hardware_generation",
                   "gpu_mem",

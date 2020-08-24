@@ -9,8 +9,8 @@ from ufdl.json.core.jobs import StartJobSpec, FinishJobSpec
 from wai.json.object import Absent
 
 from ...exceptions import *
-from ...models import User
 from ...models.jobs import Job
+from ...models.nodes import Node
 from ...serialisers.jobs import JobSerialiser
 from ._RoutedViewSet import RoutedViewSet
 
@@ -64,12 +64,15 @@ class AcquireJobViewSet(RoutedViewSet):
         if job.is_acquired:
             raise JobAcquired()
 
+        # Get the node making the request
+        node = Node.from_request(request)
+
         # Make sure the user acquiring the job is a node
-        if not isinstance(request.user, User) or request.user.node is None:
+        if node is None:
             raise Exception(f"Non-node user attempted to acquire job: {request.user}")
 
         # Allow the node to acquire the job
-        job.node = request.user.node
+        job.node = node
         job.save(update_fields=['node'])
 
         return Response(JobSerialiser().to_representation(job))
@@ -89,12 +92,12 @@ class AcquireJobViewSet(RoutedViewSet):
         if job.is_started:
             raise JobStarted(self.action)
 
-        # Make sure the user acquiring the job is a node
-        if not isinstance(request.user, User) or request.user.node is None:
-            raise Exception(f"Non-node user attempted to start job: {request.user}")
+        # Get the node making the request
+        node = Node.from_request(request)
 
-        # Get the node reference
-        node = request.user.node
+        # Make sure the user acquiring the job is a node
+        if node is None:
+            raise Exception(f"Non-node user attempted to acquire job: {request.user}")
 
         # Make sure the node isn't already working a job
         if node.is_working_job:
@@ -131,12 +134,12 @@ class AcquireJobViewSet(RoutedViewSet):
         if job.is_finished:
             raise JobFinished(self.action)
 
-        # Make sure the user acquiring the job is a node
-        if not isinstance(request.user, User) or request.user.node is None:
-            raise Exception(f"Non-node user attempted to start job: {request.user}")
+        # Get the node making the request
+        node = Node.from_request(request)
 
-        # Get the node reference
-        node = request.user.node
+        # Make sure the user acquiring the job is a node
+        if node is None:
+            raise Exception(f"Non-node user attempted to acquire job: {request.user}")
 
         # Parse the finish-job specification
         finish_job_spec = JSONParseFailure.attempt(dict(request.data), FinishJobSpec)

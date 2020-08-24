@@ -255,6 +255,7 @@ class Migration(migrations.Migration):
             name='Node',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('index', models.PositiveSmallIntegerField()),
                 ('ip', models.CharField(max_length=39)),
                 ('driver_version', models.CharField(max_length=16)),
                 ('gpu_mem', models.PositiveIntegerField()),
@@ -386,11 +387,6 @@ class Migration(migrations.Migration):
             model_name='licence',
             name='domains',
             field=models.ManyToManyField(related_name='_licence_domains_+', to='ufdl-core.Domain'),
-        ),
-        migrations.AddField(
-            model_name='user',
-            name='node',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='user', to='ufdl-core.Node', null=True, default=None),
         ),
         migrations.AddField(
             model_name='licence',
@@ -576,6 +572,10 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='namedfile',
             constraint=models.UniqueConstraint(fields=('name', 'canonical_source'), name='unique_filename_file_pairs_2', condition=models.Q(canonical_source__isnull=False)),
+        ),
+        migrations.AddConstraint(
+            model_name='node',
+            constraint=models.UniqueConstraint(fields=('id', 'index'), name='unique_nodes'),
         ),
         migrations.AddConstraint(
             model_name='licence',

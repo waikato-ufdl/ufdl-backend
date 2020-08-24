@@ -5,7 +5,6 @@ from .._UFDLBaseViewSet import UFDLBaseViewSet
 
 
 class NodeViewSet(UFDLBaseViewSet):
-    # TODO: Need to rethink permissions. Should there be a special node user type?
     queryset = Node.objects.all()
     serializer_class = NodeSerialiser
 
@@ -13,5 +12,6 @@ class NodeViewSet(UFDLBaseViewSet):
 
     permission_classes = {
         "list": [IsAuthenticated],
-        "retrieve": [IsAuthenticated]
+        "retrieve": [IsAuthenticated],
+        "create": [IsAuthenticated]
     }

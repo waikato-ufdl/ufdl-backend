@@ -1,7 +1,7 @@
 from django.dispatch import receiver
 from django.utils.timezone import now
 
-from ..models import User
+from ..models.nodes import Node
 from ._all_requests import all_requests
 
 
@@ -17,9 +17,7 @@ def update_node_last_seen(sender, **kwargs):
     request = kwargs['request']
 
     # Update the last-seen field of the user's node if it is one
-    user = request.user
-    if isinstance(user, User):
-        node = user.node
-        if node is not None:
-            node.last_seen = now()
-            node.save(update_fields=["last_seen"])
+    node = Node.from_request(request)
+    if node is not None:
+        node.last_seen = now()
+        node.save(update_fields=["last_seen"])

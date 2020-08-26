@@ -30,7 +30,7 @@ setup(
         "wai.json==0.0.5",
         "Django>=2.2.6,<3",
         "djangorestframework>=3.10.3,<4",
-        "simple-django-teams==0.0.5",
+        "simple-django-teams==0.0.6",
         "ufdl.json-messages",
         "requests-file>=1.5,<1.6"
     ]

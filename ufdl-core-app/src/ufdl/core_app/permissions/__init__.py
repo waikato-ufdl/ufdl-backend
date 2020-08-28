@@ -10,5 +10,6 @@ from ._MemberHasAdminPermission import MemberHasAdminPermission
 from ._MemberHasExecutePermission import MemberHasExecutePermission
 from ._MemberHasWritePermission import MemberHasWritePermission
 from ._MemberPermission import MemberPermission
+from ._NodeIsSelf import NodeIsSelf
 from ._NodeOwnsJob import NodeOwnsJob
 from ._NodePermission import NodePermission

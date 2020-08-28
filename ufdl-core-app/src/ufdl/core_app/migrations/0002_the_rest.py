@@ -575,7 +575,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='node',
-            constraint=models.UniqueConstraint(fields=('id', 'index'), name='unique_nodes'),
+            constraint=models.UniqueConstraint(fields=('ip', 'index'), name='unique_nodes'),
         ),
         migrations.AddConstraint(
             model_name='licence',

@@ -16,7 +16,7 @@ class DatasetViewSet(MergeViewSet, DownloadableViewSet, CopyableViewSet, FileCon
     permission_classes = {
         "list": [AllowAny],  # List filtering is done seperately
         "retrieve": [IsMember | IsPublic],
-        "as_file": [AllowAny],  # TODO: Change to a proper level of authorisation
+        "download": [AllowAny],  # TODO: Change to a proper level of authorisation
         "add_file": [AllowAny],  # TODO: Change to a proper level of authorisation
         "get_file": [AllowAny],  # TODO: Change to a proper level of authorisation
         "delete_file": [AllowAny],  # TODO: Change to a proper level of authorisation

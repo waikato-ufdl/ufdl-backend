@@ -4,17 +4,17 @@ from django.db import models
 
 from ...apps import UFDLCoreAppConfig
 from ...exceptions import BadNodeID
+from ..mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet
 
 
-class NodeQuerySet(models.QuerySet):
+class NodeQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySet):
     """
     A query-set over worker nodes.
     """
-    def delete(self, using=None, keep_parents=False):
-        raise Exception("Can't delete nodes")
+    pass
 
 
-class Node(models.Model):
+class Node(DeleteOnNoRemainingReferencesOnlyModel):
     """
     A worker node.
     """
@@ -64,9 +64,6 @@ class Node(models.Model):
         Whether this node is currently working a job.
         """
         return self.current_job is not None
-
-    def delete(self, using=None, keep_parents=False):
-        raise Exception("Can't delete nodes")
 
     @classmethod
     def from_request(cls, request) -> Optional['Node']:

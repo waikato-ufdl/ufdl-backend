@@ -5,7 +5,7 @@ from ufdl.json.core.filter import FilterSpec
 from ..exceptions import JSONParseFailure
 from ..filter import filter_list_request
 from ..logging import get_backend_logger
-from ..permissions import IsAdminUser
+from ..permissions import IsAdminUser, AllowNone
 from ..signals import all_requests
 from ..util import for_user
 
@@ -21,33 +21,25 @@ class UFDLBaseViewSet(ModelViewSet):
 
     Automatically logs requests/responses to the database log.
     """
-    # The permissions to use when an action isn't listed in the permission_classes dictionary
-    default_permissions = []
-
     # The admin permission (override access to any action)
     admin_permission_class = IsAdminUser
 
     def get_permissions(self):
-        # If permissions defined as a list, just act normally
-        if isinstance(self.permission_classes, list):
-            return super().get_permissions()
+        # Permissions must be defined as a dictionary from
+        # action name to permissions
+        if not isinstance(self.permission_classes, dict):
+            raise TypeError(f"Permission classes must be defined as a dict, "
+                            f"got {type(self.permission_classes)}")
 
-        # If defined as a dict from action to permissions, apply the
-        # correct permissions for the current action
-        if isinstance(self.permission_classes, dict):
-            permission_classes = (self.permission_classes[self.action]
-                                  if self.action in self.permission_classes
-                                  else self.default_permissions)
+        # Get the explicitly defined permissions class or default
+        permission_class = self.permission_classes.get(self.action, None)
 
-            # If no permissions defined, require admin permissions
-            if len(permission_classes) == 0:
-                return [self.admin_permission_class()]
+        # If the permissions are not explicitly defined, error
+        if permission_class is None:
+            raise Exception(f"No permission class defined for action '{self.action}'")
 
-            return [(self.admin_permission_class | permission)()
-                    for permission in permission_classes]
-
-        raise TypeError(f"Permission classes must be defined as a list or dict, "
-                        f"got {type(self.permission_classes)}")
+        # Require either admin permissions or the defined permissions
+        return [(self.admin_permission_class | permission_class)()]
 
     def get_queryset(self):
         query_set = super().get_queryset()

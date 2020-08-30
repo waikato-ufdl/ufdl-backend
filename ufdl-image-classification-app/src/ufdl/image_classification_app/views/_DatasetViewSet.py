@@ -1,5 +1,4 @@
-from rest_framework.permissions import AllowAny
-
+from ufdl.core_app.permissions import IsMember, MemberHasWritePermission
 from ufdl.core_app.views import DatasetViewSet as CoreDatasetViewSet
 
 from ..models import ImageClassificationDataset
@@ -12,8 +11,7 @@ class DatasetViewSet(CategoriesViewSet, CoreDatasetViewSet):
     serializer_class = DatasetSerialiser
 
     permission_classes = dict(
-        get_categories=[AllowAny],  # TODO: Change to a proper level of authorisation
-        add_categories=[AllowAny],  # TODO: Change to a proper level of authorisation
-        remove_categories=[AllowAny],  # TODO: Change to a proper level of authorisation
+        get_categories=IsMember,
+        modify_categories=MemberHasWritePermission,
         **CoreDatasetViewSet.permission_classes
     )

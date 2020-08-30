@@ -1,7 +1,7 @@
 from simple_django_teams.models import Team
 
 from ..serialisers import TeamSerialiser
-from ..permissions import IsAuthenticated, IsMember, IsAdminUser, MemberHasAdminPermission
+from ..permissions import IsAuthenticated, IsMember, IsAdminUser, MemberHasAdminPermission, AllowNone
 from .mixins import MembershipViewSet, SoftDeleteViewSet
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
@@ -10,9 +10,15 @@ class TeamViewSet(MembershipViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerialiser
 
-    admin_permission_class = IsAdminUser | MemberHasAdminPermission
-
     permission_classes = {
-        "list": [IsAuthenticated],
-        "retrieve": [IsMember],
+        "list": IsAuthenticated,
+        "create": MemberHasAdminPermission,
+        "retrieve": IsMember,
+        "update": MemberHasAdminPermission,
+        "partial_update": MemberHasAdminPermission,
+        "destroy": MemberHasAdminPermission,
+        "modify_memberships": MemberHasAdminPermission,
+        "get_permissions_for_user": MemberHasAdminPermission,
+        "hard_delete": AllowNone,
+        "reinstate": AllowNone
     }

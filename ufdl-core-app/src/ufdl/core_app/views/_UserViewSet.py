@@ -1,5 +1,5 @@
 from ..models import User
-from ..permissions import IsSelf
+from ..permissions import IsSelf, AllowNone
 from ..serialisers import UserSerialiser
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
@@ -9,7 +9,12 @@ class UserViewSet(UFDLBaseViewSet):
     serializer_class = UserSerialiser
 
     permission_classes = {
-        "retrieve": [IsSelf]
+        "list": AllowNone,
+        "create": AllowNone,
+        "retrieve": IsSelf,
+        "update": AllowNone,
+        "partial_update": AllowNone,
+        "destroy": AllowNone
     }
 
     def format_request_log_message(self, request) -> str:

@@ -1,6 +1,6 @@
 from ...models.models import Model
 from ...serialisers.models import ModelSerialiser
-from ...permissions import IsAdminUser, IsAuthenticated
+from ...permissions import IsAuthenticated, AllowNone
 from ..mixins import DownloadableViewSet, SetFileViewSet, SoftDeleteViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
@@ -9,9 +9,16 @@ class ModelViewSet(SetFileViewSet, DownloadableViewSet, SoftDeleteViewSet, UFDLB
     queryset = Model.objects.all()
     serializer_class = ModelSerialiser
 
-    admin_permission_class = IsAdminUser
-
     permission_classes = {
-        "list": [IsAuthenticated],
-        "retrieve": [IsAuthenticated]
+        "list": IsAuthenticated,
+        "create": AllowNone,
+        "retrieve": IsAuthenticated,
+        "update": AllowNone,
+        "partial_update": AllowNone,
+        "destroy": AllowNone,
+        "set_file": AllowNone,
+        "delete_file": AllowNone,
+        "download": AllowNone,
+        "hard_delete": AllowNone,
+        "reinstate": AllowNone
     }

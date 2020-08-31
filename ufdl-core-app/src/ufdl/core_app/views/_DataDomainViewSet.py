@@ -11,6 +11,10 @@ class DataDomainViewSet(UFDLBaseViewSet):
     admin_permission_class = AllowNone  # Access to mutating methods is denied even to admins
 
     permission_classes = {
-        "list": [IsAuthenticated],
-        "retrieve": [IsAuthenticated]
+        "list": IsAuthenticated,
+        "create": AllowNone,
+        "retrieve": IsAuthenticated,
+        "update": AllowNone,
+        "partial_update": AllowNone,
+        "destroy": AllowNone
     }

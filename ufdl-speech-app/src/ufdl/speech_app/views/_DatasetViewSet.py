@@ -1,5 +1,4 @@
-from rest_framework.permissions import AllowAny
-
+from ufdl.core_app.permissions import IsMember, MemberHasWritePermission
 from ufdl.core_app.views import DatasetViewSet as CoreDatasetViewSet
 
 from ..models import SpeechDataset
@@ -12,8 +11,8 @@ class DatasetViewSet(TranscriptionsViewSet, CoreDatasetViewSet):
     serializer_class = DatasetSerialiser
 
     permission_classes = dict(
-        get_transcriptions=[AllowAny],  # TODO: Change to a proper level of authorisation
-        get_transcription_for_file=[AllowAny],  # TODO: Change to a proper level of authorisation
-        set_transcription_for_file=[AllowAny],  # TODO: Change to a proper level of authorisation
+        get_transcriptions=IsMember,
+        get_transcription_for_file=IsMember,
+        set_transcription_for_file=MemberHasWritePermission,
         **CoreDatasetViewSet.permission_classes
     )

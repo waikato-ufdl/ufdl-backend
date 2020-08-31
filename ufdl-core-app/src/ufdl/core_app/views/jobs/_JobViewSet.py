@@ -12,14 +12,18 @@ class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDL
     admin_permission_class = AllowNone  # Some actions require the admin is a node, so must be explicit
 
     permission_classes = {
-        "list": [IsAuthenticated],
-        "create": [IsAuthenticated],
-        "retrieve": [IsAuthenticated],
-        "update": [IsAdminUser],
-        "partial_update": [IsAdminUser],
-        "destroy": [IsAdminUser],
-        "add_output": [IsAdminUser | NodeOwnsJob],
-        "acquire_job": [IsNode],
-        "start_job": [NodeOwnsJob],
-        "finish_job": [NodeOwnsJob]
+        "list": IsAuthenticated,
+        "create": IsAuthenticated,
+        "retrieve": IsAuthenticated,
+        "update": IsAdminUser,
+        "partial_update": IsAdminUser,
+        "destroy": IsAdminUser,
+        "add_output": IsAdminUser | NodeOwnsJob,
+        "delete_output": IsAdminUser,
+        "get_output": IsAuthenticated,
+        "acquire_job": IsNode,
+        "start_job": NodeOwnsJob,
+        "finish_job": NodeOwnsJob,
+        "hard_delete": IsAdminUser,
+        "reinstate": IsAdminUser
     }

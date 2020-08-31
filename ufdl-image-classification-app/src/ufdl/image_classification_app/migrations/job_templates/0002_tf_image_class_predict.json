@@ -25,6 +25,12 @@
   ],
   "parameters":
   [
+    {
+      "name": "top_x",
+      "type": "int",
+      "default": "5",
+      "help": "The top X predictions to output."
+    },
   ],
-  "body": "tfic-poll --in_dir /prediction/in --out_dir /prediction/out --graph /output/graph.pb --info /output/info.json"
+  "body": "tfic-poll --top_x ${top_x} --in_dir /prediction/in --out_dir /prediction/out --graph /output/graph.pb --info /output/info.json"
 }

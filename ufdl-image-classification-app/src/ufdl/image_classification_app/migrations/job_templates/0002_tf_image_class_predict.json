@@ -1,0 +1,30 @@
+{
+  "name": "tf_image_class_predict",
+  "version": 1,
+  "scope": "public",
+  "domain": "ic",
+  "framework": "tensorflow|1.14",
+  "licence": "Apache 2.0",
+  "job_type": "predict",
+  "executor_class": "ufdl.joblauncher.classify.ImageClassificationPredict_TF_1_14",
+  "required_packages": "",
+  "inputs":
+  [
+    {
+      "name": "model",
+      "type": "tfmodel",
+      "options": "",
+      "help": "The Tensorflow image classification model to use for making predictions."
+    },
+    {
+      "name": "data",
+      "type": "dataset",
+      "options": "",
+      "help": "The dataset to generate predictions for."
+    }
+  ],
+  "parameters":
+  [
+  ],
+  "body": "tfic-poll --in_dir /prediction/in --out_dir /prediction/out --graph /output/graph.pb --info /output/info.json"
+}

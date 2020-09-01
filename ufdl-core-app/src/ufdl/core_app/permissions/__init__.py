@@ -13,3 +13,7 @@ from ._MemberPermission import MemberPermission
 from ._NodeIsSelf import NodeIsSelf
 from ._NodeOwnsJob import NodeOwnsJob
 from ._NodePermission import NodePermission
+
+# A combination permission that allows members with write permissions or
+# nodes with execute permissions to perform an action
+WriteOrNodeExecutePermission = MemberHasWritePermission | (IsNode & MemberHasExecutePermission)

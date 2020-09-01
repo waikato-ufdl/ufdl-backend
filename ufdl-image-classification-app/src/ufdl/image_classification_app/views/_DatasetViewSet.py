@@ -1,4 +1,4 @@
-from ufdl.core_app.permissions import IsMember, MemberHasWritePermission
+from ufdl.core_app.permissions import IsMember, WriteOrNodeExecutePermission
 from ufdl.core_app.views import DatasetViewSet as CoreDatasetViewSet
 
 from ..models import ImageClassificationDataset
@@ -12,6 +12,6 @@ class DatasetViewSet(CategoriesViewSet, CoreDatasetViewSet):
 
     permission_classes = dict(
         get_categories=IsMember,
-        modify_categories=MemberHasWritePermission,
+        modify_categories=WriteOrNodeExecutePermission,
         **CoreDatasetViewSet.permission_classes
     )

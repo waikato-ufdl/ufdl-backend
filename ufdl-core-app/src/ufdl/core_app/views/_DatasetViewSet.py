@@ -2,7 +2,7 @@ from rest_framework.permissions import AllowAny
 
 from ..models import Dataset
 from ..serialisers import DatasetSerialiser
-from ..permissions import MemberHasWritePermission, IsMember, IsPublic, AllowNone
+from ..permissions import MemberHasWritePermission, IsMember, IsPublic, AllowNone, WriteOrNodeExecutePermission
 from .mixins import DownloadableViewSet, CopyableViewSet, FileContainerViewSet, SoftDeleteViewSet, MergeViewSet
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
@@ -15,16 +15,16 @@ class DatasetViewSet(MergeViewSet, DownloadableViewSet, CopyableViewSet, FileCon
         "list": AllowAny,
         "create": MemberHasWritePermission,
         "retrieve": IsMember | IsPublic,
-        "update": MemberHasWritePermission,
-        "partial_update": MemberHasWritePermission,
+        "update": WriteOrNodeExecutePermission,
+        "partial_update": WriteOrNodeExecutePermission,
         "destroy": MemberHasWritePermission,
-        "merge": MemberHasWritePermission,
+        "merge": WriteOrNodeExecutePermission,
         "download": IsMember,
         "copy": IsMember,
-        "add_file": MemberHasWritePermission,
+        "add_file": WriteOrNodeExecutePermission,
         "get_file": IsMember,
-        "delete_file": MemberHasWritePermission,
-        "set_metadata": MemberHasWritePermission,
+        "delete_file": WriteOrNodeExecutePermission,
+        "set_metadata": WriteOrNodeExecutePermission,
         "get_metadata": IsMember,
         "hard_delete": AllowNone,
         "reinstate": AllowNone

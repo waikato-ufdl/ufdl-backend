@@ -1,4 +1,4 @@
-from ufdl.core_app.permissions import MemberHasWritePermission, IsMember
+from ufdl.core_app.permissions import WriteOrNodeExecutePermission, IsMember
 from ufdl.core_app.views import DatasetViewSet as CoreDatasetViewSet
 
 from ..models import ObjectDetectionDataset
@@ -13,7 +13,7 @@ class DatasetViewSet(AnnotationsViewSet, CoreDatasetViewSet):
     permission_classes = dict(
         get_annotations=IsMember,
         get_annotations_for_image=IsMember,
-        set_annotations_for_image=MemberHasWritePermission,
-        delete_annotations_for_image=MemberHasWritePermission,
+        set_annotations_for_image=WriteOrNodeExecutePermission,
+        delete_annotations_for_image=WriteOrNodeExecutePermission,
         **CoreDatasetViewSet.permission_classes
     )

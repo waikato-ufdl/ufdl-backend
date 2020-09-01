@@ -30,7 +30,7 @@ except ImportError:
         file.write(f"SECRET_KEY='{get_random_secret_key()}'\n")
         file.write(f"JWT_SIGNING_KEY='{get_random_secret_key()}'\n")
         file.write(f"DEBUG=True\n")
-        file.write(f"ALLOWED_HOSTS=['localhost', '127.0.0.1']\n")
+        file.write(f"ALLOWED_HOSTS=['*']\n")
     from .secret import SECRET_KEY, JWT_SIGNING_KEY
     
     # SECURITY WARNING: don't run with debug turned on in production!

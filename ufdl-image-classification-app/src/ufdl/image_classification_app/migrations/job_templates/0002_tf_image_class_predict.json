@@ -12,25 +12,25 @@
   [
     {
       "name": "model",
-      "type": "tfmodel",
-      "options": "",
+      "type": "joboutput",
+      "options": "tfmodel",
       "help": "The Tensorflow image classification model to use for making predictions."
     },
     {
       "name": "data",
       "type": "dataset",
-      "options": "",
+      "options": "to-subdir",
       "help": "The dataset to generate predictions for."
     }
   ],
   "parameters":
   [
     {
-      "name": "top_x",
+      "name": "top-x",
       "type": "int",
       "default": "5",
       "help": "The top X predictions to output."
-    },
+    }
   ],
-  "body": "tfic-poll --top_x ${top_x} --in_dir /prediction/in --out_dir /prediction/out --graph /output/graph.pb --info /output/info.json"
+  "body": "tfic-poll --top_x ${top-x} --in_dir /prediction/in --out_dir /prediction/out --graph /output/graph.pb --info /output/info.json"
 }

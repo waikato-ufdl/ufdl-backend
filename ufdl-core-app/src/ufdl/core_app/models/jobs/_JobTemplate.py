@@ -23,6 +23,9 @@ class JobTemplate(SoftDeleteModel):
     # The version of the job template
     version = models.IntegerField(default=1)
 
+    # A description of the template
+    description = models.TextField(blank=True)
+
     # The scope of the job template
     scope = models.CharField(max_length=16)
 

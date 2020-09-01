@@ -43,6 +43,7 @@ class JobTemplateSerialiser(SoftDeleteModelSerialiser):
         fields = ["pk",
                   "name",
                   "version",
+                  "description",
                   "scope",
                   "framework",
                   "domain",

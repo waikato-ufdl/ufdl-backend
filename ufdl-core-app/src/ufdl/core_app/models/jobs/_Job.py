@@ -55,6 +55,9 @@ class Job(SoftDeleteModel):
                              null=True,
                              default=None)
 
+    # A brief description of the job
+    description = models.TextField(blank=True)
+
     objects = JobQuerySet.as_manager()
 
     @property

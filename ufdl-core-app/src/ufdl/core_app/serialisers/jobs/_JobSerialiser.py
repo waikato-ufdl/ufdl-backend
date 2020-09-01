@@ -69,7 +69,8 @@ class JobSerialiser(SoftDeleteModelSerialiser):
                   "input_values",
                   "parameter_values",
                   "node",
-                  "outputs"] + SoftDeleteModelSerialiser.base_fields
+                  "outputs",
+                  "description"] + SoftDeleteModelSerialiser.base_fields
         read_only_fields = ["template",
                             "docker_image",
                             "start_time",

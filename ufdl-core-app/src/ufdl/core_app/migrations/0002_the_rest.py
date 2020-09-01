@@ -163,6 +163,7 @@ class Migration(migrations.Migration):
                 ('error', models.TextField(default=None, null=True)),
                 ('input_values', models.TextField()),
                 ('parameter_values', models.TextField(blank=True)),
+                ('description', models.TextField(blank=True)),
             ],
             options={
                 'abstract': False,
@@ -188,6 +189,7 @@ class Migration(migrations.Migration):
                 ('deletion_time', models.DateTimeField(default=None, editable=False, null=True)),
                 ('name', models.CharField(max_length=64)),
                 ('version', models.IntegerField(default=1)),
+                ('description', models.TextField(blank=True)),
                 ('scope', models.CharField(max_length=16)),
                 ('executor_class', models.CharField(max_length=128)),
                 ('required_packages', models.TextField(blank=True)),

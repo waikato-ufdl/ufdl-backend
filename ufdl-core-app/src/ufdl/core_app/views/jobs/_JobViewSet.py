@@ -13,7 +13,7 @@ class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDL
 
     permission_classes = {
         "list": IsAuthenticated,
-        "create": IsAuthenticated,
+        "create": AllowNone,  # Created via the job-template 'create_job' action
         "retrieve": IsAuthenticated,
         "update": IsAdminUser,
         "partial_update": IsAdminUser,

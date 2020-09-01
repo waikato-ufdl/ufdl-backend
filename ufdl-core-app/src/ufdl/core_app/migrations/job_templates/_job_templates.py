@@ -81,6 +81,7 @@ def add_initial_job_templates(apps, schema_editor, job_template_iterator: Iterat
         job_template_instance = job_template_model(
             name=job_template.name,
             version=1,
+            description=job_template.description,
             scope=job_template.scope,
             framework=framework_instance,
             domain=data_domain_instance,

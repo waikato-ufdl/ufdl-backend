@@ -14,7 +14,7 @@
     {
       "name": "data",
       "type": "dataset",
-      "options": "to-coco --sort-categories --category-output-file labels.txt --split-names train.json test.json val.json --split-ratios 0.7 0.15 0.15",
+      "options": "to-coco --sort-categories --category-output-file labels.txt --split-names train.json test.json val.json --split-ratios 70 15 15",
       "help": "The dataset to use for building the model."
     }
   ],

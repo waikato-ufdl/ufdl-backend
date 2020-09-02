@@ -26,6 +26,9 @@ class DataDomain(DeleteOnNoRemainingReferencesOnlyModel):
     # The domain's two-letter identifier string
     name = models.CharField(max_length=2, unique=True)
 
+    # A longer description string for the domain
+    description = models.CharField(max_length=32)
+
     objects = DataDomainQuerySet.as_manager()
 
     @classmethod

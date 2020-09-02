@@ -6,4 +6,5 @@ class DataDomainSerialiser(serializers.ModelSerializer):
     class Meta:
         model = DataDomain
         fields = ["pk",
-                  "name"]
+                  "name",
+                  "description"]

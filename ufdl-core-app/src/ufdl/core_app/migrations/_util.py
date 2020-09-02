@@ -21,11 +21,12 @@ def iterate_csv_file(filename: str) -> Iterator[Tuple[str, ...]]:
         yield from csv_reader
 
 
-def add_data_domain(code: str):
+def add_data_domain(code: str, description: str):
     """
     Creates a function which adds the given data-domain to the server.
 
-    :param code:    The two-letter code for the domain.
+    :param code:            The two-letter code for the domain.
+    :param description:     The long description name for the domain.
     """
     # Define the adding function
     def add_function(apps, schema_editor):
@@ -36,6 +37,6 @@ def add_data_domain(code: str):
         data_domain_model = apps.get_model(UFDLCoreAppConfig.label, "DataDomain")
 
         # Add the domain code to the database
-        data_domain_model(name=code).save()
+        data_domain_model(name=code, description=description).save()
 
     return add_function

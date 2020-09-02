@@ -13,5 +13,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_data_domain('ic'))
+        migrations.RunPython(add_data_domain('ic', "Image Classification"))
     ]

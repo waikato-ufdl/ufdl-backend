@@ -1,6 +1,7 @@
 {
-  "name": "tf_image_class_efficientnet_b0",
+  "name": "tensorflow_1_14_image_class_train",
   "version": 1,
+  "description": "Training image classification models using Tensorflow 1.14",
   "scope": "public",
   "domain": "ic",
   "framework": "tensorflow|1.14",

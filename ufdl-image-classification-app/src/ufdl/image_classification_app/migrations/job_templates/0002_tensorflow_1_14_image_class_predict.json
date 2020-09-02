@@ -1,6 +1,7 @@
 {
-  "name": "tf_image_class_predict",
+  "name": "tensorflow_1_14_image_class_predict",
   "version": 1,
+  "description": "Making predictions using image classification models built with Tensorflow 1.14",
   "scope": "public",
   "domain": "ic",
   "framework": "tensorflow|1.14",

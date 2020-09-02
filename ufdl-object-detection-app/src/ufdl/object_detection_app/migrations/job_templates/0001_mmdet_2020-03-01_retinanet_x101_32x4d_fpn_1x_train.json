@@ -1,6 +1,7 @@
 {
-  "name": "mmdet_retinanet_x101_32x4d_fpn_1x",
+  "name": "mmdet_2020-03-01_retinanet_x101_32x4d_fpn_1x",
   "version": 1,
+  "description": "Building RetinaNet X-101 FPN models using MMDetection 2020-03-01",
   "scope": "public",
   "domain": "od",
   "framework": "mmdetection|2020-03-01",

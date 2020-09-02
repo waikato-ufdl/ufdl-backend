@@ -4,5 +4,7 @@ from ._format_query_params import format_query_params
 from ._format_suffix import format_suffix
 from ._typing import (
     QueryParameterValue,
-    QueryParameters
+    QueryParameters,
+    is_query_parameters,
+    is_query_parameter_value
 )

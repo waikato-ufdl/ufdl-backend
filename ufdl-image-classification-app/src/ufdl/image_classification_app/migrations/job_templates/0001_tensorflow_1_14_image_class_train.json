@@ -7,8 +7,8 @@
   "framework": "tensorflow|1.14",
   "licence": "Apache 2.0",
   "job_type": "train",
-  "executor_class": "ufdl.joblauncher.classify.ImageClassificationTrain_TF_1_14",
-  "required_packages": "",
+  "executor_class": "ufdl.joblauncher.classify.tensforflow.ImageClassificationTrain_TF_1_14",
+  "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
   "inputs":
   [
     {

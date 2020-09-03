@@ -31,6 +31,12 @@
       "type": "int",
       "default": "5",
       "help": "The top X predictions to output."
+    },
+    {
+      "name": "store-predictions",
+      "type": "bool",
+      "default": "false",
+      "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
     }
   ],
   "body": "tfic-poll --top_x ${top-x} --in_dir /prediction/in --out_dir /prediction/out --graph /output/graph.pb --info /output/info.json"

@@ -32,6 +32,12 @@ User-Friendly Deep Learning (UFDL) - backend system.
   environment on [http://localhost:8000](http://localhost:8000), unless the IP
   address and port to bind to is provided as argument (e.g., `0.0.0.0:8000`)
 
+## API documentation
+
+For API documentation see:
+* [repository](https://github.com/waikato-ufdl/ufdl-api)
+* [website](https://waikato-ufdl.github.io/ufdl-api/)
+
 
 ## Job templates
 

@@ -51,7 +51,12 @@ User-Friendly Deep Learning (UFDL) - backend system.
   * int
   * float
   * str
-  * model
   * dataset
+  * joboutput (specifies the job output `type` in the `options` field of parameters)
 
-  
+
+## Job execution
+
+Jobs that were created from job templates get executed using the 
+[Job launcher framework](https://github.com/waikato-ufdl/ufdl-job-launcher) 
+on worker nodes.

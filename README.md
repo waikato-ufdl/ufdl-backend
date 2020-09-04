@@ -58,6 +58,7 @@ For API documentation see:
   * float
   * str
   * dataset
+  * model (for selecting pretrained models)
   * joboutput (specifies the job output `type` in the `options` field of parameters)
 
 

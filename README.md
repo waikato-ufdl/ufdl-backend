@@ -24,7 +24,7 @@ User-Friendly Deep Learning (UFDL) - backend system.
 * additional libraries
 
   ```commandline
-  sudo apt-get install libsm6 libxrender1
+  sudo apt-get install libsm6 libxrender1 virtualenv
   ```
 
 

@@ -4,6 +4,8 @@ from rest_framework import routers
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from simple_django_teams.mixins import SoftDeleteModel
+
 from ufdl.json.core import MergeSpec
 
 from ...exceptions import JSONParseFailure
@@ -54,6 +56,9 @@ class MergeViewSet(RoutedViewSet):
 
         # If specified to delete the source, do so
         if spec.delete:
-            source.delete()
+            if spec.hard and isinstance(source, SoftDeleteModel):
+                source.hard_delete()
+            else:
+                source.delete()
 
         return Response(self.get_serializer().to_representation(target))

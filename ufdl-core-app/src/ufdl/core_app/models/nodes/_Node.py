@@ -25,7 +25,7 @@ class Node(DeleteOnNoRemainingReferencesOnlyModel):
     index = models.PositiveSmallIntegerField()
 
     # The NVidia driver version
-    driver_version = models.CharField(max_length=16)
+    driver_version = models.CharField(max_length=16, null=True)
 
     # The hardware generation of graphics on the node
     hardware_generation = models.ForeignKey(f"{UFDLCoreAppConfig.label}.Hardware",
@@ -34,7 +34,7 @@ class Node(DeleteOnNoRemainingReferencesOnlyModel):
                                             null=True)
 
     # The amount of GPU memory available on the node, in MB
-    gpu_mem = models.PositiveIntegerField()
+    gpu_mem = models.PositiveIntegerField(null=True)
 
     # The amount of CPU memory available on the node, in MB
     cpu_mem = models.PositiveIntegerField()

@@ -1,7 +1,10 @@
 #!/bin/bash
 
-echo "Press any key to reset database of UFDL backend"
-read -s -n 1 key
+if [ ! "$1" = "-y" ]
+then
+  echo "Press any key to reset database of UFDL backend"
+  read -s -n 1 key
+fi
 
 # check venv directory
 if [ ! -d "./venv.dev" ]

@@ -86,9 +86,12 @@ fi
 REPO="ufdl-json-messages"
 check_repository
 
-echo
-echo "Press any key to start setup of 'venv.dev' for running UFDL backend (using $PYTHON)..."
-read -s -n 1 key
+if [ ! "$1" = "-y" ]
+then
+  echo
+  echo "Press any key to start setup of 'venv.dev' for running UFDL backend (using $PYTHON)..."
+  read -s -n 1 key
+fi
 
 # delete old directory
 if [ -d "./venv.dev" ]

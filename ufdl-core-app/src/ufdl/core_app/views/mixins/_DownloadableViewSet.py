@@ -28,7 +28,7 @@ class DownloadableViewSet(RoutedViewSet):
         return [
             routers.Route(
                 url=r'^{prefix}/{lookup}/download{trailing_slash}$',
-                mapping={'get': 'download'},
+                mapping={'post': 'download'},
                 name='{basename}-download',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: DownloadableViewSet.MODE_KEYWORD}

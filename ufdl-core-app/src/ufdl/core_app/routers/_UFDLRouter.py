@@ -1,6 +1,7 @@
 from rest_framework import routers
 
 from ..views.mixins import *
+from ._standard_routes import STANDARD_CRUD_ROUTES
 
 
 class UFDLRouter(routers.DefaultRouter):
@@ -14,7 +15,7 @@ class UFDLRouter(routers.DefaultRouter):
     trailing_slash = property(lambda self: "/?", lambda self, value: None)
 
     routes = (
-            routers.DefaultRouter.routes +
+            STANDARD_CRUD_ROUTES +
             AcquireJobViewSet.get_routes() +
             AddJobOutputViewSet.get_routes() +
             CopyableViewSet.get_routes() +

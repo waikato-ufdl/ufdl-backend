@@ -21,6 +21,13 @@ User-Friendly Deep Learning (UFDL) - backend system.
   sudo apt-get install build-essential
   ```
 
+* additional libraries
+
+  ```commandline
+  sudo apt-get install libsm6 libxrender1
+  ```
+
+
 ## Scripts
 
 * `dev_init.sh` - for setting up the virtual environment `venv.dev` that runs a
@@ -31,6 +38,7 @@ User-Friendly Deep Learning (UFDL) - backend system.
 * `dev_start.sh` - launches the developer instance from the `venv.dev` virtual
   environment on [http://localhost:8000](http://localhost:8000), unless the IP
   address and port to bind to is provided as argument (e.g., `0.0.0.0:8000`)
+
 
 ## API documentation
 

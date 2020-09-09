@@ -59,6 +59,23 @@ REQUIRED=false
 check_executable
 PYTHON38_AVAILABLE=$AVAILABLE
 
+EXEC="mysql_config"
+ADDITIONAL=""
+REQUIRED=false
+check_executable
+MYSQLCONFIG_AVAILABLE=$AVAILABLE
+
+if [ "MYSQLCONFIG_AVAILABLE" = "false" ]
+then
+  echo
+  echo "mysql_config is not available, i.e., you won't be able to use MySQL as database backend."
+  echo "Install on Debian systems with:"
+  echo "  sudo apt-get install libmysqlclient-dev"
+  echo
+fi
+
+
+
 if [ "$PYTHON37_AVAILABLE" = "false" ] && [ "$PYTHON38_AVAILABLE" = "false" ]
 then
   echo
@@ -108,6 +125,10 @@ echo "Installing dependencies..."
 ./venv.dev/bin/pip install --upgrade setuptools
 ./venv.dev/bin/pip install Cython
 ./venv.dev/bin/pip install numpy
+if [ "$MYSQLCONFIG_AVAILABLE" = "true" ]
+then
+  ./venv.dev/bin/pip install mysqlclient
+fi
 ./venv.dev/bin/pip install "opencv-python<4.2.0"
 # check for nvidia-smi and install GPU version
 if [ -f "/usr/bin/nvidia-smi" ]

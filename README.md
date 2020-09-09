@@ -27,6 +27,12 @@ User-Friendly Deep Learning (UFDL) - backend system.
   sudo apt-get install libsm6 libxrender1 virtualenv
   ```
 
+* when using a MySQL backend ensure that `mysql_config` is present
+
+  ```commandline
+  sudo apt-get install libmysqlclient-dev
+  ```
+
 
 ## Scripts
 
@@ -38,6 +44,37 @@ User-Friendly Deep Learning (UFDL) - backend system.
 * `dev_start.sh` - launches the developer instance from the `venv.dev` virtual
   environment on [http://localhost:8000](http://localhost:8000), unless the IP
   address and port to bind to is provided as argument (e.g., `0.0.0.0:8000`)
+
+
+## MySQL
+
+Change `DATABASES` in your `settings.py` to this:  
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'OPTIONS': {
+            'read_default_file': '/some/where/my.cnf',
+        },
+    }
+}
+```
+
+The content of `/some/where/my.cnf` is as follows:
+
+```ini
+[client]
+host = SERVER
+database = DATABASE
+user = USER
+password = PASSWORD
+default-character-set = utf8
+```
+
+Make sure to create the database with `utf-8` encoding rather than `latin1`.
+
+For more information, see the [Django documentation](https://docs.djangoproject.com/en/3.1/ref/databases/#mysql-notes).
 
 
 ## API documentation
@@ -75,3 +112,4 @@ For API documentation see:
 Jobs that were created from job templates get executed using the 
 [Job launcher framework](https://github.com/waikato-ufdl/ufdl-job-launcher) 
 on worker nodes.
+ 

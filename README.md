@@ -77,6 +77,11 @@ Make sure to create the database with `utf-8` encoding rather than `latin1`.
 For more information, see the [Django documentation](https://docs.djangoproject.com/en/3.1/ref/databases/#mysql-notes).
 
 
+## Docker
+
+See [here](docker/README.md) for more details.
+
+
 ## API documentation
 
 For API documentation see:
@@ -112,4 +117,3 @@ For API documentation see:
 Jobs that were created from job templates get executed using the 
 [Job launcher framework](https://github.com/waikato-ufdl/ufdl-job-launcher) 
 on worker nodes.
- 

@@ -70,6 +70,7 @@ database = DATABASE
 user = USER
 password = PASSWORD
 default-character-set = utf8
+sql_mode='STRICT_TRANS_TABLES'
 ```
 
 Make sure to create the database with `utf-8` encoding rather than `latin1`.

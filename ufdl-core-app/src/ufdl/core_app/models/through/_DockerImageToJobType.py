@@ -27,10 +27,3 @@ class DockerImageToJobType(DeleteOnNoRemainingReferencesOnlyModel):
                                  related_name="+")
 
     objects = DockerImageToJobTypeQuerySet.as_manager()
-
-    class Meta(SoftDeleteModel.Meta):
-        constraints = [
-            # Ensure that each Docker image has each job-type only once
-            models.UniqueConstraint(name="unique_job_types_per_docker_image",
-                                    fields=["docker_image", "job_type"])
-        ]

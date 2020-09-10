@@ -9,10 +9,27 @@ def reset():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ufdl.api_site.settings')
 
     # Reset the database
-    import sys
-    from .manage import main
-    script = sys.argv[0].replace("reset.py", "manage.py")
-    main([script, "migrate", "ufdl-core", "zero"])
+    from django.db import connections, DEFAULT_DB_ALIAS
+    print(f"Resetting database")
+    connection = connections[DEFAULT_DB_ALIAS]
+    database_type = connection.vendor
+    print(f"Detected database type: {database_type}")
+    if database_type == "sqlite":
+        DB_PATH = connection.settings_dict['NAME']
+        if os.path.exists(DB_PATH):
+            print(f"Deleting database '{DB_PATH}'")
+            os.remove(DB_PATH)
+        else:
+            print(f"Database '{DB_PATH}' not present; skipping deletion...")
+    elif database_type == "mysql":
+        with connection.cursor() as cursor:
+            cursor.execute("select database();")
+            database_name = cursor.fetchone()[0]
+            cursor.execute(f"drop database `{database_name}`;"
+                           f"create database `{database_name}` character set utf8;"
+                           f"use `{database_name}`;")
+    else:
+        raise Exception(f"Can't reset database type: {database_type}")
 
     # Remove the file-system
     import shutil
@@ -25,6 +42,9 @@ def reset():
         print(f"Filesystem '{FS_PATH}' not present; skipping deletion...")
 
     # Apply the migrations to recreate the database
+    import sys
+    from .manage import main
+    script = sys.argv[0].replace("reset.py", "manage.py")
     main([script, "migrate"])
 
     # Create the test superuser

@@ -19,7 +19,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('v1/core/', include('ufdl.core_app.urls')),
+    path('v1/', include('ufdl.core_app.urls')),
     path('v1/classify/', include('ufdl.image_classification_app.urls')),
     path('v1/objdet/', include('ufdl.object_detection_app.urls')),
     path('v1/speech/', include('ufdl.speech_app.urls')),

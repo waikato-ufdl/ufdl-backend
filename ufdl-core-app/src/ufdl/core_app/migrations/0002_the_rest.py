@@ -539,7 +539,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dataset',
             name='domain',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl-core.DataDomain', null=True, editable=False),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl-core.DataDomain', null=True, editable=False),
         ),
         migrations.AddField(
             model_name='dataset',

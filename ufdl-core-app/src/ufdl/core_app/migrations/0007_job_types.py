@@ -2,6 +2,7 @@ from django.db import migrations
 
 from ..apps import UFDLCoreAppConfig
 from .job_types import iterate_job_types
+from ._util import DataMigration
 
 
 def add_initial_job_types(apps, schema_editor):
@@ -30,5 +31,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_initial_job_types)
+        DataMigration(add_initial_job_types)
     ]

@@ -8,14 +8,11 @@ def reset():
     import os
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ufdl.api_site.settings')
 
-    # Remove the database
-    from ..settings import gen_database_name
-    DB_PATH = gen_database_name()
-    if os.path.exists(DB_PATH):
-        print(f"Deleting database '{DB_PATH}'")
-        os.remove(DB_PATH)
-    else:
-        print(f"Database '{DB_PATH}' not present; skipping deletion...")
+    # Reset the database
+    import sys
+    from .manage import main
+    script = sys.argv[0].replace("reset.py", "manage.py")
+    main([script, "migrate", "ufdl-core", "zero"])
 
     # Remove the file-system
     import shutil
@@ -28,9 +25,6 @@ def reset():
         print(f"Filesystem '{FS_PATH}' not present; skipping deletion...")
 
     # Apply the migrations to recreate the database
-    import sys
-    from .manage import main
-    script = sys.argv[0].replace("reset.py", "manage.py")
     main([script, "migrate"])
 
     # Create the test superuser

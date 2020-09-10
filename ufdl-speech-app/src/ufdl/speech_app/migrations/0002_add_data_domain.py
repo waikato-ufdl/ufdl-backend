@@ -1,6 +1,6 @@
 from django.db import migrations
 
-from ufdl.core_app.migrations import add_data_domain
+from ufdl.core_app.migrations import add_data_domain, DataMigration
 
 
 class Migration(migrations.Migration):
@@ -13,5 +13,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_data_domain('sp', "Speech"))
+        DataMigration(add_data_domain('sp', "Speech"))
     ]

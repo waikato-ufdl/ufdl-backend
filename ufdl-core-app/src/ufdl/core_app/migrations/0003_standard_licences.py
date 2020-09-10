@@ -4,16 +4,17 @@ from django.db import migrations
 
 from ..apps import UFDLCoreAppConfig
 from .licences import iterate_licences, get_licence_subdescriptors
+from ._util import DataMigration
 
 
 def create_licence_subdescriptors(apps, model_name: str, entries: Set[str]):
     """
     Returns the set of instances that correspond to the given set of names in
-    the a sub-descriptor table (limitations, conditions, permissions). If
+    the a sub-descriptor table (limitations, conditions, permissions, domains). If
     an instance does not exist for the given name, it is automatically created.
 
     :param apps:        The app registry.
-    :param model_name:  The table to use (limitations, conditions, permissions).
+    :param model_name:  The table to use (limitations, conditions, permissions, domains).
     :param entries:     The set of entry names.
     :return:            The set of entries.
     """
@@ -68,6 +69,8 @@ def add_licence(apps, licence_name, licence_url):
     licence.domains.add(*domains)
     licence.save()
 
+    return list()
+
 
 def add_initial_licences(apps, schema_editor):
     """
@@ -77,8 +80,10 @@ def add_initial_licences(apps, schema_editor):
     :param schema_editor:   Unused.
     """
     # Process each licence in the file
+    models = []
     for licence_name, licence_url in iterate_licences():
-        add_licence(apps, licence_name, licence_url)
+        models += add_licence(apps, licence_name, licence_url)
+    return models
 
 
 class Migration(migrations.Migration):
@@ -90,5 +95,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_initial_licences)
+        DataMigration(add_initial_licences)
     ]

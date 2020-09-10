@@ -2,6 +2,7 @@ from django.db import migrations
 
 from ..apps import UFDLCoreAppConfig
 from .hardware import iterate_hardware
+from ._util import DataMigration
 
 
 def add_initial_hardware(apps, schema_editor):
@@ -32,5 +33,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_initial_hardware)
+        DataMigration(add_initial_hardware)
     ]

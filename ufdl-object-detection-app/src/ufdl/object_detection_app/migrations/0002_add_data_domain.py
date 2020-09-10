@@ -1,5 +1,6 @@
 from django.db import migrations
 
+from ufdl.core_app.migrations import DataMigration
 from ufdl.core_app.migrations import add_data_domain
 
 
@@ -13,5 +14,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_data_domain('od', "Object Detection"))
+        DataMigration(add_data_domain('od', "Object Detection"))
     ]

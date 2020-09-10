@@ -2,6 +2,7 @@ from django.db import migrations
 
 from ..apps import UFDLCoreAppConfig
 from .framework import iterate_frameworks
+from ._util import DataMigration
 
 
 def add_initial_frameworks(apps, schema_editor):
@@ -30,5 +31,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_initial_frameworks)
+        DataMigration(add_initial_frameworks)
     ]

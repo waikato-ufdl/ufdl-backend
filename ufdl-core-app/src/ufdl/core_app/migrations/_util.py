@@ -1,6 +1,8 @@
 import csv
 from typing import Tuple, Iterator
 
+from django.db import migrations
+
 
 def iterate_csv_file(filename: str) -> Iterator[Tuple[str, ...]]:
     """
@@ -40,3 +42,12 @@ def add_data_domain(code: str, description: str):
         data_domain_model(name=code, description=description).save()
 
     return add_function
+
+
+class DataMigration(migrations.RunPython):
+    """
+    Base class for migrations which add data to the database, providing
+    automatic support for reversal of the migration (reversal is no-op).
+    """
+    def __init__(self, code, atomic=None, hints=None, elidable=False):
+        super().__init__(code, lambda apps, schema: None, atomic, hints, elidable)

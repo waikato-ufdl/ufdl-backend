@@ -31,6 +31,15 @@ class DatasetQuerySet(UserRestrictedQuerySet, PublicQuerySet, SoftDeleteQuerySet
         """
         return self.filter(name=name)
 
+    def with_version(self, version: int):
+        """
+        Filters the query-set to those data-sets with a given version.
+
+        :param version:     The version to filter to.
+        :return:            The resulting query-set.
+        """
+        return self.filter(version=version)
+
     def max_version(self) -> int:
         """
         Gets the largest version number in all of the datasets.
@@ -188,6 +197,10 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         new_version = 1
         if new_name is None:
             new_version = self.project.datasets.with_name(self.name).active().max_version() + 1
+        else:
+            # Check that the new name is not already in use
+            if self.project.datasets.with_name(new_name).with_version(1).active().exists():
+                raise BadName(new_name, "New dataset name is already taken")
 
         # Create the new dataset
         new_dataset = type(self)(name=new_name if new_name is not None else self.name,

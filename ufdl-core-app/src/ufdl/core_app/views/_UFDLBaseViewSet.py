@@ -5,7 +5,7 @@ from ufdl.json.core.filter import FilterSpec
 from ..exceptions import JSONParseFailure
 from ..filter import filter_list_request
 from ..logging import get_backend_logger
-from ..permissions import IsAdminUser, AllowNone
+from ..permissions import IsAdminUser
 from ..signals import all_requests
 from ..util import for_user
 
@@ -23,6 +23,9 @@ class UFDLBaseViewSet(ModelViewSet):
     """
     # The admin permission (override access to any action)
     admin_permission_class = IsAdminUser
+
+    # The base router only allows detail access by primary key
+    lookup_value_regex = '[0-9]+'
 
     def get_permissions(self):
         # Permissions must be defined as a dictionary from

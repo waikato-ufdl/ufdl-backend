@@ -6,6 +6,8 @@ from rest_framework.response import Response
 
 from ufdl.json.core.jobs import JobTemplateMigrationSpec, InputMigrationSpec, ParameterMigrationSpec
 
+from wai.json.object import Absent
+
 from ...exceptions import JSONParseFailure
 from ...migrations.job_templates import add_job_template
 from ...models import *
@@ -48,6 +50,10 @@ class ImportTemplateViewSet(RoutedViewSet):
         """
         # Deserialise the job-template JSON
         spec = JSONParseFailure.attempt(dict(request.data), JobTemplateMigrationSpec)
+
+        # If the template already exists, delete it
+        if spec.version is not Absent:
+            JobTemplate.objects.with_name_and_version(spec.name, spec.version).active().delete()
 
         # Add the template
         instance = add_job_template(spec, Input, Parameter, Framework, DataDomain, JobType, Licence, JobTemplate)

@@ -51,63 +51,95 @@ def add_initial_job_templates(apps, schema_editor, job_template_iterator: Iterat
 
     # Add each Docker image to the database
     for job_template in job_template_iterator:
+        add_job_template(job_template,
+                         input_model,
+                         parameter_model,
+                         framework_model,
+                         data_domain_model,
+                         job_type_model,
+                         licence_model,
+                         job_template_model)
 
-        # Validate the licence
-        licence_instance = licence_model.objects.filter(name=job_template.licence).first()
-        if licence_instance is None:
-            raise Exception(f"Unknown licence '{job_template.licence}'")
 
-        # Validate the tasks
-        job_type_instance = job_type_model.objects.filter(name=job_template.job_type).first()
-        if job_type_instance is None:
-            raise Exception(f"Unknown job-type '{job_template.job_type}'")
+def add_job_template(job_template: JobTemplateMigrationSpec,
+                     input_model,
+                     parameter_model,
+                     framework_model,
+                     data_domain_model,
+                     job_type_model,
+                     licence_model,
+                     job_template_model):
+    """
+    Adds a job-template to the database from the given specification.
 
-        # Validate the data-domain
-        data_domain_instance = data_domain_model.objects.filter(name=job_template.domain).first()
-        if data_domain_instance is None:
-            raise Exception(f"Unknown data-domain '{job_template.domain}'")
+    :param job_template:        The JSON specification of the job-template.
+    :param input_model:         The Input model.
+    :param parameter_model:     The Parameter model.
+    :param framework_model:     The Framework model.
+    :param data_domain_model:   The DataDomain model.
+    :param job_type_model:      The JobType model.
+    :param licence_model:       The Licence model.
+    :param job_template_model:  The JobTemplate model.
+    :return:                    The created JobTemplate instance.
+    """
+    # Validate the licence
+    licence_instance = licence_model.objects.filter(name=job_template.licence).first()
+    if licence_instance is None:
+        raise Exception(f"Unknown licence '{job_template.licence}'")
 
-        # Make sure the framework exists
-        framework_parts = split_multipart_field(job_template.framework)
-        if len(framework_parts) != 2:
-            raise Exception(f"Couldn't split framework '{job_template.framework}' into name and "
-                            f"version parts (separate with |)")
-        framework_instance = framework_model.objects.filter(name=framework_parts[0],
-                                                            version=framework_parts[1]).first()
-        if framework_instance is None:
-            raise Exception(f"Unknown framework {job_template.framework}")
+    # Validate the tasks
+    job_type_instance = job_type_model.objects.filter(name=job_template.job_type).first()
+    if job_type_instance is None:
+        raise Exception(f"Unknown job-type '{job_template.job_type}'")
 
-        # Create the Docker image
-        job_template_instance = job_template_model(
-            name=job_template.name,
-            version=1,
-            description=job_template.description,
-            scope=job_template.scope,
-            framework=framework_instance,
-            domain=data_domain_instance,
-            type=job_type_instance,
-            executor_class=job_template.executor_class,
-            required_packages=job_template.required_packages,
-            body=job_template.body,
-            licence=licence_instance,
-        )
-        job_template_instance.save()
+    # Validate the data-domain
+    data_domain_instance = data_domain_model.objects.filter(name=job_template.domain).first()
+    if data_domain_instance is None:
+        raise Exception(f"Unknown data-domain '{job_template.domain}'")
 
-        # Add the inputs
-        for input_spec in job_template.inputs:
-            input_model(template=job_template_instance,
-                        name=input_spec.name,
-                        type=input_spec.type,
-                        options=input_spec.options,
-                        help=input_spec.help).save()
+    # Make sure the framework exists
+    framework_parts = split_multipart_field(job_template.framework)
+    if len(framework_parts) != 2:
+        raise Exception(f"Couldn't split framework '{job_template.framework}' into name and "
+                        f"version parts (separate with |)")
+    framework_instance = framework_model.objects.filter(name=framework_parts[0],
+                                                        version=framework_parts[1]).first()
+    if framework_instance is None:
+        raise Exception(f"Unknown framework {job_template.framework}")
 
-        # Add the parameters
-        for parameter_spec in job_template.parameters:
-            parameter_model(template=job_template_instance,
-                            name=parameter_spec.name,
-                            type=parameter_spec.type,
-                            default=parameter_spec.default,
-                            help=parameter_spec.help).save()
+    # Create the Docker image
+    job_template_instance = job_template_model(
+        name=job_template.name,
+        version=1,
+        description=job_template.description,
+        scope=job_template.scope,
+        framework=framework_instance,
+        domain=data_domain_instance,
+        type=job_type_instance,
+        executor_class=job_template.executor_class,
+        required_packages=job_template.required_packages,
+        body=job_template.body,
+        licence=licence_instance
+    )
+    job_template_instance.save()
+
+    # Add the inputs
+    for input_spec in job_template.inputs:
+        input_model(template=job_template_instance,
+                    name=input_spec.name,
+                    type=input_spec.type,
+                    options=input_spec.options,
+                    help=input_spec.help).save()
+
+    # Add the parameters
+    for parameter_spec in job_template.parameters:
+        parameter_model(template=job_template_instance,
+                        name=parameter_spec.name,
+                        type=parameter_spec.type,
+                        default=parameter_spec.default,
+                        help=parameter_spec.help).save()
+
+    return job_template_instance
 
 
 def split_multipart_field(field: str) -> List[str]:

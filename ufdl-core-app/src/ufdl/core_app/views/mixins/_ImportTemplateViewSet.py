@@ -85,6 +85,7 @@ class ImportTemplateViewSet(RoutedViewSet):
         """
         return JobTemplateMigrationSpec(
             name=job_template.name,
+            version=job_template.version,
             description=job_template.description,
             scope=job_template.scope,
             framework=f"{job_template.framework.name}|{job_template.framework.version}",

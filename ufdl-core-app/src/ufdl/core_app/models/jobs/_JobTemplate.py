@@ -2,13 +2,20 @@ from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet
 
 from ...apps import UFDLCoreAppConfig
+from ...util import max_value
 
 
 class JobTemplateQuerySet(SoftDeleteQuerySet):
     """
     A query-set over job templates.
     """
-    pass
+    def max_version(self) -> int:
+        """
+        Gets the largest version number in all of the job-templates.
+
+        :return:    The version number.
+        """
+        return max_value(self, "version", 0)
 
 
 class JobTemplate(SoftDeleteModel):

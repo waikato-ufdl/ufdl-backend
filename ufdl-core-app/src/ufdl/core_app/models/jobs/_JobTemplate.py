@@ -9,6 +9,16 @@ class JobTemplateQuerySet(SoftDeleteQuerySet):
     """
     A query-set over job templates.
     """
+    def with_name_and_version(self, name: str, version: int):
+        """
+        Filters the query-set to those instances with a given name and version.
+
+        :param name:        The name of the template.
+        :param version:     The template version.
+        :return:            The filtered query-set.
+        """
+        return self.filter(name=name, version=version)
+
     def max_version(self) -> int:
         """
         Gets the largest version number in all of the job-templates.

@@ -4,6 +4,8 @@ from typing import Iterator, List
 
 from ufdl.json.core.jobs import JobTemplateMigrationSpec
 
+from wai.json.object import Absent
+
 from ...apps import UFDLCoreAppConfig
 from ...util import max_value
 
@@ -109,16 +111,16 @@ def add_job_template(job_template: JobTemplateMigrationSpec,
         raise Exception(f"Unknown framework {job_template.framework}")
 
     # Find the maximum version of this template's name
-    max_version = max_value(
+    new_version = max_value(
         job_template_model.objects.filter(name=job_template.name, deletion_time__isnull=True),
         "version",
         0
-    )
+    ) + 1 if job_template.version is Absent else job_template.version
 
     # Create the Docker image
     job_template_instance = job_template_model(
         name=job_template.name,
-        version=max_version + 1,
+        version=new_version,
         description=job_template.description,
         scope=job_template.scope,
         framework=framework_instance,

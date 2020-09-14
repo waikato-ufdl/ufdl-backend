@@ -1,11 +1,15 @@
 from ...models.jobs import JobTemplate
 from ...serialisers.jobs import JobTemplateSerialiser
 from ...permissions import IsAuthenticated, AllowNone
-from ..mixins import SoftDeleteViewSet, InputsParametersViewSet, CreateJobViewSet
+from ..mixins import SoftDeleteViewSet, InputsParametersViewSet, CreateJobViewSet, ImportTemplateViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class JobTemplateViewSet(CreateJobViewSet, InputsParametersViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
+class JobTemplateViewSet(ImportTemplateViewSet,
+                         CreateJobViewSet,
+                         InputsParametersViewSet,
+                         SoftDeleteViewSet,
+                         UFDLBaseViewSet):
     queryset = JobTemplate.objects.all()
     serializer_class = JobTemplateSerialiser
 
@@ -22,5 +26,7 @@ class JobTemplateViewSet(CreateJobViewSet, InputsParametersViewSet, SoftDeleteVi
         "add_parameter": AllowNone,
         "delete_parameter": AllowNone,
         "hard_delete": AllowNone,
-        "reinstate": AllowNone
+        "reinstate": AllowNone,
+        "import_template": AllowNone,
+        "export_template": AllowNone
     }

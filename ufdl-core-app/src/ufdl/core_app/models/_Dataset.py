@@ -14,7 +14,7 @@ from wai.annotations.core.instance import Instance
 
 from ..apps import UFDLCoreAppConfig
 from ..exceptions import *
-from ..util import QueryParameterValue, for_user, format_suffix
+from ..util import QueryParameterValue, for_user, format_suffix, max_value
 from .mixins import (
     PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel, UserRestrictedQuerySet,
     MergableModel
@@ -46,7 +46,7 @@ class DatasetQuerySet(UserRestrictedQuerySet, PublicQuerySet, SoftDeleteQuerySet
 
         :return:    The version number.
         """
-        return self.aggregate(models.Max('version'))['version__max']
+        return max_value(self, "version", 0)
 
     def for_user(self, user):
         # Users can see all public datasets and any datasets belonging to teams

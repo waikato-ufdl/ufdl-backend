@@ -105,6 +105,27 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
                                     condition=SoftDeleteModel.active_Q)
         ]
 
+    @property
+    def domain_specific(self):
+        """
+        Converts this data-set instance into the domain-specific model.
+
+        :return:    The domain-specific representation of this data-set.
+        """
+        # Already domain-specific, return self
+        if not type(self) is Dataset:
+            return self
+
+        # Not a domain-specific data-set, return self
+        if self.domain is None:
+            return self
+
+        # Format the domain prefix
+        prefix: str = self.domain.description
+        prefix = prefix.lower().replace(" ", "")
+
+        return getattr(self, f"{prefix}dataset")
+
     @classmethod
     def domain_code(cls) -> Optional[str]:
         """

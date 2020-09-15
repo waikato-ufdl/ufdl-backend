@@ -29,3 +29,13 @@ class DatasetViewSet(MergeViewSet, DownloadableViewSet, CopyableViewSet, FileCon
         "hard_delete": AllowNone,
         "reinstate": AllowNone
     }
+
+    def get_object_from_url(self, **kwargs):
+        # Get the object as normal
+        obj = super().get_object_from_url(**kwargs)
+
+        # If it is a data-set, up-cast it automatically
+        if isinstance(obj, Dataset):
+            obj = obj.domain_specific
+
+        return obj

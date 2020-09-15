@@ -265,7 +265,7 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         delattr(self, "__annotations_args")
 
         # If no annotations arguments supplied, just return the files
-        if annotations_args is None:
+        if annotations_args is None or type(self) is Dataset:
             return ((file_reference.file.filename, file_reference.file.get_data())
                     for file_reference in self.files.all())
 

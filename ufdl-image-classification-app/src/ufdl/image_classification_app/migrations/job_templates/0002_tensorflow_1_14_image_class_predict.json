@@ -37,6 +37,12 @@
       "type": "bool",
       "default": "false",
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+    },
+    {
+      "name": "confidence-scores",
+      "type": "str",
+      "default": "ufdl.joblauncher.TopScore;ufdl.joblauncher.Entropy",
+      "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
     }
   ],
   "body": "tfic-poll --top_x ${top-x} --in_dir /prediction/in --out_dir /prediction/out --graph /output/graph.pb --info /output/info.json"

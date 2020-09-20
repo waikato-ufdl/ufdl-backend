@@ -37,9 +37,16 @@ class FileContainerViewSet(RoutedViewSet):
                 initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.FILE_MODE_KEYWORD}
             ),
             routers.Route(
-                url=r'^{prefix}/{lookup}/metadata/(?P<fn>.*)$',
+                url=r'^{prefix}/{lookup}/metadata/(?P<fn>.+)$',
                 mapping={'post': 'set_metadata',
                          'get': 'get_metadata'},
+                name='{basename}-file-metadata',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.METADATA_MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/metadata{trailing_slash}$',
+                mapping={'get': 'get_all_metadata'},
                 name='{basename}-file-metadata',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.METADATA_MODE_KEYWORD}
@@ -144,3 +151,19 @@ class FileContainerViewSet(RoutedViewSet):
         metadata = container.get_file_metadata(fn)
 
         return Response(FileMetadata(metadata=metadata).to_raw_json())
+
+    def get_all_metadata(self, request: Request, pk=None):
+        """
+        Action to retrieve the meta-data for all files in the container.
+
+        :param request:     The request.
+        :param pk:          The primary key of the file-container being accessed.
+        :return:            A response containing the files' meta-data.
+        """
+        # Get the container object
+        container = self.get_object_of_type(FileContainerModel)
+
+        return Response(
+            {fn: container.get_file_metadata(fn)
+             for fn in container.iterate_filenames()}
+        )

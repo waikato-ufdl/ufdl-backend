@@ -26,6 +26,7 @@ class DatasetViewSet(MergeViewSet, DownloadableViewSet, CopyableViewSet, FileCon
         "delete_file": WriteOrNodeExecutePermission,
         "set_metadata": WriteOrNodeExecutePermission,
         "get_metadata": IsMember,
+        "get_all_metadata": IsMember,
         "hard_delete": AllowNone,
         "reinstate": AllowNone
     }

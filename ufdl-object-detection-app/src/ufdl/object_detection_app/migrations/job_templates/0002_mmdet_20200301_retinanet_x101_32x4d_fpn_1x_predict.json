@@ -31,7 +31,7 @@
       "type": "bool",
       "default": "false",
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
-    },
+    }
   ],
   "body": "mmdet_predict --checkpoint /output/latest.pth --config /output/config.py --labels /output/labels.txt --score 0 --prediction_in /predictions/in/ --prediction_out /predictions/out/"
 }

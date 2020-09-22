@@ -127,6 +127,6 @@ total_epochs = ${epochs}
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 work_dir = '/output'
-#load_from = '/models/${model}'
+load_from = None
 resume_from = None
 workflow = [('train', 1)]

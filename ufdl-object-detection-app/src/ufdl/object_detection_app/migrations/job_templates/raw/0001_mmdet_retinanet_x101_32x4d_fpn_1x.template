@@ -90,17 +90,17 @@ data = dict(
     train=dict(
         type=dataset_type,
         ann_file=data_root + '/train/annotations.json',
-        img_prefix=data_root + '/',
+        img_prefix=data_root + '/train/',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         ann_file=data_root + '/val/annotations.json',
-        img_prefix=data_root + '/',
+        img_prefix=data_root + '/val/',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         ann_file=data_root + '/test/annotations.json',
-        img_prefix=data_root + '/',
+        img_prefix=data_root + '/test/',
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric='bbox')
 # optimizer

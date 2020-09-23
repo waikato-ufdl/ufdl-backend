@@ -179,7 +179,7 @@ then
   rm -rf ./$VENV
 fi
 
-echo "Creating new virtual environment..."
+echo "Creating new virtual environment $VENV..."
 virtualenv -p /usr/bin/$PYTHON ./$VENV
 
 echo "Installing dependencies..."

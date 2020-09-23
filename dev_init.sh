@@ -170,6 +170,8 @@ if [ "$UPDATE" = "yes" ]
 then
   REPO="ufdl-json-messages"
   update_repository
+
+  git pull
 fi
 
 # delete old directory

@@ -27,11 +27,17 @@
   "parameters":
   [
     {
+      "name": "min-score",
+      "type": "int",
+      "default": "0.0",
+      "help": "The minimum score (0-1) that the predictions need to achieve for being included."
+    }
+    {
       "name": "store-predictions",
       "type": "bool",
       "default": "false",
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
     }
   ],
-  "body": "mmdet_predict --checkpoint /output/latest.pth --config /output/config.py --labels /output/labels.txt --score 0 --prediction_in /prediction/in/ --prediction_out /prediction/out/"
+  "body": "mmdet_predict --checkpoint /output/latest.pth --config /output/config.py --labels /output/labels.txt --score ${min-score} --prediction_in /prediction/in/ --prediction_out /prediction/out/"
 }

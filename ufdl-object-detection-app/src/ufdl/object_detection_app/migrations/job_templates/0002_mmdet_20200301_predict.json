@@ -28,7 +28,7 @@
   [
     {
       "name": "min-score",
-      "type": "int",
+      "type": "float",
       "default": "0.0",
       "help": "The minimum score (0-1) that the predictions need to achieve for being included."
     },

@@ -1,10 +1,11 @@
 # How to Install UFDL Backend
 
+The script `dev_init.sh` performs all the steps outlined below
+to set up a virtual environment.
+
 ## Prerequisites
 
-* Python 3.7
-* Development headers (python3.7-dev) (Windows only?)
-* Compiler e.g. gcc (exported as CC) (Windows only?)
+See [Requirements section](README.md#requirements) in [README.md](README.md).
 
 ## Checkout Sources from Git
 
@@ -53,6 +54,7 @@ pip install ufdl-annotation-utils/
 pip install ufdl-core-app/
 pip install ufdl-image-classification-app/
 pip install ufdl-object-detection-app/
+pip install ufdl-speech-app/
 pip install ufdl-api-site/
 ```
 
@@ -67,5 +69,9 @@ python -m ufdl.api_site.scripts.reset
 ## Start the Server
 
 ```
-python -m ufdl.api_site.scripts.manage runserver
+python -m ufdl.api_site.scripts.manage runserver [BIND]
 ```
+
+If `BIND` is omitted, the server runs on `localhost:8000`.
+In order to expose the server on port 8000 outside of localhost, 
+use `0.0.0.0:8000`. 

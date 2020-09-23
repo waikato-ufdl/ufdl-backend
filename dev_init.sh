@@ -1,5 +1,23 @@
 #!/bin/bash
 
+#############
+# FUNCTIONS #
+#############
+
+# the usage of this script
+function usage()
+{
+   echo
+   echo "${0##*/} [-y] [-u] [-h]"
+   echo
+   echo "Initializes the virtual environment for the UFDL backend."
+   echo
+   echo " -h   this help"
+   echo " -y   do not prompt user, assume 'yes'"
+   echo " -u   update any repositories first"
+   echo
+}
+
 function check_executable()
 {
   echo "Checking $EXEC..."
@@ -34,11 +52,47 @@ function check_repository()
     echo "cd .."
     echo "git clone https://github.com/waikato-ufdl/$REPO.git"
     echo	  
-    exit 2
+    exit 1
   else
     echo "...is present"
   fi
 }
+
+function update_repository()
+{
+  echo "Updating repo $REPO..."
+  CURRENT="`pwd`"
+  cd "../$REPO"
+  git pull
+  cd "$CURRENT"
+}
+
+##############
+# PARAMETERS #
+##############
+
+VENV="venv.dev"
+PROMPT="yes"
+UPDATE="no"
+while getopts ":hyu" flag
+do
+   case $flag in
+      y) PROMPT="no"
+         ;;
+      u) UPDATE="yes"
+         ;;
+      h) usage
+         exit 0
+         ;;
+      *) usage
+         exit 1
+         ;;
+   esac
+done
+
+##########
+# CHECKS #
+##########
 
 echo "Performing checks"
 
@@ -74,8 +128,6 @@ then
   echo
 fi
 
-
-
 if [ "$PYTHON37_AVAILABLE" = "false" ] && [ "$PYTHON38_AVAILABLE" = "false" ]
 then
   echo
@@ -96,62 +148,73 @@ then
   PYTHON=python3.8
 else
   echo "Don't know what Python executable to use!"
-  exit 2
+  exit 1
 fi
-
 
 REPO="ufdl-json-messages"
 check_repository
 
-if [ ! "$1" = "-y" ]
+#############
+# EXECUTION #
+#############
+
+if [ "$PROMPT" = "yes" ]
 then
   echo
-  echo "Press any key to start setup of 'venv.dev' for running UFDL backend (using $PYTHON)..."
+  echo "Press any key to start setup of '$VENV' for running UFDL backend (using $PYTHON)..."
   read -s -n 1 key
 fi
 
+# update repos
+if [ "$UPDATE" = "yes" ]
+then
+  REPO="ufdl-json-messages"
+  update_repository
+fi
+
 # delete old directory
-if [ -d "./venv.dev" ]
+if [ -d "./$VENV" ]
 then
   echo "Removing old virtual environment..."
-  rm -rf ./venv.dev
+  rm -rf ./$VENV
 fi
 
 echo "Creating new virtual environment..."
-virtualenv -p /usr/bin/$PYTHON ./venv.dev
+virtualenv -p /usr/bin/$PYTHON ./$VENV
 
 echo "Installing dependencies..."
-./venv.dev/bin/pip install --upgrade pip
-./venv.dev/bin/pip install --upgrade setuptools
-./venv.dev/bin/pip install Cython
-./venv.dev/bin/pip install numpy
+./$VENV/bin/pip install --upgrade pip
+./$VENV/bin/pip install --upgrade setuptools
+./$VENV/bin/pip install Cython
+./$VENV/bin/pip install numpy
 if [ "$MYSQLCONFIG_AVAILABLE" = "true" ]
 then
-  ./venv.dev/bin/pip install mysqlclient
+  ./$VENV/bin/pip install mysqlclient
 fi
-./venv.dev/bin/pip install "opencv-python<4.2.0"
+./$VENV/bin/pip install "opencv-python<4.2.0"
 # check for nvidia-smi and install GPU version
 if [ -f "/usr/bin/nvidia-smi" ]
 then
-  ./venv.dev/bin/pip install tensorflow-gpu
+  ./$VENV/bin/pip install tensorflow-gpu
 else
-  ./venv.dev/bin/pip install tensorflow
+  ./$VENV/bin/pip install tensorflow
 fi
 
 echo "Installing UFDL modules..."
-./venv.dev/bin/pip install ../ufdl-json-messages/
-./venv.dev/bin/pip install ufdl-annotation-utils/
-./venv.dev/bin/pip install ufdl-core-app/
-./venv.dev/bin/pip install ufdl-image-classification-app/
-./venv.dev/bin/pip install ufdl-object-detection-app/
-./venv.dev/bin/pip install ufdl-speech-app/
-./venv.dev/bin/pip install ufdl-api-site/
+./$VENV/bin/pip install ../ufdl-json-messages/
+./$VENV/bin/pip install ufdl-annotation-utils/
+./$VENV/bin/pip install ufdl-core-app/
+./$VENV/bin/pip install ufdl-image-classification-app/
+./$VENV/bin/pip install ufdl-object-detection-app/
+./$VENV/bin/pip install ufdl-speech-app/
+./$VENV/bin/pip install ufdl-api-site/
 
 echo "Configuring backend (admin/admin user)..."
-./venv.dev/bin/python -m ufdl.api_site.scripts.reset
+./$VENV/bin/python -m ufdl.api_site.scripts.reset
 
 echo "Start dev server with:"
-echo "./venv.dev/bin/python -m ufdl.api_site.scripts.manage runserver"
-
-echo "Server is running on:"
-echo "localhost:8000"
+echo "  ./$VENV/bin/python -m ufdl.api_site.scripts.manage runserver [BIND]"
+echo "Server is then running on:"
+echo "  localhost:8000"
+echo "Using '0.0.0.0:8000' as BIND address will make the server available on"
+echo "port 8000 outside of localhost."

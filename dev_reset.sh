@@ -1,5 +1,7 @@
 #!/bin/bash
 
+VENV="venv.dev"
+
 if [ ! "$1" = "-y" ]
 then
   echo "Press any key to reset database of UFDL backend"
@@ -7,17 +9,18 @@ then
 fi
 
 # check venv directory
-if [ ! -d "./venv.dev" ]
+if [ ! -d "./$VENV" ]
 then
   echo "Virtual environment directory does not exist!"
   exit 1
 fi
 
 echo "Resetting DB..."
-./venv.dev/bin/python -m ufdl.api_site.scripts.reset
+./$VENV/bin/python -m ufdl.api_site.scripts.reset
 
 echo "Start dev server with:"
-echo "./venv.dev/bin/python -m ufdl.api_site.scripts.manage runserver"
-
-echo "Server is running on:"
-echo "localhost:8000"
+echo "  ./$VENV/bin/python -m ufdl.api_site.scripts.manage runserver [BIND]"
+echo "Server is then running on:"
+echo "  localhost:8000"
+echo "Using '0.0.0.0:8000' as BIND address will make the server available on"
+echo "port 8000 outside of localhost."

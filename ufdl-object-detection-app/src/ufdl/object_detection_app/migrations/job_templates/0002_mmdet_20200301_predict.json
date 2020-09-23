@@ -1,5 +1,5 @@
 {
-  "name": "mmdet_2020-03-01_retinanet_x101_32x4d_fpn_1x-predict",
+  "name": "mmdet_2020-03-01-predict",
   "version": 1,
   "description": "Making predictions using object detection models built with MMDetection 2020-03-01",
   "scope": "public",
@@ -33,5 +33,5 @@
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
     }
   ],
-  "body": "mmdet_predict --checkpoint /output/latest.pth --config /output/config.py --labels /output/labels.txt --score 0 --prediction_in /predictions/in/ --prediction_out /predictions/out/"
+  "body": "mmdet_predict --checkpoint /output/latest.pth --config /output/config.py --labels /output/labels.txt --score 0 --prediction_in /prediction/in/ --prediction_out /prediction/out/"
 }

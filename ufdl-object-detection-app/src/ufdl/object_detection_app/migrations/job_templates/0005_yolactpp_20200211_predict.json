@@ -1,0 +1,49 @@
+{
+  "name": "yolactpp_2020-02-11-predict",
+  "version": 1,
+  "description": "Making predictions using object detection models built with YOLACT++ 2020-02-11",
+  "scope": "public",
+  "domain": "od",
+  "framework": "yolact|2020-02-11",
+  "licence": "MIT",
+  "job_type": "predict",
+  "executor_class": "ufdl.joblauncher.objdet.yolact.ObjectDetectionPredict_YOLACTPP_20200211",
+  "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
+  "inputs":
+  [
+    {
+      "name": "model",
+      "type": "joboutput",
+      "options": "yolactmodel",
+      "help": "The YOLACT++ object detection model to use for making predictions."
+    },
+    {
+      "name": "data",
+      "type": "dataset",
+      "options": "to-coco",
+      "help": "The dataset to generate predictions for."
+    }
+  ],
+  "parameters":
+  [
+    {
+      "name": "min-score",
+      "type": "float",
+      "default": "0.0",
+      "help": "The minimum score (0-1) that the predictions need to achieve for being included."
+    },
+    {
+      "name": "top-x",
+      "type": "int",
+      "default": "5",
+      "help": "The top X predictions to output."
+    },
+    {
+      "name": "store-predictions",
+      "type": "bool",
+      "default": "false",
+      "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+    }
+  ],
+  "body": "yolactpp_predict --checkpoint /output/latest.pth --config external_config --top_k ${top-x} --score_threshold ${min-score} --output_width_height --output_polygons --bbox_as_fallback --prediction_in /prediction/in/ --prediction_out /prediction/out/"
+}

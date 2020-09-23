@@ -1,0 +1,73 @@
+{
+  "name": "yolactpp_2020-02-11_resnet50-train",
+  "version": 1,
+  "description": "Building YOLACT++ ResNet50 models using YOLACT++ 2020-02-11",
+  "scope": "public",
+  "domain": "od",
+  "framework": "yolact|2020-02-11",
+  "licence": "MIT",
+  "job_type": "train",
+  "executor_class": "ufdl.joblauncher.objdet.yolact.ObjectDetectionTrain_YOLACTPP_20200211",
+  "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
+  "inputs":
+  [
+    {
+      "name": "data",
+      "type": "dataset",
+      "options": "to-coco --sort-categories --category-output-file labels.txt -o annotations.json --split-names train test --split-ratios 80 20",
+      "help": "The dataset to use for building the model; gets split into 80% train, 20% test."
+    }
+  ],
+  "parameters":
+  [
+    {
+      "name": "max-iter",
+      "type": "int",
+      "default": "60000",
+      "help": "The maximum number of iterations to perform."
+    },
+    {
+      "name": "max-size",
+      "type": "int",
+      "default": "1000",
+      "help": "The maximum width/height to use."
+    },
+    {
+      "name": "preserve-aspect-ratio",
+      "type": "bool",
+      "default": "true",
+      "help": "Whether to preserve the aspect ratio of the images."
+    },
+    {
+      "name": "lr-steps",
+      "type": "str",
+      "default": "30000, 50000",
+      "help": "The iterations at which to change the learning rate (comma-separated list of iterations)."
+    },
+    {
+      "name": "validation-epoch",
+      "type": "int",
+      "default": "100",
+      "help": "Output validation information every n iterations. If -1, do no validation."
+    },
+    {
+      "name": "batch-size",
+      "type": "int",
+      "default": "1",
+      "help": "The batch size to use."
+    },
+    {
+      "name": "resnet50model",
+      "type": "model",
+      "default": "",
+      "help": "The pretrained ResNet50 model to use."
+    },
+    {
+      "name": "shared-memory-size",
+      "type": "str",
+      "default": "8G",
+      "help": "The shared memory size to use for launching the docker container."
+    }
+  ],
+  "body": "from data.config import dataset_base, yolact_plus_resnet50_config\n\nexternal_dataset = dataset_base.copy({\n    'name': 'dataset',\n\n    # \"/data/images\" refers to the directory inside the docker container\n    'train_images': '/data/train',\n    'train_info':   '/data/train/annotations.json',\n\n    'valid_images': '/data/test',\n    'valid_info':   '/data/test/annotations.json',\n\n    'has_gt': True,\n    'class_names': (${labels})\n})\n\n\nexternal_config = yolact_plus_resnet50_config.copy({\n    'name': 'model',  # this name gets used for storing model files: NAME_XXX_YYY.pth\n\n    'preserve_aspect_ratio': ${preserve-aspect-ratio},\n\n    'max_size': ${max-size},\n    \n    # Dataset stuff\n    'dataset': external_dataset,  # references the above dataset via its variable name\n    'num_classes': ${num-labels},  # labels + 1 for background\n\n    'max_iter': ${max-iter},\n    'lr_steps': (${lr-steps}),\n})\n\n"
+}

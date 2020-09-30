@@ -18,7 +18,7 @@ class ModelViewSet(SetFileViewSet, DownloadableViewSet, SoftDeleteViewSet, UFDLB
         "destroy": AllowNone,
         "set_file": AllowNone,
         "delete_file": AllowNone,
-        "download": AllowNone,
+        "download": IsAuthenticated,
         "hard_delete": AllowNone,
         "reinstate": AllowNone
     }

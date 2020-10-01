@@ -5,6 +5,7 @@ from rest_framework.exceptions import APIException
 
 from wai.json.error import JSONError
 from wai.json.object import JSONObject
+from wai.json.raw import RawJSONObject
 
 # The type of definition being parsed
 DefinitionType = TypeVar("DefinitionType", bound=JSONObject)
@@ -36,5 +37,18 @@ class JSONParseFailure(APIException):
         """
         try:
             return definition.from_raw_json(raw_json)
+        except JSONError as e:
+            raise JSONParseFailure(raw_json, definition, str(e))
+
+    @staticmethod
+    def validate(raw_json: RawJSONObject, definition: Type[DefinitionType]):
+        """
+        Validates the raw JSON, raising this error type on failure.
+
+        :param raw_json:        The raw JSON to validate.
+        :param definition:      The definition of the JSON structure.
+        """
+        try:
+            definition.validate_raw_json(raw_json)
         except JSONError as e:
             raise JSONParseFailure(raw_json, definition, str(e))

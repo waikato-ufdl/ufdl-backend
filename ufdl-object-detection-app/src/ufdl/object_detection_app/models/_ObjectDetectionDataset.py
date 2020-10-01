@@ -1,3 +1,4 @@
+from json import loads, dumps
 from typing import List, Optional, Iterator
 
 from ufdl.annotation_utils.object_detection import image_from_file, annotations_iterator
@@ -7,6 +8,8 @@ from ufdl.core_app.models import Dataset, DatasetQuerySet
 from ufdl.json.object_detection import AnnotationsFile, Annotation, Image
 
 from wai.annotations.core.instance import Instance
+
+from wai.json.raw import RawJSONObject, RawJSONArray
 
 
 class ObjectDetectionDatasetQuerySet(DatasetQuerySet):
@@ -76,6 +79,14 @@ class ObjectDetectionDataset(Dataset):
         """
         return AnnotationsFile.from_json_string(self.unstructured)
 
+    def get_annotations_raw(self) -> RawJSONObject:
+        """
+        Gets the annotations of this object detection data-set, in raw JSON format.
+
+        :return:    The annotations for each image.
+        """
+        return loads(self.unstructured)
+
     def set_annotations(self, annotations_file: AnnotationsFile):
         """
         Sets the annotations to the given file.
@@ -85,7 +96,16 @@ class ObjectDetectionDataset(Dataset):
         self.unstructured = annotations_file.to_json_string()
         self.save()
 
-    def get_annotations_for_image(self, filename: str) -> List[Annotation]:
+    def set_annotations_raw(self, annotations_file: RawJSONObject):
+        """
+        Sets the annotations to the given file.
+
+        :param annotations_file:    The new annotations file, in raw JSON format.
+        """
+        self.unstructured = dumps(annotations_file)
+        self.save()
+
+    def get_annotations_for_image(self, filename: str) -> RawJSONArray:
         """
         Sets the annotations for an image.
 
@@ -93,26 +113,27 @@ class ObjectDetectionDataset(Dataset):
         :return:                The list of image annotations.
         """
         # Get the annotations file
-        annotations_file = self.get_annotations()
+        annotations_file = self.get_annotations_raw()
 
         # Call this to check the file exists
         self.get_named_file_record(filename)
 
         # If there are no annotations for the image, return an empty list
-        if not annotations_file.has_property(filename):
+        if filename not in annotations_file:
             return []
 
-        return annotations_file[filename].annotations
+        return annotations_file[filename]['annotations']
 
-    def set_annotations_for_image(self, filename: str, annotations: List[Annotation]):
+    def set_annotations_for_image(self, filename: str, annotations: RawJSONArray):
         """
         Sets the annotations for an image.
 
         :param filename:        The filename of the image.
         :param annotations:     The annotations to set against the image.
         """
+
         # Get the annotations file
-        annotations_file = self.get_annotations()
+        annotations_file = self.get_annotations_raw()
 
         # Get the reference to the file we are annotating
         file = self.get_named_file_record(filename)
@@ -120,16 +141,16 @@ class ObjectDetectionDataset(Dataset):
         # Addition mode
         if len(annotations) > 0:
             # Create the property if not already existing
-            if not annotations_file.has_property(filename):
-                annotations_file.set_property(filename, image_from_file(file.filename, file.get_data()))
+            if filename not in annotations_file:
+                annotations_file[filename] = image_from_file(file.filename, file.get_data()).to_raw_json()
 
             # Replace the annotations for the image
-            annotations_file[filename].annotations = annotations
+            annotations_file[filename]['annotations'] = annotations
 
         # Deletion mode
         else:
-            if annotations_file.has_property(filename):
+            if filename in annotations_file:
                 del annotations_file[filename]
 
         # Save the annotations
-        self.set_annotations(annotations_file)
+        self.set_annotations_raw(annotations_file)

@@ -52,7 +52,7 @@ class AnnotationsViewSet(RoutedViewSet):
         dataset = self.get_object_of_type(ObjectDetectionDataset)
 
         # Return the annotations
-        return Response(dataset.get_annotations().to_raw_json())
+        return Response(dataset.get_annotations_raw())
 
     def get_annotations_for_image(self, request: Request, pk=None, fn=None):
         """
@@ -70,7 +70,7 @@ class AnnotationsViewSet(RoutedViewSet):
         annotations = dataset.get_annotations_for_image(fn)
 
         # Return the annotations
-        return Response(list(annotation.to_raw_json() for annotation in annotations))
+        return Response(annotations)
 
     def set_annotations_for_image(self, request: Request, pk=None, fn=None):
         """
@@ -85,10 +85,13 @@ class AnnotationsViewSet(RoutedViewSet):
         dataset = self.get_object_of_type(ObjectDetectionDataset)
 
         # Get the annotations from the request
-        annotations = JSONParseFailure.attempt(dict(request.data), AnnotationsModSpec).annotations
+        annotations = dict(request.data)
+
+        # Ensure the annotations are valid
+        JSONParseFailure.validate(annotations, AnnotationsModSpec)
 
         # Set the annotations
-        dataset.set_annotations_for_image(fn, annotations)
+        dataset.set_annotations_for_image(fn, annotations['annotations'])
 
         # Return an empty response
         return Response({})

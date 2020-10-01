@@ -66,6 +66,6 @@ class JobOutput(SoftDeleteModel):
     class Meta:
         constraints = [
             # Ensure that each output is distinct for a given job
-            models.UniqueConstraint(name="unique_job_output_names",
-                                    fields=["job", "name"])
+            models.UniqueConstraint(name="unique_job_outputs",
+                                    fields=["job", "name", "type"])
         ]

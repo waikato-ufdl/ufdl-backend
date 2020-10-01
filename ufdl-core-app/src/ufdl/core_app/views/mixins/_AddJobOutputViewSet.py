@@ -25,7 +25,7 @@ class AddJobOutputViewSet(RoutedViewSet):
     def get_routes(cls) -> List[routers.Route]:
         return [
             routers.Route(
-                url=r'^{prefix}/{lookup}/outputs/(?P<name>[^/]+)/?(?P<type>[^/]*)$',
+                url=r'^{prefix}/{lookup}/outputs/(?P<name>[^/]+)/(?P<type>[^/]+)$',
                 mapping={'post': 'add_output',
                          'delete': 'delete_output',
                          'get': 'get_output'},
@@ -71,12 +71,8 @@ class AddJobOutputViewSet(RoutedViewSet):
             raise JobFinished(self.action)
 
         # Make sure the job doesn't already have an output by this name
-        if job.outputs.filter(name=name).exists():
-            raise BadName(name, "Job already has an output by this name")
-
-        # If no type is given, use the empty string
-        if type is None:
-            type = ""
+        if job.outputs.filter(name=name, type=type).exists():
+            raise BadName(name, f"Job already has an output by this name/type ({name}/{type})")
 
         # Read the data from the request
         data = request.data['file'].file.read()
@@ -101,11 +97,11 @@ class AddJobOutputViewSet(RoutedViewSet):
         job = self.get_object_of_type(Job)
 
         # Get the named output
-        output = job.outputs.filter(name=name).first()
+        output = job.outputs.filter(name=name, type=type).first()
 
         # Make sure the output exists
         if output is None:
-            raise BadName(name, "Job has no output by this name")
+            raise BadName(name, f"Job has no output by this name/type ({name}/{type})")
 
         # Delete the output
         output.delete()
@@ -126,10 +122,10 @@ class AddJobOutputViewSet(RoutedViewSet):
         job = self.get_object_of_type(Job)
 
         # Get the named output
-        output = job.outputs.filter(name=name).first()
+        output = job.outputs.filter(name=name, type=type).first()
 
         # Make sure the output exists
         if output is None:
-            raise BadName(name, "Job has no output by this name")
+            raise BadName(name, f"Job has no output by this name/type ({name}/{type})")
 
         return Response(output.data.get_data())

@@ -589,7 +589,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name='joboutput',
-            constraint=models.UniqueConstraint(fields=('job', 'name'), name='unique_job_output_names'),
+            constraint=models.UniqueConstraint(fields=('job', 'name', 'type'), name='unique_job_outputs'),
         ),
         migrations.AddConstraint(
             model_name='input',

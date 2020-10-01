@@ -59,7 +59,7 @@
     {
       "name": "resnet50model",
       "type": "model",
-      "default": "",
+      "default": "resnet50-19c8e357",
       "help": "The pretrained ResNet50 model to use."
     },
     {

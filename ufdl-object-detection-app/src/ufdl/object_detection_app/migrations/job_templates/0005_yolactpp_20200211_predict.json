@@ -33,6 +33,12 @@
       "help": "The minimum score (0-1) that the predictions need to achieve for being included."
     },
     {
+      "name": "mask-threshold",
+      "type": "float",
+      "default": "0.1",
+      "help": "The threshold (0-1) to use for determining the contour of a mask."
+    },
+    {
       "name": "top-x",
       "type": "int",
       "default": "5",
@@ -45,5 +51,5 @@
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
     }
   ],
-  "body": "yolactpp_predict --checkpoint /output/latest.pth --config external_config --top_k ${top-x} --score_threshold ${min-score} --output_width_height --output_polygons --bbox_as_fallback --prediction_in /prediction/in/ --prediction_out /prediction/out/"
+  "body": "yolactpp_predict --checkpoint /output/latest.pth --config external_config --top_k ${top-x} --score_threshold ${min-score} --output_polygons --output_width_height --output_polygons --bbox_as_fallback --prediction_in /prediction/in/ --prediction_out /prediction/out/"
 }

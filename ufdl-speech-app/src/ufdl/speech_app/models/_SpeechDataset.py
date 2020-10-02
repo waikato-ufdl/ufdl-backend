@@ -1,5 +1,7 @@
 from typing import Iterator
 
+from django.db import models
+
 from ufdl.annotation_utils.speech import annotations_iterator
 
 from ufdl.core_app.models import Dataset, DatasetQuerySet
@@ -14,6 +16,9 @@ class SpeechDatasetQuerySet(DatasetQuerySet):
 
 
 class SpeechDataset(Dataset):
+    # Serialised representation of the transcriptions for this dataset
+    transcriptions = models.TextField()
+
     objects = SpeechDatasetQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):
@@ -21,11 +26,11 @@ class SpeechDataset(Dataset):
         super().__init__(*args, **kwargs)
 
         # Set a default of no transcriptions
-        if self.unstructured == "":
-            self.unstructured = "{}"
+        if self.transcriptions == "":
+            self.transcriptions = "{}"
 
         # Make sure the unstructured data is valid
-        TranscriptionsFile.validate_json_string(self.unstructured)
+        TranscriptionsFile.validate_json_string(self.transcriptions)
 
     @classmethod
     def domain_code(cls) -> str:
@@ -74,7 +79,7 @@ class SpeechDataset(Dataset):
 
         :return:    The transcriptions for each audio file.
         """
-        return TranscriptionsFile.from_json_string(self.unstructured)
+        return TranscriptionsFile.from_json_string(self.transcriptions)
 
     def set_transcriptions(self, transcriptions_file: TranscriptionsFile):
         """
@@ -82,7 +87,7 @@ class SpeechDataset(Dataset):
 
         :param transcriptions_file:     The new transcriptions file.
         """
-        self.unstructured = transcriptions_file.to_json_string()
+        self.transcriptions = transcriptions_file.to_json_string()
         self.save()
 
     def get_transcription(self, filename: str) -> Transcription:

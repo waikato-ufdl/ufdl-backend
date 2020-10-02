@@ -39,6 +39,12 @@
       "help": "The threshold (0-1) to use for determining the contour of a mask."
     },
     {
+      "name": "bbox-as-fallback",
+      "type": "float",
+      "default": "-1",
+      "help": "When outputting polygons the bbox can be used as fallback polygon. This happens if the ratio between the surrounding bbox of the polygon and the bbox is smaller than the specified value. Turned off if < 0."
+    },
+    {
       "name": "top-x",
       "type": "int",
       "default": "5",
@@ -51,5 +57,5 @@
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
     }
   ],
-  "body": "yolactpp_predict --checkpoint /output/latest.pth --config external_config --top_k ${top-x} --score_threshold ${min-score} --mask_threshold ${mask-threshold} --output_polygons --output_width_height --output_polygons --bbox_as_fallback --prediction_in /prediction/in/ --prediction_out /prediction/out/"
+  "body": "yolactpp_predict --checkpoint /output/latest.pth --config external_config --top_k ${top-x} --score_threshold ${min-score} --mask_threshold ${mask-threshold} --output_polygons --output_width_height --output_polygons --bbox_as_fallback ${bbox-as-fallback} --prediction_in /prediction/in/ --prediction_out /prediction/out/"
 }

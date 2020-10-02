@@ -14,7 +14,7 @@
     {
       "name": "model",
       "type": "joboutput",
-      "options": "yolactmodel",
+      "options": "yolactppmodel",
       "help": "The YOLACT++ object detection model to use for making predictions."
     },
     {

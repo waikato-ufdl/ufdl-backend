@@ -1,6 +1,7 @@
 from json import loads, dumps
 from typing import List, Optional, Iterator
 
+from django.db import models
 from ufdl.annotation_utils.object_detection import image_from_file, annotations_iterator
 
 from ufdl.core_app.models import Dataset, DatasetQuerySet
@@ -17,6 +18,8 @@ class ObjectDetectionDatasetQuerySet(DatasetQuerySet):
 
 
 class ObjectDetectionDataset(Dataset):
+    unstructured = models.TextField()
+
     objects = ObjectDetectionDatasetQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):

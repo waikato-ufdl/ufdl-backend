@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
             name='ImageClassificationDataset',
             fields=[
                 ('dataset_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Dataset')),
+                ('categories', models.TextField())
             ],
             options={
                 'abstract': False,

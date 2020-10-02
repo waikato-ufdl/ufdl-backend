@@ -83,9 +83,6 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
     # The tags applied to this dataset
     tags = models.TextField()
 
-    # Unstructured data (use is determined by the type of dataset)
-    unstructured = models.TextField()
-
     # The data-domain the dataset is in
     domain = models.ForeignKey(f"{UFDLCoreAppConfig.label}.DataDomain",
                                on_delete=models.DO_NOTHING,
@@ -232,8 +229,7 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
                                  licence=self.licence,
                                  tags=self.tags,
                                  creator=creator,
-                                 is_public=self.is_public,
-                                 unstructured=self.unstructured)
+                                 is_public=self.is_public)
 
         # Save the dataset
         new_dataset.save()
@@ -241,6 +237,9 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         # Add our files to the new dataset
         for reference in self.files.all():
             new_dataset.files.add(reference.copy())
+
+        # Copy the annotations for this data-set
+        new_dataset.merge_annotations(self, [(file.filename, file.filename) for file in self.files.all()])
 
         return new_dataset
 

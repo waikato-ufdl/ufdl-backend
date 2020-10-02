@@ -56,7 +56,6 @@ class Migration(migrations.Migration):
                 ('previous_version', models.IntegerField(default=-1, editable=False)),
                 ('description', models.TextField(blank=True)),
                 ('tags', models.TextField()),
-                ('unstructured', models.TextField()),
             ],
             options={
                 'abstract': False,

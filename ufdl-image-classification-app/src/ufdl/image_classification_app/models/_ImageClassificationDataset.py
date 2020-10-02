@@ -1,5 +1,7 @@
 from typing import List, Iterator
 
+from django.db import models
+
 from ufdl.annotation_utils.image_classification import annotations_iterator
 
 from ufdl.core_app.exceptions import *
@@ -17,6 +19,9 @@ class ImageClassificationDatasetQuerySet(DatasetQuerySet):
 
 
 class ImageClassificationDataset(Dataset):
+    # Serialised representation of the categories of this data-set
+    categories = models.TextField()
+
     objects = ImageClassificationDatasetQuerySet.as_manager()
 
     def __init__(self, *args, **kwargs):
@@ -24,11 +29,11 @@ class ImageClassificationDataset(Dataset):
         super().__init__(*args, **kwargs)
 
         # Set a default of no categories
-        if self.unstructured == "":
-            self.unstructured = "{}"
+        if self.categories == "":
+            self.categories = "{}"
 
         # Make sure the unstructured data is valid
-        CategoriesFile.validate_json_string(self.unstructured)
+        CategoriesFile.validate_json_string(self.categories)
 
     @classmethod
     def domain_code(cls) -> str:
@@ -70,7 +75,7 @@ class ImageClassificationDataset(Dataset):
 
         :return:    The categories for each image.
         """
-        return CategoriesFile.from_json_string(self.unstructured)
+        return CategoriesFile.from_json_string(self.categories)
 
     def set_categories(self, categories_file: CategoriesFile):
         """
@@ -78,7 +83,7 @@ class ImageClassificationDataset(Dataset):
 
         :param categories_file:     The new categories file.
         """
-        self.unstructured = categories_file.to_json_string()
+        self.categories = categories_file.to_json_string()
         self.save()
 
     def add_categories(self, images: List[str], categories: List[str]) -> CategoriesFile:

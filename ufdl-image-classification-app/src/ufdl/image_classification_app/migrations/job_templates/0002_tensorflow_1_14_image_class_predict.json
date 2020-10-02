@@ -14,7 +14,7 @@
     {
       "name": "model",
       "type": "joboutput",
-      "options": "tfmodel",
+      "options": "tficmodel",
       "help": "The Tensorflow image classification model to use for making predictions."
     },
     {

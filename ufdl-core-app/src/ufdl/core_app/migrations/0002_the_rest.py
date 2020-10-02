@@ -81,11 +81,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
             ],
-            options={
-                'abstract': False,
-                'base_manager_name': 'objects',
-                'default_manager_name': 'objects',
-            },
+            options={},
         ),
         migrations.CreateModel(
             name='Domain',

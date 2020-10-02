@@ -57,7 +57,7 @@
       "help": "The batch size to use."
     },
     {
-      "name": "resnet50model",
+      "name": "pretrained-model",
       "type": "model",
       "default": "resnet50-19c8e357",
       "help": "The pretrained ResNet50 model to use."

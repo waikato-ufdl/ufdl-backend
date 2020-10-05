@@ -108,6 +108,7 @@ For API documentation see:
   * int
   * float
   * str
+  * choice (`parameter` only; options to be listed in the `default` field, separated by `,` and default value surrounded by `[]`)
   * dataset
   * model (for selecting pretrained models)
   * joboutput (specifies the job output `type` in the `options` field of parameters)

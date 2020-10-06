@@ -18,6 +18,7 @@ class UFDLRouter(routers.DefaultRouter):
             STANDARD_CRUD_ROUTES +
             AcquireJobViewSet.get_routes() +
             AddJobOutputViewSet.get_routes() +
+            ClearDatasetViewSet.get_routes() +
             CopyableViewSet.get_routes() +
             CreateJobViewSet.get_routes() +
             DownloadableViewSet.get_routes() +

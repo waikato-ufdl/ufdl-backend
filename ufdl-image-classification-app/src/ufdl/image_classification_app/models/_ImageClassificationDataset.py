@@ -51,6 +51,9 @@ class ImageClassificationDataset(Dataset):
         # Save the annotations
         self.set_categories(self_categories_file)
 
+    def clear_annotations(self):
+        self.categories = "{}"
+
     def delete_file(self, filename: str):
         # Delete the file as usual
         file = super().delete_file(filename)

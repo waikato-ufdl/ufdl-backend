@@ -189,6 +189,25 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         # Default implementation is to do nothing
         pass
 
+    def clear(self):
+        """
+        Clears all annotations and meta-data from this data-set.
+        """
+        # Remove all meta-data
+        for file in self.files.all():
+            file.metadata = ""
+            file.save()
+
+        # Remove annotations
+        self.clear_annotations()
+
+    def clear_annotations(self):
+        """
+        Clears all annotations from this data-set.
+        """
+        # Default implementation is to do nothing
+        pass
+
     def copy(self, *, creator=None, new_name=None, **kwargs) -> 'Dataset':
         """
         Creates a copy of this dataset.

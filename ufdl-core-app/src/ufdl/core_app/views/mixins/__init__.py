@@ -3,6 +3,7 @@ Package of mixin functionality for view-sets.
 """
 from ._AcquireJobViewSet import AcquireJobViewSet
 from ._AddJobOutputViewSet import AddJobOutputViewSet
+from ._ClearDatasetViewSet import ClearDatasetViewSet
 from ._CopyableViewSet import CopyableViewSet
 from ._CreateJobViewSet import CreateJobViewSet
 from ._DownloadableViewSet import DownloadableViewSet

@@ -48,6 +48,9 @@ class SpeechDataset(Dataset):
         # Save the transcriptions
         self.set_transcriptions(self_transcriptions_file)
 
+    def clear_annotations(self):
+        self.transcriptions = "{}"
+
     def delete_file(self, filename: str):
         # Delete the file as usual
         file = super().delete_file(filename)

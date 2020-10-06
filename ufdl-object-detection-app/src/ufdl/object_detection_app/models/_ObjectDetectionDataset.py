@@ -32,6 +32,9 @@ class ObjectDetectionDataset(Dataset):
             target_annotation.annotations = other.annotations.for_file(source_file).first().annotations
             target_annotation.save()
 
+    def clear_annotations(self):
+        self.annotations.all().delete()
+
     def delete_file(self, filename: str):
         # Delete the file as usual
         file = super().delete_file(filename)
@@ -88,6 +91,7 @@ class ObjectDetectionDataset(Dataset):
         # Create an empty set to buffer the labels in
         labels = set()
 
+        # Add the labels for each image into the buffer
         for annotation in self.annotations.all():
             labels.update(annotation.labels)
 
@@ -99,6 +103,9 @@ class ObjectDetectionDataset(Dataset):
 
         :param annotations_file:    The new annotations file.
         """
+        # Remove any existing annotations
+        self.clear_annotations()
+
         for filename in annotations_file:
             self.set_annotations_for_image(filename, annotations_file.get_property_as_raw_json(filename))
 
@@ -108,6 +115,9 @@ class ObjectDetectionDataset(Dataset):
 
         :param annotations_file:    The new annotations file, in raw JSON format.
         """
+        # Remove any existing annotations
+        self.clear_annotations()
+
         for filename, annotations in annotations_file.items():
             self.set_annotations_for_image(filename, annotations)
 

@@ -295,6 +295,7 @@ class Migration(migrations.Migration):
                 ('url', models.CharField(max_length=200)),
                 ('description', models.CharField(blank=True, max_length=200)),
                 ('name', models.CharField(max_length=200)),
+                ('metadata', models.TextField(blank=True, default="")),
             ],
             options={
                 'abstract': False,

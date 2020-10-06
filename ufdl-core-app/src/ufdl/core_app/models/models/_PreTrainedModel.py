@@ -23,4 +23,7 @@ class PreTrainedModel(Model):
     # A nickname for the model
     name = models.CharField(max_length=200)
 
+    # Model metadata
+    metadata = models.TextField(blank=True, default="")
+
     objects = PreTrainedModelQuerySet.as_manager()

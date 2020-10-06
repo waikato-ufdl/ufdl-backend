@@ -10,6 +10,10 @@ from ..apps import UFDLObjectDetectionAppConfig
 
 
 class AnnotationsQuerySet(models.QuerySet):
+    """
+    Represents a query-set of the annotations for images in an
+    object-detection data-set.
+    """
     def for_file(self, filename: str) -> 'AnnotationsQuerySet':
         """
         Filters the query-set to those annotations that are for a particular file.
@@ -21,25 +25,38 @@ class AnnotationsQuerySet(models.QuerySet):
 
 
 class Annotations(models.Model):
+    """
+    Represents the annotations for a single image in an object-detection
+    data-set.
+    """
+    # The data-set the annotations belong to
     dataset = models.ForeignKey(
         f"{UFDLObjectDetectionAppConfig.label}.ObjectDetectionDataset",
         on_delete=models.DO_NOTHING,
         related_name="annotations"
     )
 
+    # The name of the image the annotations are for
     filename = models.CharField(max_length=200,
                                 editable=False)
 
+    # The JSON string encoding the annotations
     annotations = models.TextField()
 
     objects = AnnotationsQuerySet.as_manager()
 
     @property
     def image(self) -> Image:
+        """
+        Creates an Image object from this set of annotations.
+        """
         return Image.from_json_string(self.annotations)
 
     @property
     def raw_json(self) -> RawJSONObject:
+        """
+        Loads the set of annotations as raw JSON.
+        """
         return loads(self.annotations)
 
     class Meta:

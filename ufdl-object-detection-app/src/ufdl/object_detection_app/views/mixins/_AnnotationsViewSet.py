@@ -37,6 +37,13 @@ class AnnotationsViewSet(RoutedViewSet):
                 name='{basename}-annotations-for-image',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: AnnotationsViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/labels{trailing_slash}$',
+                mapping={'get': 'get_labels'},
+                name='{basename}-labels',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: AnnotationsViewSet.MODE_KEYWORD}
             )
         ]
 
@@ -53,6 +60,26 @@ class AnnotationsViewSet(RoutedViewSet):
 
         # Return the annotations
         return Response(dataset.get_annotations_raw())
+
+    def get_labels(self, request: Request, pk=None):
+        """
+        Gets the labels of a data-set.
+
+        :param request:     The request.
+        :param pk:          The primary key of the data-set being accessed.
+        :return:            The response containing the labels.
+        """
+        # Get the data-set
+        dataset = self.get_object_of_type(ObjectDetectionDataset)
+
+        # Get the labels from the data-set
+        labels = list(dataset.get_labels())
+
+        # Sort the labels
+        labels.sort()
+
+        # Return the annotations
+        return Response(labels)
 
     def get_annotations_for_image(self, request: Request, pk=None, fn=None):
         """

@@ -15,5 +15,6 @@ class DatasetViewSet(AnnotationsViewSet, CoreDatasetViewSet):
         get_annotations_for_image=IsMember,
         set_annotations_for_image=WriteOrNodeExecutePermission,
         delete_annotations_for_image=WriteOrNodeExecutePermission,
+        get_labels=IsMember,
         **CoreDatasetViewSet.permission_classes
     )

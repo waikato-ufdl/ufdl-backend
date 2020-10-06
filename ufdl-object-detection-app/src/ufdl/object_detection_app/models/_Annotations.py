@@ -1,4 +1,5 @@
 from json import loads
+from typing import Set
 
 from django.db import models
 
@@ -58,6 +59,16 @@ class Annotations(models.Model):
         Loads the set of annotations as raw JSON.
         """
         return loads(self.annotations)
+
+    @property
+    def labels(self) -> Set[str]:
+        """
+        The set of labels in these annotations.
+        """
+        return set(
+            annotation['label']
+            for annotation in self.raw_json['annotations']
+        )
 
     class Meta:
         constraints = [

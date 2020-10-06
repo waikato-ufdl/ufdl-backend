@@ -1,7 +1,6 @@
-from json import loads, dumps
-from typing import List, Optional, Iterator
+from json import dumps
+from typing import Optional, Iterator, Set
 
-from django.db import models
 from ufdl.annotation_utils.object_detection import image_from_file, annotations_iterator
 
 from ufdl.core_app.models import Dataset, DatasetQuerySet
@@ -79,6 +78,20 @@ class ObjectDetectionDataset(Dataset):
             raw[annotation.filename] = annotation.raw_json
 
         return raw
+
+    def get_labels(self) -> Set[str]:
+        """
+        Gets the labels that are present in this data-set.
+
+        :return:    The list of labels.
+        """
+        # Create an empty set to buffer the labels in
+        labels = set()
+
+        for annotation in self.annotations.all():
+            labels.update(annotation.labels)
+
+        return labels
 
     def set_annotations(self, annotations_file: AnnotationsFile):
         """

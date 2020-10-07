@@ -49,6 +49,12 @@
       "type": "bool",
       "default": "false",
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+    },
+    {
+      "name": "confidence-scores",
+      "type": "str",
+      "default": "ufdl.joblauncher.objdet.confidence.Common",
+      "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
     }
   ],
   "body": "objdet_predict --graph /output/frozen_inference_graph.pb --labels /data/labels.pbtxt --score ${min-score} --output_polygons --output_width_height --mask_threshold ${mask-threshold} --prediction_in /prediction/in/ --prediction_out /prediction/out/"

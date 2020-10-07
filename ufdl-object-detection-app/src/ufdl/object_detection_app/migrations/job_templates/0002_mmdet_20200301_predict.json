@@ -43,6 +43,12 @@
       "type": "bool",
       "default": "false",
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+    },
+    {
+      "name": "confidence-scores",
+      "type": "str",
+      "default": "ufdl.joblauncher.objdet.confidence.Common",
+      "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
     }
   ],
   "body": "mmdet_predict --checkpoint /output/latest.pth --config /output/config.py --labels /output/labels.txt --score ${min-score} --mask_threshold ${mask-threshold} --output_width_height --prediction_in /prediction/in/ --prediction_out /prediction/out/"

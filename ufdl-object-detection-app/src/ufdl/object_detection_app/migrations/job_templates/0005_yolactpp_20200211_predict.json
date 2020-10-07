@@ -55,6 +55,12 @@
       "type": "bool",
       "default": "false",
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+    },
+    {
+      "name": "confidence-scores",
+      "type": "str",
+      "default": "ufdl.joblauncher.objdet.confidence.Common",
+      "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
     }
   ],
   "body": "yolactpp_predict --model /output/latest.pth --config external_config --top_k ${top-x} --score_threshold ${min-score} --mask_threshold ${mask-threshold} --output_polygons --output_width_height --output_polygons --bbox_as_fallback ${bbox-as-fallback} --prediction_in /prediction/in/ --prediction_out /prediction/out/"

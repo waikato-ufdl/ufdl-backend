@@ -24,6 +24,7 @@ class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDL
         "acquire_job": IsNode,
         "start_job": NodeOwnsJob,
         "finish_job": NodeOwnsJob,
+        "reset_job": IsAdminUser,
         "hard_delete": IsAdminUser,
         "reinstate": IsAdminUser
     }

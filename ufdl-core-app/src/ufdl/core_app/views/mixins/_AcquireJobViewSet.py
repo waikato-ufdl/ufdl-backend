@@ -46,6 +46,13 @@ class AcquireJobViewSet(RoutedViewSet):
                 name='{basename}-finish-job',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/reset{trailing_slash}$',
+                mapping={'delete': 'reset_job'},
+                name='{basename}-reset-job',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
             )
         ]
 
@@ -72,8 +79,7 @@ class AcquireJobViewSet(RoutedViewSet):
             raise Exception(f"Non-node user attempted to acquire job: {request.user}")
 
         # Allow the node to acquire the job
-        job.node = node
-        job.save(update_fields=['node'])
+        job.acquire(node)
 
         return Response(JobSerialiser().to_representation(job))
 
@@ -151,5 +157,25 @@ class AcquireJobViewSet(RoutedViewSet):
         # Clear the current job from the node
         node.current_job = None
         node.save(update_fields=["current_job"])
+
+        return Response(JobSerialiser().to_representation(job))
+
+    def reset_job(self, request: Request, pk=None):
+        """
+        Action to reset a job.
+
+        :param request:     The request.
+        :param pk:          The primary key of the job.
+        :return:            The response containing the job, after reset.
+        """
+        # Get the job that is being reset
+        job = self.get_object_of_type(Job)
+
+        # Make sure the job is finished
+        if not job.is_finished:
+            raise JobNotFinished(self.action)
+
+        # Reset the job
+        job.reset()
 
         return Response(JobSerialiser().to_representation(job))

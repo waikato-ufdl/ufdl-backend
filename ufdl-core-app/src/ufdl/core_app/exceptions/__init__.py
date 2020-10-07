@@ -9,6 +9,7 @@ from ._BadNodeID import BadNodeID
 from ._BadSource import BadSource
 from ._JobAcquired import JobAcquired
 from ._JobFinished import JobFinished
+from ._JobNotFinished import JobNotFinished
 from ._JobNotStarted import JobNotStarted
 from ._JobStarted import JobStarted
 from ._JSONParseFailure import JSONParseFailure

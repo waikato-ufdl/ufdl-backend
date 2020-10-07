@@ -81,6 +81,15 @@ class Job(SoftDeleteModel):
         """
         return self.end_time is not None
 
+    def acquire(self, node):
+        """
+        Acquires the job.
+
+        :param node:    The node acquiring the job.
+        """
+        self.node = node
+        self.save(update_fields=['node'])
+
     def start(self):
         """
         Starts the job.
@@ -97,3 +106,17 @@ class Job(SoftDeleteModel):
         self.end_time = now()
         self.error = error
         self.save(update_fields=["end_time", "error"])
+
+    def reset(self):
+        """
+        Resets the job.
+        """
+        # Remove any outputs
+        self.outputs.all().delete()
+
+        # Reset the lifecycle state
+        self.node = None
+        self.start_time = None
+        self.end_time = None
+        self.error = None
+        self.save(update_fields=['node', 'start_time', 'end_time', 'error'])

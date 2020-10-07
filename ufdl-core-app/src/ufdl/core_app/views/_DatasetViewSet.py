@@ -26,7 +26,7 @@ class DatasetViewSet(
         "update": WriteOrNodeExecutePermission,
         "partial_update": WriteOrNodeExecutePermission,
         "destroy": MemberHasWritePermission,
-        "clear_dataset": MemberHasWritePermission,
+        "clear_dataset": WriteOrNodeExecutePermission,
         "merge": WriteOrNodeExecutePermission,
         "download": IsMember,
         "copy": IsMember,

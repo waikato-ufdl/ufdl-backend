@@ -1,5 +1,5 @@
 {
-  "name": "tensorflow_objectdetection_1.14_faster_rcnn_resnet101-predict",
+  "name": "tensorflow_objectdetection_1.14-predict",
   "version": 1,
   "description": "Making predictions using object detection models built with Object Detection API using Tensorflow 1.14",
   "scope": "public",
@@ -15,7 +15,7 @@
       "name": "model",
       "type": "joboutput",
       "options": "tfodmodel",
-      "help": "The YOLACT++ object detection model to use for making predictions."
+      "help": "The Tensorflow object detection model to use for making predictions."
     },
     {
       "name": "data",

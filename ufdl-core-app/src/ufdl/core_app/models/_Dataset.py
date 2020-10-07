@@ -253,12 +253,17 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         # Save the dataset
         new_dataset.save()
 
+        # Create a list of files to merge annotations for
+        merge_files = []
+
         # Add our files to the new dataset
         for reference in self.files.all():
-            new_dataset.files.add(reference.copy())
+            new_file = reference.copy()
+            merge_files.append((reference, new_file))
+            new_dataset.files.add(new_file)
 
         # Copy the annotations for this data-set
-        new_dataset.merge_annotations(self, [(file.filename, file.filename) for file in self.files.all()])
+        new_dataset.merge_annotations(self, merge_files)
 
         return new_dataset
 

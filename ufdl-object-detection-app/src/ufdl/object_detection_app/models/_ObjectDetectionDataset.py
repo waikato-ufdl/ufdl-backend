@@ -28,8 +28,8 @@ class ObjectDetectionDataset(Dataset):
     def merge_annotations(self, other, files):
         # Overwrite the annotations for the target files
         for source_file, target_file in files:
-            target_annotation = self._get_or_create_annotations(target_file)
-            target_annotation.annotations = other.annotations.for_file(source_file).first().annotations
+            target_annotation = self._get_or_create_annotations(target_file.filename)
+            target_annotation.annotations = other.annotations.for_file(source_file.filename).first().annotations
             target_annotation.save()
 
     def clear_annotations(self):

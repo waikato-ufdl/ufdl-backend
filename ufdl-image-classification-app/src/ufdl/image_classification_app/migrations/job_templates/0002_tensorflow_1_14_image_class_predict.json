@@ -41,7 +41,7 @@
     {
       "name": "confidence-scores",
       "type": "str",
-      "default": "ufdl.joblauncher.classify.confidence.TopScore;ufdl.joblauncher.classify.confidence.Entropy",
+      "default": "ufdl.joblauncher.classify.confidence.Common",
       "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
     }
   ],

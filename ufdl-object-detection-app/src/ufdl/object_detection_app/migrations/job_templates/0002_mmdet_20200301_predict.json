@@ -27,6 +27,12 @@
   "parameters":
   [
     {
+      "name": "clear-dataset",
+      "type": "bool",
+      "default": "false",
+      "help": "If enabled, any meta-data or predictions get removed from the dataset beforehand."
+    },
+    {
       "name": "min-score",
       "type": "float",
       "default": "0.0",

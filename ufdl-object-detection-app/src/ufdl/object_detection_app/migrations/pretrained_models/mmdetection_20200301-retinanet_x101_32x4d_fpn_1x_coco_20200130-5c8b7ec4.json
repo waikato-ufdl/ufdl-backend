@@ -1,6 +1,6 @@
 {
   "name": "retinanet_x101_32x4d_fpn_1x_coco_20200130-5c8b7ec4",
-  "description": "RetinaNet ResNext101 FPN PyTorch\nhttps://github.com/open-mmlab/mmdetection/tree/b6b80a0b37aac46039acd62e01ec3ce93fb03900/configs/retinanet",
+  "description": "RetinaNet ResNext101 FPN PyTorch\nhttps://github.com/open-mmlab/mmdetection/tree/b6b80a0b37aac46039acd62e01ec3ce93fb03900/configs/retinanet\nLabels: https://github.com/open-mmlab/mmdetection/blob/v1.2.0/mmdet/datasets/coco.py",
   "url": "https://open-mmlab.s3.ap-northeast-2.amazonaws.com/mmdetection/v2.0/retinanet/retinanet_x101_32x4d_fpn_1x_coco/retinanet_x101_32x4d_fpn_1x_coco_20200130-5c8b7ec4.pth",
   "framework": "mmdetection|2020-03-01",
   "domain": "od",

@@ -1,6 +1,6 @@
 {
   "name": "mask_rcnn_r50_fpn_1x_20181010-069fa190",
-  "description": "Mask R-CNN ResNet50 FPN PyTorch\nhttps://github.com/open-mmlab/mmdetection/blob/v1.2.0/docs/MODEL_ZOO.md",
+  "description": "Mask R-CNN ResNet50 FPN PyTorch\nhttps://github.com/open-mmlab/mmdetection/blob/v1.2.0/docs/MODEL_ZOO.md\nLabels: https://github.com/open-mmlab/mmdetection/blob/v1.2.0/mmdet/datasets/coco.py",
   "url": "https://s3.ap-northeast-2.amazonaws.com/open-mmlab/mmdetection/models/mask_rcnn_r50_fpn_1x_20181010-069fa190.pth",
   "framework": "mmdetection|2020-03-01",
   "domain": "od",

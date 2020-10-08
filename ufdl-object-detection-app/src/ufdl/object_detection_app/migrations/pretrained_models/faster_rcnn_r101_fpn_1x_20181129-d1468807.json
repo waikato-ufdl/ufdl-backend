@@ -1,0 +1,10 @@
+{
+  "name": "faster_rcnn_r101_fpn_1x_20181129-d1468807",
+  "description": "Faster R-CNN ResNet101 FPN PyTorch\nhttps://github.com/open-mmlab/mmdetection/blob/v1.2.0/docs/MODEL_ZOO.md",
+  "url": "https://s3.ap-northeast-2.amazonaws.com/open-mmlab/mmdetection/models/faster_rcnn_r101_fpn_1x_20181129-d1468807.pth",
+  "framework": "mmdetection|2020-03-01",
+  "domain": "od",
+  "source": "https://s3.ap-northeast-2.amazonaws.com/open-mmlab/mmdetection/models/faster_rcnn_r101_fpn_1x_20181129-d1468807.pth",
+  "metadata": {},
+  "licence": "MIT"
+}

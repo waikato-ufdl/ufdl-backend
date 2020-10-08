@@ -1,27 +1,27 @@
-from typing import Iterator, Tuple
+import glob
+from json import dumps
+import os
+from typing import Iterator
+
+from ufdl.json.core.models import PretrainedModelMigrationSpec
+
+from wai.json.object import Absent
 
 from ...apps import UFDLCoreAppConfig
-from .._util import iterate_csv_file
+from .._util import split_multipart_field
 
 
-def iterate_pretrained_models(path: str) -> Iterator[Tuple[str, ...]]:
+def iterate_pretrained_models(path: str) -> Iterator[PretrainedModelMigrationSpec]:
     """
     Iterates over the known pre-trained models.
 
-    :return:    An iterator over the following fields of the known pre-trained models:
-                 - name
-                 - description
-                 - URL
-                 - licence
-                 - framework name
-                 - framework version
-                 - domain
-                 - source URL
+    :return:    An iterator over the JSON model specifications.
     """
-    yield from iterate_csv_file(path)
+    for filename in glob.iglob(os.path.join(path, "*.json")):
+        yield PretrainedModelMigrationSpec.load_json_from_file(filename)
 
 
-def get_python_pretrained_model_migration(pretrained_model_iterator):
+def get_python_pretrained_model_migration(pretrained_model_iterator: Iterator[PretrainedModelMigrationSpec]):
     """
     Creates a migration function for adding the pre-trained models
     from the given iterator to the database.
@@ -36,13 +36,13 @@ def get_python_pretrained_model_migration(pretrained_model_iterator):
     return migration_function
 
 
-def add_initial_pretrained_models(apps, schema_editor, pretrained_model_iterator):
+def add_initial_pretrained_models(apps, schema_editor, pretrained_model_iterator: Iterator[PretrainedModelMigrationSpec]):
     """
     Adds the standard pre-trained models to the database.
 
     :param apps:                        The app registry.
     :param schema_editor:               Unused.
-    :param pretrained_model_iterator:   An iterator over a pre-trained model CSV file.
+    :param pretrained_model_iterator:   An iterator over pre-trained model JSON files.
     """
     # Get the required models
     named_file_model = apps.get_model(UFDLCoreAppConfig.label, "NamedFile")
@@ -53,42 +53,43 @@ def add_initial_pretrained_models(apps, schema_editor, pretrained_model_iterator
     licence_model = apps.get_model(UFDLCoreAppConfig.label, "Licence")
 
     # Add each Docker image to the database
-    for (name, description, url, licence,
-         framework_name, framework_version, domain, source) in pretrained_model_iterator:
+    for migration_spec in pretrained_model_iterator:
 
         # Validate the licence
-        licence_instance = licence_model.objects.filter(name=licence).first()
+        licence_instance = licence_model.objects.filter(name=migration_spec.licence).first()
         if licence_instance is None:
-            raise Exception(f"Unknown licence '{licence}'")
+            raise Exception(f"Unknown licence '{migration_spec.licence}'")
 
         # Validate the data-domain
-        data_domain_instance = data_domain_model.objects.filter(name=domain).first()
+        data_domain_instance = data_domain_model.objects.filter(name=migration_spec.domain).first()
         if data_domain_instance is None:
-            raise Exception(f"Unknown data-domain '{domain}'")
+            raise Exception(f"Unknown data-domain '{migration_spec.domain}'")
 
         # Make sure the framework exists
+        framework_name, framework_version = split_multipart_field(migration_spec.framework)
         framework_instance = framework_model.objects.filter(name=framework_name, version=framework_version).first()
         if framework_instance is None:
             raise Exception(f"Unknown framework {framework_name} v{framework_version}")
 
         # Can't use methods defined on the actual NamedFile class here (i.e. 'get_association'),
         # so have to re-implement
-        association = get_named_file_association(named_file_model, filename_model, source)
+        association = get_named_file_association(named_file_model, filename_model, migration_spec.source)
 
         # Create the pre-trained model
         pretrained_model = pretrained_model_model(
-            name=name,
-            description=description,
-            url=url,
+            name=migration_spec.name,
+            description=migration_spec.description,
+            url=migration_spec.url,
             framework=framework_instance,
             domain=data_domain_instance,
             licence=licence_instance,
-            data=association
+            data=association,
+            metadata=dumps(migration_spec.get_property_as_raw_json("metadata"))
         )
         pretrained_model.save()
 
 
-def get_named_file_association(named_file_model, filename_model, source):
+def get_named_file_association(named_file_model, filename_model, source: str):
     """
     Special re-implementation of NamedFile.get_association as that method is not
     accessible during migrations.

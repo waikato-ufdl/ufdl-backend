@@ -1,0 +1,10 @@
+{
+  "name": "resnet50-19c8e357",
+  "description": "ResNet50 PyTorch\nhttps://github.com/dbolya/yolact#training",
+  "url": "https://github.com/waikato-ufdl/ufdl-backend/releases/download/yolact_resnet50/resnet50-19c8e357.pth",
+  "framework": "yolact|2020-02-11",
+  "domain": "od",
+  "source": "https://github.com/waikato-ufdl/ufdl-backend/releases/download/yolact_resnet50/resnet50-19c8e357.pth",
+  "metadata": {},
+  "licence": "MIT"
+}

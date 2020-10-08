@@ -1,0 +1,10 @@
+{
+  "name": "faster_rcnn_inception_resnet_v2_atrous_oid_v4_2018_12_12",
+  "description": "Faster R-CNN Inception ResNet v2 Atrous\nhttps://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf1_detection_zoo.md",
+  "url": "http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_resnet_v2_atrous_oid_2018_01_28.tar.gz",
+  "framework": "tensorflow|1.14",
+  "domain": "od",
+  "source": "http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_resnet_v2_atrous_oid_2018_01_28.tar.gz",
+  "metadata": {},
+  "licence": "Apache 2.0"
+}

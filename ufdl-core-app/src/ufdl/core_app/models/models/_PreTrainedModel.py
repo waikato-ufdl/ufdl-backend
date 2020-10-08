@@ -18,7 +18,7 @@ class PreTrainedModel(Model):
     url = models.CharField(max_length=200)
 
     # The description of the model
-    description = models.CharField(max_length=200, blank=True)
+    description = models.TextField(blank=True)
 
     # A nickname for the model
     name = models.CharField(max_length=200)

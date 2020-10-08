@@ -192,8 +192,9 @@ class Job(SoftDeleteModel):
         self.outputs.all().delete()
 
         # Force-remove this job from the acquiring node
-        self.node.current_job = None
-        self.node.save(update_fields=['current_job'])
+        if self.node.current_job == self:
+            self.node.current_job = None
+            self.node.save(update_fields=['current_job'])
 
         # Reset the lifecycle to the 'un-acquired' state
         self.start_time = None

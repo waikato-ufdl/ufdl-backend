@@ -1,6 +1,6 @@
 import os
 import glob
-from typing import Iterator, List
+from typing import Iterator
 
 from ufdl.json.core.jobs import JobTemplateMigrationSpec
 
@@ -8,6 +8,7 @@ from wai.json.object import Absent
 
 from ...apps import UFDLCoreAppConfig
 from ...util import max_value
+from .._util import split_multipart_field
 
 
 def iterate_job_templates(path: str) -> Iterator[JobTemplateMigrationSpec]:
@@ -150,13 +151,3 @@ def add_job_template(job_template: JobTemplateMigrationSpec,
                         help=parameter_spec.help).save()
 
     return job_template_instance
-
-
-def split_multipart_field(field: str) -> List[str]:
-    """
-    Splits a multi-part field into its component parts.
-
-    :param field:   The multi-part field's value.
-    :return:        The parts.
-    """
-    return field.split("|", maxsplit=2)

@@ -7,7 +7,6 @@
   "source": "https://s3.ap-northeast-2.amazonaws.com/open-mmlab/mmdetection/models/faster_rcnn_r101_fpn_1x_20181129-d1468807.pth",
   "metadata": {
     "classes": [
-      "__background__",
       "person",
       "bicycle",
       "car",

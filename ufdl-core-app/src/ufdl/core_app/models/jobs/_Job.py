@@ -184,6 +184,10 @@ class Job(SoftDeleteModel):
         if not self.is_acquired:
             return
 
+        # Can't abort a successfully-finished job
+        if self.is_finished and self.error is None:
+            raise JobFinished("abort")
+
         # Remove any outputs
         self.outputs.all().delete()
 

@@ -3,7 +3,7 @@ from typing import Optional
 from django.db import models
 
 from ...apps import UFDLCoreAppConfig
-from ...exceptions import BadNodeID
+from ...exceptions import *
 from ..mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet
 
 

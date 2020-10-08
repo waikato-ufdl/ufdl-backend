@@ -34,6 +34,13 @@ class AcquireJobViewSet(RoutedViewSet):
                 initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
             ),
             routers.Route(
+                url=r'^{prefix}/{lookup}/release{trailing_slash}$',
+                mapping={'delete': 'release_job'},
+                name='{basename}-release-job',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
                 url=r'^{prefix}/{lookup}/start{trailing_slash}$',
                 mapping={'post': 'start_job'},
                 name='{basename}-start-job',
@@ -53,6 +60,13 @@ class AcquireJobViewSet(RoutedViewSet):
                 name='{basename}-reset-job',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/abort{trailing_slash}$',
+                mapping={'delete': 'abort_job'},
+                name='{basename}-abort-job',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
             )
         ]
 
@@ -67,19 +81,27 @@ class AcquireJobViewSet(RoutedViewSet):
         # Get the job that is being acquired
         job = self.get_object_of_type(Job)
 
-        # Make sure the job isn't already acquired
-        if job.is_acquired:
-            raise JobAcquired()
-
         # Get the node making the request
         node = Node.from_request(request)
 
-        # Make sure the user acquiring the job is a node
-        if node is None:
-            raise Exception(f"Non-node user attempted to acquire job: {request.user}")
-
         # Allow the node to acquire the job
         job.acquire(node)
+
+        return Response(JobSerialiser().to_representation(job))
+
+    def release_job(self, request: Request, pk=None):
+        """
+        Action for a node to release a job.
+
+        :param request:     The request.
+        :param pk:          The primary key of the job.
+        :return:            The response containing the job.
+        """
+        # Get the job that is being acquired
+        job = self.get_object_of_type(Job)
+
+        # Allow the node to acquire the job
+        job.release()
 
         return Response(JobSerialiser().to_representation(job))
 
@@ -94,30 +116,14 @@ class AcquireJobViewSet(RoutedViewSet):
         # Get the job that is being acquired
         job = self.get_object_of_type(Job)
 
-        # Make sure the job hasn't already been started
-        if job.is_started:
-            raise JobStarted(self.action)
-
         # Get the node making the request
         node = Node.from_request(request)
-
-        # Make sure the user acquiring the job is a node
-        if node is None:
-            raise Exception(f"Non-node user attempted to acquire job: {request.user}")
-
-        # Make sure the node isn't already working a job
-        if node.is_working_job:
-            raise NodeAlreadyWorking()
 
         # Parse the start-job specification (currently unused)
         start_job_spec = JSONParseFailure.attempt(dict(request.data), StartJobSpec)
 
         # Start the job
-        job.start()
-
-        # Set the node's current job
-        node.current_job = job
-        node.save(update_fields=["current_job"])
+        job.start(node)
 
         return Response(JobSerialiser().to_representation(job))
 
@@ -132,31 +138,15 @@ class AcquireJobViewSet(RoutedViewSet):
         # Get the job that is being acquired
         job = self.get_object_of_type(Job)
 
-        # Make sure the job has been started
-        if not job.is_started:
-            raise JobNotStarted(self.action)
-
-        # Make sure the job isn't already finished
-        if job.is_finished:
-            raise JobFinished(self.action)
-
         # Get the node making the request
         node = Node.from_request(request)
-
-        # Make sure the user acquiring the job is a node
-        if node is None:
-            raise Exception(f"Non-node user attempted to acquire job: {request.user}")
 
         # Parse the finish-job specification
         finish_job_spec = JSONParseFailure.attempt(dict(request.data), FinishJobSpec)
 
         # Finish the job
         error = finish_job_spec.error
-        job.finish(error if error is not Absent else None)
-
-        # Clear the current job from the node
-        node.current_job = None
-        node.save(update_fields=["current_job"])
+        job.finish(node, error if error is not Absent else None)
 
         return Response(JobSerialiser().to_representation(job))
 
@@ -171,11 +161,23 @@ class AcquireJobViewSet(RoutedViewSet):
         # Get the job that is being reset
         job = self.get_object_of_type(Job)
 
-        # Make sure the job is finished
-        if not job.is_finished:
-            raise JobNotFinished(self.action)
-
         # Reset the job
         job.reset()
+
+        return Response(JobSerialiser().to_representation(job))
+
+    def abort_job(self, request: Request, pk=None):
+        """
+        Action to abort a job.
+
+        :param request:     The request.
+        :param pk:          The primary key of the job.
+        :return:            The response containing the job, after abort.
+        """
+        # Get the job that is being reset
+        job = self.get_object_of_type(Job)
+
+        # Reset the job
+        job.abort()
 
         return Response(JobSerialiser().to_representation(job))

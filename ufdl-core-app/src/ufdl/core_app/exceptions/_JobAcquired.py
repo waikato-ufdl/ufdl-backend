@@ -11,4 +11,4 @@ class JobAcquired(APIException):
     default_code = 'job_acquired'
 
     def __init__(self):
-        super().__init__(f"Attempted to acquired job that has already been acquired")
+        super().__init__(f"Attempted to acquire job that has already been acquired")

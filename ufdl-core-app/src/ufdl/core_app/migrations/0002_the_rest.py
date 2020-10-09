@@ -186,7 +186,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('creation_time', models.DateTimeField(auto_now_add=True)),
                 ('deletion_time', models.DateTimeField(default=None, editable=False, null=True)),
-                ('name', models.CharField(max_length=64)),
+                ('name', models.CharField(max_length=200)),
                 ('version', models.IntegerField(default=1)),
                 ('description', models.TextField(blank=True)),
                 ('scope', models.CharField(max_length=16)),
@@ -293,7 +293,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('model_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Model')),
                 ('url', models.CharField(max_length=200)),
-                ('description', models.CharField(blank=True, max_length=200)),
+                ('description', models.TextField(blank=True)),
                 ('name', models.CharField(max_length=200)),
                 ('metadata', models.TextField(blank=True, default="")),
             ],

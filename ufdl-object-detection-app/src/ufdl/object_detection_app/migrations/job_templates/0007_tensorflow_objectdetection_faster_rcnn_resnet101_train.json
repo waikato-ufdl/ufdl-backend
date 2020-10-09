@@ -1,7 +1,7 @@
 {
   "name": "tensorflow_objectdetection_1.14_faster_rcnn_resnet101-train",
   "version": 1,
-  "description": "Building Faster R-CNN ResNet101 models using ObjectDetection API for Tensorflow 1.14",
+  "description": "Building Faster R-CNN ResNet101 models using ObjectDetection API for Tensorflow 1.14\nhttp://download.tensorflow.org/models/object_detection/faster_rcnn_resnet101_coco_2018_01_28.tar.gz",
   "scope": "public",
   "domain": "od",
   "framework": "tensorflow|1.14",

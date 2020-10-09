@@ -1,4 +1,5 @@
 # model settings
+# Original config file: https://github.com/open-mmlab/mmdetection/blob/v1.2.0/configs/mask_rcnn_r50_fpn_1x.py
 model = dict(
     type='MaskRCNN',
     pretrained='torchvision://resnet50',

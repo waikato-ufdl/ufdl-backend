@@ -1,4 +1,5 @@
 # model settings
+# Original config file: https://github.com/open-mmlab/mmdetection/blob/v1.2.0/configs/fast_rcnn_r101_fpn_1x.py
 model = dict(
     type='FasterRCNN',
     pretrained='torchvision://resnet101',

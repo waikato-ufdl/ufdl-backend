@@ -1,7 +1,7 @@
 {
   "name": "yolactpp_2020-02-11_resnet50-train",
   "version": 1,
-  "description": "Building YOLACT++ ResNet50 models using YOLACT++ 2020-02-11",
+  "description": "Building YOLACT++ ResNet50 models using YOLACT++ 2020-02-11\nPretrained model: https://drive.google.com/file/d/1Jy3yCdbatgXa5YYIdTCRrSV0S9V5g1rn/view?usp=sharing",
   "scope": "public",
   "domain": "od",
   "framework": "yolact|2020-02-11",

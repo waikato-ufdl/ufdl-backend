@@ -1,7 +1,7 @@
 {
-  "name": "mmdet_2020-03-01_retinanet_x101_32x4d_fpn_1x-predict-pretrained\nOriginal config file: https://github.com/open-mmlab/mmdetection/blob/b6b80a0b37aac46039acd62e01ec3ce93fb03900/configs/retinanet/retinanet_x101_32x4d_fpn_1x_coco.py",
+  "name": "mmdet_2020-03-01_retinanet_x101_32x4d_fpn_1x-predict-pretrained",
   "version": 1,
-  "description": "Making predictions using pretrained RetinaNet X-101 FPN model (MMDetection 2020-03-01)",
+  "description": "Making predictions using pretrained RetinaNet X-101 FPN model (MMDetection 2020-03-01)\nOriginal config file: https://github.com/open-mmlab/mmdetection/blob/b6b80a0b37aac46039acd62e01ec3ce93fb03900/configs/retinanet/retinanet_x101_32x4d_fpn_1x_coco.py",
   "scope": "public",
   "domain": "od",
   "framework": "mmdetection|2020-03-01",

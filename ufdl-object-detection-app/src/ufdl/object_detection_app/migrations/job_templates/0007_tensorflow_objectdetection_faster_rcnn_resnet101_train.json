@@ -29,13 +29,13 @@
     {
       "name": "min-dimension",
       "type": "int",
-      "default": "1000",
+      "default": "600",
       "help": "The minimum dimension (width or height) for images."
     },
     {
       "name": "max-dimension",
       "type": "int",
-      "default": "1000",
+      "default": "1024",
       "help": "The maximum dimension (width or height) for images."
     },
     {

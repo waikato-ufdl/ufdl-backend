@@ -1,7 +1,7 @@
 name,version,url,registry_url,registry_user,registry_password,cuda_version,framework_name,framework_version,domain,types,min_hardware_generation,cpu,license
 tf_objdet,1.14.0_2019-08-31,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/object_detection:1.14.0_2019-08-31,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.14,od,"train,export,predict",Pascal,false,Apache 2.0
 yolact,2020-02-11,public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp:2020-02-11,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,yolact,2020-02-11,od,"train,predict",Pascal,false,MIT
-yolact_slim,2020-02-11,public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp_slim:2020-02-11,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,yolact_slim,2020-02-11,od,"train,predict",Turing,false,MIT
+yolact,2020-02-11_slim,public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp_slim:2020-02-11,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,yolact,2020-02-11_slim,od,"train,predict",Turing,false,MIT
 mmdetection,2020-03-01,public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.1,mmdetection,2020-03-01,od,"train,predict",Turing,false,Apache 2.0
-mmdetection_cuda10,2020-03-01,public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01_cuda10,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.1,mmdetection_cuda10,2020-03-01,od,"train,predict",Pascal,false,Apache 2.0
+mmdetection,2020-03-01_cuda10,public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01_cuda10,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.1,mmdetection,2020-03-01_cuda10,od,"train,predict",Pascal,false,Apache 2.0
 mmdetection,2020-10-11,public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-10-11,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.1,mmdetection,2020-10-11,od,"train,predict",Pascal,false,Apache 2.0

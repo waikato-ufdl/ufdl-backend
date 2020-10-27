@@ -1,0 +1,61 @@
+{
+  "name": "mmdet_2020-03-01_cuda10-predict",
+  "version": 1,
+  "description": "Making predictions using object detection models built with MMDetection 2020-03-01 (for CUDA10)",
+  "scope": "public",
+  "domain": "od",
+  "framework": "mmdetection|2020-03-01_cuda10",
+  "licence": "Apache 2.0",
+  "job_type": "predict",
+  "executor_class": "ufdl.joblauncher.objdet.mmdetection.ObjectDetectionPredict_MMDet_20200301",
+  "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
+  "inputs":
+  [
+    {
+      "name": "model",
+      "type": "joboutput",
+      "options": "mmdetmodel",
+      "help": "The MMDetection object detection model to use for making predictions."
+    },
+    {
+      "name": "data",
+      "type": "dataset",
+      "options": "to-coco",
+      "help": "The dataset to generate predictions for."
+    }
+  ],
+  "parameters":
+  [
+    {
+      "name": "clear-dataset",
+      "type": "bool",
+      "default": "false",
+      "help": "If enabled, any meta-data or predictions get removed from the dataset beforehand."
+    },
+    {
+      "name": "min-score",
+      "type": "float",
+      "default": "0.0",
+      "help": "The minimum score (0-1) that the predictions need to achieve for being included."
+    },
+    {
+      "name": "mask-threshold",
+      "type": "float",
+      "default": "0.1",
+      "help": "The threshold (0-1) to use for determining the contour of a mask."
+    },
+    {
+      "name": "store-predictions",
+      "type": "bool",
+      "default": "false",
+      "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+    },
+    {
+      "name": "confidence-scores",
+      "type": "str",
+      "default": "ufdl.joblauncher.objdet.confidence.Common",
+      "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
+    }
+  ],
+  "body": "mmdet_predict --checkpoint /output/latest.pth --config /output/config.py --labels /output/labels.txt --score ${min-score} --mask_threshold ${mask-threshold} --output_width_height --prediction_in /prediction/in/ --prediction_out /prediction/out/"
+}

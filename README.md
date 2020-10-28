@@ -93,7 +93,7 @@ For API documentation see:
 ## Job templates
 
 * The migrations look for `.json` files in the `migrations/job_templates` directory.
-* Use the [template_to_json.py](ufdl/core_app/migrations/job_templates/raw/template_to_json.py)
+* Use the [template_to_json.py](ufdl-core-app/src/ufdl/core_app/migrations/job_templates/raw/template_to_json.py)
   script to convert any text file into dummy JSON output (`body` element) for copy/pasting into an
   actual template.
 * Compound fields get split on the `|`:

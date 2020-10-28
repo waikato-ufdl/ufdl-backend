@@ -57,6 +57,18 @@
       "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
     },
     {
+      "name": "generate-polygons",
+      "type": "bool",
+      "default": "false",
+      "help": "If enabled, polygons are traced around the detected objects."
+    },
+    {
+      "name": "generate-mask-images",
+      "type": "bool",
+      "default": "false",
+      "help": "If enabled, PNGs with an indexed palette are generated depicting the detected objects."
+    },
+    {
       "name": "confidence-scores",
       "type": "str",
       "default": "ufdl.joblauncher.objdet.confidence.Common",

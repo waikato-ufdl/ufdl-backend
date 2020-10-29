@@ -132,6 +132,7 @@ train_config {
 train_input_reader {
   label_map_path: "/data//train/labels.pbtxt"
   load_instance_masks: true
+  mask_type: PNG_MASKS
   tf_record_input_reader {
     input_path: "/data/train/data.tfrecords"
   }
@@ -146,6 +147,7 @@ eval_input_reader {
   shuffle: false
   num_readers: 1
   load_instance_masks: true
+  mask_type: PNG_MASKS
   tf_record_input_reader {
     input_path: "/data/test/data.tfrecords"
   }

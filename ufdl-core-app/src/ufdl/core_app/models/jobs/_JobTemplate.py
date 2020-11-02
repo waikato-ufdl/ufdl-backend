@@ -35,7 +35,7 @@ class JobTemplate(SoftDeleteModel):
     TODO: Who owns a job template? A team? A project? The server as a whole?
     """
     # The name of the job template
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=200)
 
     # The version of the job template
     version = models.IntegerField(default=1)

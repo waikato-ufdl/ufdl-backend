@@ -1,6 +1,6 @@
 from typing import Iterator, Callable, Iterable, List
 
-from wai.annotations.domain.image import ImageInfo
+from wai.annotations.domain.image import Image
 from wai.annotations.domain.image.classification import ImageClassificationInstance
 
 
@@ -28,6 +28,6 @@ def annotations_iterator(filenames: Iterable[str],
         category = "" if len(categories) == 0 else categories[0]
 
         yield ImageClassificationInstance(
-            ImageInfo.from_file_data(filename, image_data_supplier(filename)),
+            Image.from_file_data(filename, image_data_supplier(filename)),
             category
         )

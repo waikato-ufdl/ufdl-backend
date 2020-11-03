@@ -1,8 +1,6 @@
 from typing import Iterator, Callable, Iterable
 
-from ufdl.json.speech import TranscriptionsFile
-
-from wai.annotations.domain.audio import AudioInfo
+from wai.annotations.domain.audio import Audio
 from wai.annotations.domain.audio.speech import SpeechInstance, Transcription
 
 
@@ -23,6 +21,6 @@ def annotations_iterator(filenames: Iterable[str],
     # Process each known audio file
     for filename in filenames:
         yield SpeechInstance(
-            AudioInfo.from_file_data(filename, image_data_supplier(filename)),
+            Audio.from_file_data(filename, image_data_supplier(filename)),
             Transcription(transcription_supplier(filename))
         )

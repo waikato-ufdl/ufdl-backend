@@ -1,15 +1,15 @@
 from typing import Iterator, Callable, Iterable, Optional
 
-from ufdl.json.object_detection import AnnotationsFile, Image
+from ufdl.json.object_detection import Image
 
-from wai.annotations.domain.image.object_detection import ObjectDetectionInstance
+from wai.annotations.domain.image.object_detection import ImageObjectDetectionInstance
 
 from ._image_to_annotations_internal_format import image_to_annotations_internal_format
 
 
 def annotations_iterator(filenames: Iterable[str],
                          image_supplier: Callable[[str], Optional[Image]],
-                         image_data_supplier: Callable[[str], bytes]) -> Iterator[ObjectDetectionInstance]:
+                         image_data_supplier: Callable[[str], bytes]) -> Iterator[ImageObjectDetectionInstance]:
     """
     Creates an iterator over the images in an annotations file in
     the format expected by wai.annotations.

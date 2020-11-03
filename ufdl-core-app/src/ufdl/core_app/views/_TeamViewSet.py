@@ -1,7 +1,7 @@
 from simple_django_teams.models import Team
 
 from ..serialisers import TeamSerialiser
-from ..permissions import IsAuthenticated, IsMember, IsAdminUser, MemberHasAdminPermission, AllowNone
+from ..permissions import IsAuthenticated, IsMember, MemberHasAdminPermission, AllowNone
 from .mixins import MembershipViewSet, SoftDeleteViewSet
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 

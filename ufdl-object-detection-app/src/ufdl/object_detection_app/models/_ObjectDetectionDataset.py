@@ -5,7 +5,7 @@ from ufdl.annotation_utils.object_detection import image_from_file, annotations_
 
 from ufdl.core_app.models import Dataset, DatasetQuerySet
 
-from ufdl.json.object_detection import AnnotationsFile, Annotation, Image
+from ufdl.json.object_detection import AnnotationsFile, Image
 
 from wai.annotations.core.instance import Instance
 

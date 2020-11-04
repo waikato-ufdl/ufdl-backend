@@ -29,6 +29,7 @@ class UFDLRouter(routers.DefaultRouter):
             LicenceSubdescriptorViewSet.get_routes() +
             MembershipViewSet.get_routes() +
             MergeViewSet.get_routes() +
+            PingNodeViewSet.get_routes() +
             SetFileViewSet.get_routes() +
             SoftDeleteViewSet.get_routes()
     )

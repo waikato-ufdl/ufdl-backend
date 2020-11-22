@@ -5,6 +5,7 @@ from ._format_suffix import format_suffix
 from ._query_sets import (
     max_value
 )
+from ._split_multipart_field import split_multipart_field
 from ._typing import (
     QueryParameterValue,
     QueryParameters,

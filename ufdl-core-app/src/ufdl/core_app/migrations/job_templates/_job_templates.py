@@ -7,8 +7,7 @@ from ufdl.json.core.jobs import JobTemplateMigrationSpec
 from wai.json.object import Absent
 
 from ...apps import UFDLCoreAppConfig
-from ...util import max_value
-from .._util import split_multipart_field
+from ...util import max_value, split_multipart_field
 
 
 def iterate_job_templates(path: str) -> Iterator[JobTemplateMigrationSpec]:

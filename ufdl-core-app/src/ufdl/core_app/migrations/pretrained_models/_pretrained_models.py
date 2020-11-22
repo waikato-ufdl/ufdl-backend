@@ -8,7 +8,7 @@ from ufdl.json.core.models import PretrainedModelMigrationSpec
 from wai.json.object import Absent
 
 from ...apps import UFDLCoreAppConfig
-from .._util import split_multipart_field
+from ...util import split_multipart_field
 
 
 def iterate_pretrained_models(path: str) -> Iterator[PretrainedModelMigrationSpec]:

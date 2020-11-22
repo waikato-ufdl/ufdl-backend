@@ -1,5 +1,7 @@
 import os
-from typing import Iterator, Tuple, Optional
+from typing import Iterator
+
+from ufdl.json.core.models import PretrainedModelMigrationSpec
 
 from ufdl.core_app.migrations.pretrained_models import iterate_pretrained_models as core_iterate_pretrained_models
 
@@ -7,5 +9,5 @@ from ufdl.core_app.migrations.pretrained_models import iterate_pretrained_models
 ROOT = os.path.split(__file__)[0]
 
 
-def iterate_pretrained_models() -> Iterator[Tuple[Optional[str], ...]]:
+def iterate_pretrained_models() -> Iterator[PretrainedModelMigrationSpec]:
     yield from core_iterate_pretrained_models(ROOT)

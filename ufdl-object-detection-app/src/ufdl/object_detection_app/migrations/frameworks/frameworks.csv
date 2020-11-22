@@ -1,0 +1,7 @@
+name,version
+tensorflow,1.14
+yolact,2020-02-11
+yolact,2020-02-11_slim
+mmdetection,2020-03-01
+mmdetection,2020-03-01_cuda10
+mmdetection,2020-10-11

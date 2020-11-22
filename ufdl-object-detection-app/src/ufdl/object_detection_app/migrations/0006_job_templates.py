@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     Migration inserting the pre-trained model presets into the database.
     """
     dependencies = [
-        ('ufdl-object-detection', '0004_pretrained_models')
+        ('ufdl-object-detection', '0005_pretrained_models')
     ]
 
     operations = [

@@ -26,8 +26,8 @@ class Migration(migrations.Migration):
     Migration inserting the job-types into the database.
     """
     dependencies = [
-        ('ufdl-core', '0006_framework')  # Actually dependent on '0002_the_rest' but Django needs a linear
-                                         # dependency
+        ('ufdl-core', '0005_cuda')  # Actually dependent on '0002_the_rest' but Django needs a linear
+                                    # dependency
     ]
 
     operations = [

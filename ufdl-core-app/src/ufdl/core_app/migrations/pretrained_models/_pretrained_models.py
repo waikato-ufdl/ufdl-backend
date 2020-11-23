@@ -5,8 +5,6 @@ from typing import Iterator
 
 from ufdl.json.core.models import PretrainedModelMigrationSpec
 
-from wai.json.object import Absent
-
 from ...apps import UFDLCoreAppConfig
 from ...util import split_multipart_field
 

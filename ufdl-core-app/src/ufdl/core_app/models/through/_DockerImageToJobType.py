@@ -1,5 +1,4 @@
 from django.db import models
-from simple_django_teams.mixins import SoftDeleteModel
 
 from ...apps import UFDLCoreAppConfig
 from ..mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet

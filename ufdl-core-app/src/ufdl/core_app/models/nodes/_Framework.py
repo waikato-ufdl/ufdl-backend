@@ -24,6 +24,13 @@ class Framework(DeleteOnNoRemainingReferencesOnlyModel):
     def name_and_version(self) -> str:
         return f"{self.name} {self.version}"
 
+    @property
+    def signature(self) -> str:
+        """
+        The unique signature of this framework.
+        """
+        return f"{self.name}|{self.version}"
+
     objects = FrameworkQuerySet.as_manager()
 
     class Meta:

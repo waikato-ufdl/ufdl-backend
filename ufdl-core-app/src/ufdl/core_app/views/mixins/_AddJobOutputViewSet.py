@@ -62,24 +62,11 @@ class AddJobOutputViewSet(RoutedViewSet):
         # Get the job the output is being added to
         job = self.get_object_of_type(Job)
 
-        # Make sure the job has been started
-        if not job.is_started:
-            raise JobNotStarted(self.action)
-
-        # Make sure the job isn't already finished
-        if job.is_finished:
-            raise JobFinished(self.action)
-
-        # Make sure the job doesn't already have an output by this name
-        if job.outputs.filter(name=name, type=type).exists():
-            raise BadName(name, f"Job already has an output by this name/type ({name}/{type})")
-
         # Read the data from the request
         data = request.data['file'].file.read()
 
         # Create the output
-        output = JobOutput(job=job, name=name, type=type, data=File.create(data), creator=request.user)
-        output.save()
+        output = job.add_output(name, type, data, request.user)
 
         return Response(JobOutputSerialiser().to_representation(output))
 

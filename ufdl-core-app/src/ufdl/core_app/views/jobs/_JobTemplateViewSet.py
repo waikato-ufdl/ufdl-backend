@@ -1,17 +1,18 @@
-from ...models.jobs import JobTemplate
-from ...serialisers.jobs import JobTemplateSerialiser
-from ...permissions import IsAuthenticated, AllowNone
-from ..mixins import SoftDeleteViewSet, InputsParametersViewSet, CreateJobViewSet, ImportTemplateViewSet
+from ...models.jobs import JobTemplate, WorkableTemplate
+from ...serialisers.jobs import JobTemplateSerialiser, WorkableTemplateSerialiser
+from ...permissions import IsAuthenticated, AllowNone, IsAdminUser
+from ..mixins import SoftDeleteViewSet, CreateJobViewSet, ImportTemplateViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
 
 class JobTemplateViewSet(ImportTemplateViewSet,
                          CreateJobViewSet,
-                         InputsParametersViewSet,
                          SoftDeleteViewSet,
                          UFDLBaseViewSet):
     queryset = JobTemplate.objects.all()
     serializer_class = JobTemplateSerialiser
+
+    admin_permission_class = AllowNone
 
     permission_classes = {
         "list": IsAuthenticated,
@@ -19,14 +20,33 @@ class JobTemplateViewSet(ImportTemplateViewSet,
         "retrieve": IsAuthenticated,
         "update": AllowNone,
         "partial_update": AllowNone,
-        "destroy": AllowNone,
+        "destroy": IsAdminUser,
         "create_job": IsAuthenticated,
-        "add_input": AllowNone,
-        "delete_input": AllowNone,
-        "add_parameter": AllowNone,
-        "delete_parameter": AllowNone,
-        "hard_delete": AllowNone,
-        "reinstate": AllowNone,
-        "import_template": AllowNone,
-        "export_template": AllowNone
+        "hard_delete": IsAdminUser,
+        "reinstate": IsAdminUser,
+        "import_template": IsAdminUser,
+        "export_template": IsAdminUser
+    }
+
+
+class WorkableTemplateViewSet(
+    JobTemplateViewSet
+):
+    queryset = WorkableTemplate.objects.all()
+    serializer_class = WorkableTemplateSerialiser
+
+    admin_permission_class = AllowNone
+
+    permission_classes = {
+        "list": IsAuthenticated,
+        "create": AllowNone,
+        "retrieve": IsAuthenticated,
+        "update": AllowNone,
+        "partial_update": AllowNone,
+        "destroy": IsAdminUser,
+        "create_job": IsAuthenticated,
+        "hard_delete": IsAdminUser,
+        "reinstate": IsAdminUser,
+        "import_template": IsAdminUser,
+        "export_template": IsAdminUser
     }

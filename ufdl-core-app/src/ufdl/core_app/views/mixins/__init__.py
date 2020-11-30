@@ -10,7 +10,6 @@ from ._DownloadableViewSet import DownloadableViewSet
 from ._FileContainerViewSet import FileContainerViewSet
 from ._GetHardwareGenerationViewSet import GetHardwareGenerationViewSet
 from ._ImportTemplateViewSet import ImportTemplateViewSet
-from ._InputsParametersViewSet import InputsParametersViewSet
 from ._LicenceSubdescriptorViewSet import LicenceSubdescriptorViewSet
 from ._MembershipViewSet import MembershipViewSet
 from ._MergeViewSet import MergeViewSet

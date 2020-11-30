@@ -25,7 +25,6 @@ class UFDLRouter(routers.DefaultRouter):
             FileContainerViewSet.get_routes() +
             GetHardwareGenerationViewSet.get_routes() +
             ImportTemplateViewSet.get_routes() +
-            InputsParametersViewSet.get_routes() +
             LicenceSubdescriptorViewSet.get_routes() +
             MembershipViewSet.get_routes() +
             MergeViewSet.get_routes() +

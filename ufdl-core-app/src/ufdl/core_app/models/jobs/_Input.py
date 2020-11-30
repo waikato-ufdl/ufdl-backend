@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db import models
 
 from ...apps import UFDLCoreAppConfig
@@ -21,10 +23,10 @@ class Input(DeleteOnNoRemainingReferencesOnlyModel):
                                  related_name="inputs")
 
     # The name of the parameter
-    name = models.CharField(max_length=32)
+    name = models.TextField()
 
     # The type of value the parameter takes
-    type = models.CharField(max_length=32)
+    types = models.TextField()
 
     # The default value of the parameter
     options = models.TextField(blank=True, default="")
@@ -33,8 +35,37 @@ class Input(DeleteOnNoRemainingReferencesOnlyModel):
     help = models.TextField(blank=True, default="")
 
     @property
+    def type_list(self) -> List[str]:
+        """
+        A list of the possible types of this input.
+        """
+        return self.types.split("\n")
+
+    @property
+    def type_string(self) -> str:
+        """
+        A string-representation of the types of this input.
+        """
+        # Get the list of possible types
+        types = self.type_list
+
+        # Format the types into a string
+        return (
+            f"Union[{', '.join(types)}]"
+            if len(types) > 1 else
+            types[0]
+        )
+
+    @property
     def signature(self) -> str:
-        return f"{self.name} : {self.type}" + f" ({self.options})" if self.options != "" else ""
+        """
+        The signature of the input.
+        """
+        return (
+            f"{self.name} : {self.type_string}"
+            if self.options == "" else
+            f"{self.name} : {self.type_string} ({self.options})"
+        )
 
     objects = InputQuerySet.as_manager()
 

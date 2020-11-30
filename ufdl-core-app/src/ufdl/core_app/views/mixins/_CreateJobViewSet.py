@@ -4,13 +4,12 @@ from rest_framework import routers
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from ufdl.json.core.jobs import CreateJobSpec, DockerImageSpec
+from ufdl.json.core.jobs import CreateJobSpec
 
 from wai.json.object import Absent
 
-from ...exceptions import JSONParseFailure, BadArgumentValue
-from ...models.jobs import Job, JobTemplate
-from ...models.nodes import DockerImage
+from ...exceptions import JSONParseFailure
+from ...models.jobs import JobTemplate
 from ...serialisers.jobs import JobSerialiser
 from ._RoutedViewSet import RoutedViewSet
 
@@ -49,25 +48,26 @@ class CreateJobViewSet(RoutedViewSet):
         # Parse the job specification from the request
         spec = JSONParseFailure.attempt(dict(request.data), CreateJobSpec)
 
-        # Get the docker image referred to by the spec
-        if isinstance(spec.docker_image, DockerImageSpec):
-            docker_image = DockerImage.objects.name(spec.docker_image.name).version(spec.docker_image.version).first()
-        else:
-            docker_image = DockerImage.objects.filter(pk=spec.docker_image).first()
+        # Format the input values
+        input_values = {
+            name: pair.to_raw_json()
+            for name, pair in spec.input_values.items()
+        }
 
-        # If the Docker image doesn't exist, raise an error
-        if docker_image is None:
-            raise BadArgumentValue(self.action, "docker_image", str(spec.docker_image))
+        # Format the parameter values
+        parameter_values = (
+            spec.get_property_as_raw_json("parameter_values")
+            if spec.parameter_values is not Absent else
+            {}
+        )
 
-        # Create the job
-        job = Job(template=job_template,
-                  docker_image=docker_image,
-                  input_values=spec.input_values.to_json_string(),
-                  parameter_values=(spec.parameter_values.to_json_string()
-                                    if spec.parameter_values is not Absent
-                                    else ""),
-                  description=spec.description,
-                  creator=request.user)
-        job.save()
+        # Create the job from the template
+        job = job_template.create_job(
+            request.user,
+            None,
+            input_values,
+            parameter_values,
+            spec.description
+        )
 
         return Response(JobSerialiser().to_representation(job))

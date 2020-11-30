@@ -1,6 +1,6 @@
 from ._InputSerialiser import InputSerialiser
 from ._JobOutputSerialiser import JobOutputSerialiser
 from ._JobSerialiser import JobSerialiser
-from ._JobTemplateSerialiser import JobTemplateSerialiser
+from ._JobTemplateSerialiser import JobTemplateSerialiser, WorkableTemplateSerialiser
 from ._JobTypeSerialiser import JobTypeSerialiser
 from ._ParameterSerialiser import ParameterSerialiser

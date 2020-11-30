@@ -3,7 +3,6 @@ import json
 from rest_framework import serializers
 
 from ...models.jobs import Job, JobTemplate, JobOutput
-from ...models.nodes import DockerImage
 from ..mixins import SoftDeleteModelSerialiser
 
 
@@ -14,18 +13,6 @@ class JobTemplateSerialiser(serializers.ModelSerializer):
     """
     class Meta:
         model = JobTemplate
-        fields = ["pk",
-                  "name",
-                  "version"]
-
-
-class DockerImageSerialiser(serializers.ModelSerializer):
-    """
-    Specialised serialiser for serialising the Docker image
-    used by a job.
-    """
-    class Meta:
-        model = DockerImage
         fields = ["pk",
                   "name",
                   "version"]
@@ -44,7 +31,6 @@ class JobOutputSerialiser(serializers.ModelSerializer):
 
 class JobSerialiser(SoftDeleteModelSerialiser):
     template = JobTemplateSerialiser(read_only=True)
-    docker_image = DockerImageSerialiser(read_only=True)
     outputs = JobOutputSerialiser(many=True, read_only=True)
 
     def to_representation(self, instance):
@@ -62,7 +48,7 @@ class JobSerialiser(SoftDeleteModelSerialiser):
         model = Job
         fields = ["pk",
                   "template",
-                  "docker_image",
+                  "parent",
                   "start_time",
                   "end_time",
                   "error",
@@ -72,7 +58,7 @@ class JobSerialiser(SoftDeleteModelSerialiser):
                   "outputs",
                   "description"] + SoftDeleteModelSerialiser.base_fields
         read_only_fields = ["template",
-                            "docker_image",
+                            "parent",
                             "start_time",
                             "end_time",
                             "error",

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from ...models import DataDomain
-from ...models.jobs import JobTemplate, JobType, Input, Parameter
+from ...models.jobs import JobTemplate, JobType, Input, Parameter, WorkableTemplate
 from ..mixins import SoftDeleteModelSerialiser
 
 
@@ -10,10 +10,17 @@ class InputSerialiser(serializers.ModelSerializer):
     Specialised serialiser for serialising the inputs to a
     job template.
     """
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        representation['types'] = representation['types'].split("\n")
+
+        return representation
+
     class Meta:
         model = Input
         fields = ["name",
-                  "type",
+                  "types",
                   "options",
                   "help"]
 
@@ -34,7 +41,6 @@ class ParameterSerialiser(serializers.ModelSerializer):
 class JobTemplateSerialiser(SoftDeleteModelSerialiser):
     # Slug fields require explicit definition
     domain = serializers.SlugRelatedField("name", queryset=DataDomain.objects)
-    type = serializers.SlugRelatedField("name", queryset=JobType.objects)
     inputs = InputSerialiser(many=True, read_only=True)
     parameters = ParameterSerialiser(many=True, read_only=True)
 
@@ -45,12 +51,21 @@ class JobTemplateSerialiser(SoftDeleteModelSerialiser):
                   "version",
                   "description",
                   "scope",
-                  "framework",
                   "domain",
-                  "type",
-                  "executor_class",
-                  "required_packages",
-                  "body",
                   "inputs",
                   "parameters",
                   "licence"] + SoftDeleteModelSerialiser.base_fields
+
+
+class WorkableTemplateSerialiser(JobTemplateSerialiser):
+    type = serializers.SlugRelatedField("name", queryset=JobType.objects)
+
+    class Meta(JobTemplateSerialiser.Meta):
+        model = WorkableTemplate
+        fields = JobTemplateSerialiser.Meta.fields + [
+            "framework",
+            "type",
+            "executor_class",
+            "required_packages",
+            "body"
+        ]

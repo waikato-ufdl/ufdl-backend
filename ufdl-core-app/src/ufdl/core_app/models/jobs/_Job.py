@@ -162,9 +162,7 @@ class Job(SoftDeleteModel):
         :return:
                     The child name.
         """
-        # If we are not a child, we have no child name
-        if self.parent is None:
-            raise Exception("Job is not a child")
+        assert self.parent is not None, "Job is not a child"
 
         # Get our name from our description
         return self.description[11:].split("'", maxsplit=1)[0]

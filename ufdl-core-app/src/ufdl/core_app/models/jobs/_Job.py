@@ -330,7 +330,7 @@ class Job(SoftDeleteModel):
         :param node:
                     The node finishing the job.
         """
-        assert not self.is_meta, "Can't manually finish meta-job"
+        assert not self.is_meta, "finish called on meta-job"
 
         self._finish_workable(node)
 
@@ -404,10 +404,9 @@ class Job(SoftDeleteModel):
         :param error:
                     The error that occurred.
         """
-        if self.is_meta:
-            self._finish_with_error_meta(error)
-        else:
-            self._finish_with_error_workable(node, error)
+        assert not self.is_meta, "finish_with_error called on meta-job"
+
+        self._finish_with_error_workable(node, error)
 
     def _finish_with_error_meta(self, error: str):
         assert self.is_meta, "_finish_meta called on workable job"

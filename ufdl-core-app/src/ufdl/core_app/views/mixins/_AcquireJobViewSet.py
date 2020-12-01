@@ -146,7 +146,10 @@ class AcquireJobViewSet(RoutedViewSet):
 
         # Finish the job
         error = finish_job_spec.error
-        job.finish(node, error if error is not Absent else None)
+        if error is Absent:
+            job.finish(node)
+        else:
+            job.finish_with_error(node, error)
 
         return Response(JobSerialiser().to_representation(job))
 

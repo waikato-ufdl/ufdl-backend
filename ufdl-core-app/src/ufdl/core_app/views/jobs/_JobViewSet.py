@@ -1,6 +1,13 @@
 from ...models.jobs import Job
 from ...serialisers.jobs import JobSerialiser
-from ...permissions import IsAuthenticated, IsAdminUser, NodeOwnsJob, IsNode, AllowNone
+from ...permissions import (
+    IsAuthenticated,
+    IsAdminUser,
+    NodeOwnsJob,
+    IsNode,
+    AllowNone,
+    JobIsWorkable
+)
 from ..mixins import SoftDeleteViewSet, AddJobOutputViewSet, AcquireJobViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
@@ -21,11 +28,11 @@ class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDL
         "add_output": IsAdminUser | NodeOwnsJob,
         "delete_output": IsAdminUser,
         "get_output": IsAuthenticated,
-        "acquire_job": IsNode,
+        "acquire_job": IsNode & JobIsWorkable,
         "release_job": NodeOwnsJob,
         "start_job": NodeOwnsJob,
         "finish_job": NodeOwnsJob,
-        "reset_job": IsAdminUser | NodeOwnsJob,
+        "reset_job": NodeOwnsJob,
         "abort_job": IsAdminUser,
         "hard_delete": IsAdminUser,
         "reinstate": IsAdminUser

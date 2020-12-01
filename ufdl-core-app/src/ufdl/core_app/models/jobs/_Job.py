@@ -10,7 +10,7 @@ from ...exceptions import *
 from ..files import File
 from ..nodes import Node
 from .._User import User
-from ._JobOutput import JobOutput
+from ._JobOutput import JobOutput, JobOutputQuerySet
 
 
 class JobQuerySet(SoftDeleteQuerySet):
@@ -23,6 +23,71 @@ class JobQuerySet(SoftDeleteQuerySet):
 class Job(SoftDeleteModel):
     """
     A job.
+
+    A job is an instantiation of a job-template with specific settings
+    to inform how the work is performed.
+
+    There are 2 types of job, workable jobs (with come from workable templates)
+    and meta-jobs (which come from meta-templates). Both types of job have a
+    lifecycle with transitions between phases of the lifecycle caused by actions performed by
+    clients or worker-nodes executing the job. Workable jobs are designed to be
+    performed by external worker nodes, which manage their lifecycle by making
+    appropriate calls to the server. Meta-jobs co-ordinate a group of sub-jobs in their
+    workflow, and transitions in their lifecycle are triggered by the transitions of
+    lifecycle phases in those sub-jobs.
+
+    Workable Job Lifecycle
+    ----------------------
+    -- Phases --
+    Created     := The initial phase of the job's lifecycle.
+    Acquired    := The job has been reserved for work by a node.
+    Started     := The work of completing a job has been started by the acquiring node.
+    Finished    := The job has been successfully completed by the node.
+    Errored     := No more work can be done on the job, but it was not completed.
+
+    -- Transitions --
+    Created --acquire-> Acquired    := A node reserves the job for work.
+    Created --abort-> Created       := A no-op.
+
+    Acquired --release-> Created    := The acquiring node releases the job back to the pool.
+    Acquired --abort-> Created      := Equivalent to release.
+    Acquired --start-> Started      := The node begins work on the job.
+
+    Started --finish-> Finished     := The node has successfully completed the job.
+    Started --error-> Errored       := The node could not complete the job.
+    Started --abort-> Created       := The node gives up on the job, or a client steals
+                                       the job back from the node.
+
+    Errored --reset-> Acquired      := The node wishes to re-attempt the failed job.
+    Errored --abort-> Created       := A client requests that the job be re-attempted.
+
+    Outputs can only be added to jobs in the Started lifecycle-phase, and all outputs
+    are removed from a job on any transition except finish.
+
+    Meta-Job Lifecycle
+    ------------------
+    -- Phases --
+    Created     := The initial phase of the job's lifecycle.
+    Started     := The work of completing the sub-jobs has begun.
+    Finished    := All sub-jobs have successfully completed.
+    Errored     := Any sub-job is in the Errored phase.
+
+    -- Transitions --
+    Created --start-> Started       := Any sub-job has started.
+
+    Started --start-> Started       := A no-op to make start idempotent.
+    Started --finish-> Started      := A no-op if there are unfinished sub-jobs.
+    Started --finish-> Finished     := All sub-jobs are in the Finished phase.
+    Started --error-> Errored       := Any sub-job is in the Errored phase.
+
+    Errored --start-> Errored       := A no-op to make start idempotent.
+    Errored --reset-> Started       := Resets all Errored sub-jobs.
+    Errored --finish-> Errored      := A no-op.
+    Errored --error-> Errored       := A no-op.
+
+    Finished --finish-> Finished    := A no-op.
+
+    There are no transitions out of the Finished state for either type of job.
     """
     # The template on which the job is based
     template = models.ForeignKey(
@@ -79,8 +144,6 @@ class Job(SoftDeleteModel):
 
     objects = JobQuerySet.as_manager()
 
-    # region Lifecycle
-
     @property
     def is_meta(self) -> bool:
         """
@@ -92,71 +155,120 @@ class Job(SoftDeleteModel):
         return isinstance(self.template.upcast(), MetaTemplate)
 
     @property
-    def is_acquired(self) -> bool:
+    def child_name(self) -> str:
         """
-        Whether this job has already been acquired by a node.
-        """
-        return self.node is not None
-
-    @property
-    def is_started(self) -> bool:
-        """
-        Whether the job has been started.
-        """
-        return self.start_time is not None
-
-    @property
-    def is_finished(self) -> bool:
-        """
-        Whether the job is already finished.
-        """
-        return self.end_time is not None
-
-    @property
-    def child_name(self) -> Optional[str]:
-        """
-        Gets the name of this job in the parent pipeline if it is part
-        of one.
+        Gets the name of this job in the parent workflow.
 
         :return:
-                    The child name, or None if this job is not a child.
+                    The child name.
         """
         # If we are not a child, we have no child name
         if self.parent is None:
-            return None
+            raise Exception("Job is not a child")
 
         # Get our name from our description
         return self.description[11:].split("'", maxsplit=1)[0]
 
-    def acquire(self, node):
+    # region Lifecycle Phases
+
+    @property
+    def is_created(self) -> bool:
+        """
+        Whether this job is in the Created phase.
+        """
+        return self.start_time is None and self.node is None
+
+    @property
+    def is_acquired(self) -> bool:
+        """
+        Whether this job is in the Acquired phase.
+        """
+        # Meta-jobs have no Acquired phase
+        if self.is_meta:
+            raise Exception("Meta-jobs have no Acquired phase")
+        return self.start_time is None and self.node is not None
+
+    @property
+    def is_started(self) -> bool:
+        """
+        Whether this job is in the Started phase.
+        """
+        return self.start_time is not None and self.end_time is None
+
+    @property
+    def is_finished(self) -> bool:
+        """
+        Whether this job is in the Finished phase.
+        """
+        return self.end_time is not None and self.error is None
+
+    @property
+    def is_errored(self):
+        """
+        Whether the job is in the Errored phase
+        """
+        return self.error is not None
+
+    @property
+    def lifecycle_phase(self) -> str:
+        """
+        Gets the name of the job's current lifecycle phase.
+        """
+        if self.is_created:
+            return "Created"
+        elif self.is_started:
+            return "Started"
+        elif self.is_finished:
+            return "Finished"
+        elif self.is_errored:
+            return "Errored"
+        elif self.is_meta and self.is_acquired:
+            return "Acquired"
+        else:
+            raise Exception(
+                f"Failed to determine lifecycle phase of job\n"
+                f"{self}"
+            )
+
+    # endregion
+
+    # region Lifecycle Transitions
+
+    def acquire(self, node: Node):
         """
         Allows a node to acquire this job.
 
         :param node:
                     The node acquiring the job.
         """
-        # Can't acquire meta-jobs
-        if self.is_meta:
-            raise AcquireMetaJobAttempt()
+        assert not self.is_meta, "Can't acquire meta-job"
 
-        # Make sure the job isn't already acquired
-        if self.is_acquired:
-            raise JobAcquired()
+        self._acquire_workable(node)
+
+    def _acquire_workable(self, node):
+        assert not self.is_meta, "_acquire_workable called on meta-job"
+
+        # Only valid from the Created phase
+        if not self.is_created:
+            raise IllegalPhaseTransition(self, "acquire", "Job has already been acquired")
 
         self.node = node
         self.save(update_fields=['node'])
 
     def release(self):
         """
-        Releases a job.
+        Releases an acquired job.
         """
-        # Make sure that we have acquired the job
-        if self.node is None:
-            raise JobNotAcquired()
+        assert not self.is_meta, "Can't release meta-job"
 
-        # Make sure the job hasn't already been started
-        if self.is_started:
-            raise JobStarted("release")
+        self._release_workable()
+
+    def _release_workable(self):
+        assert not self.is_meta, "_release_workable called on meta-job"
+
+        # Can only release from the Acquired phase
+        if not self.is_acquired:
+            raise IllegalPhaseTransition(self, "release", "Can only release from the Acquired phase")
 
         # Mark the job as un-acquired
         self.node = None
@@ -166,26 +278,274 @@ class Job(SoftDeleteModel):
         """
         Starts the job.
         """
-        # Make sure the job hasn't already been started
-        if self.is_started:
-            raise JobStarted("start")
+        assert not self.is_meta, "Can't manually start meta-job"
+
+        self._start_workable(node)
+
+    def _start_meta(self):
+        assert self.is_meta, "_start_meta called on workable job"
+        assert self.is_finished, "_start_meta called on finished meta-job"
+
+        # Idempotent
+        if not self.is_created:
+            return
+
+        # Start the parent meta-job, if any
+        if self.parent is not None:
+            self.parent._start_meta()
+
+        # Mark the job as started
+        self.start_time = now()
+        self.save(update_fields=["start_time"])
+
+    def _start_workable(self, node: Node):
+        assert not self.is_meta, "_start_workable called on meta-job"
+
+        # Can only start from the Acquired phase
+        if not self.is_acquired:
+            raise IllegalPhaseTransition(self, "start", "Can only start from the Acquired phase")
 
         # Make sure the node isn't already working a job
         if node.is_working_job:
             raise NodeAlreadyWorking()
 
-        # Mark the parent as started
-        if self.parent is not None and not self.parent.is_started:
-            self.parent.start(node)
+        assert self.node == node, "_start_workable called by another node"
+
+        # Start the parent meta-job, if any
+        if self.parent is not None:
+            self.parent._start_meta()
 
         # Mark the job as started
         self.start_time = now()
         self.save(update_fields=["start_time"])
 
         # Mark the job as this node's current job
-        if not self.is_meta:
-            node.current_job = self
-            node.save(update_fields=["current_job"])
+        node.current_job = self
+        node.save(update_fields=["current_job"])
+
+    def finish(self, node: Node):
+        """
+        Finishes a job.
+
+        :param node:
+                    The node finishing the job.
+        """
+        assert not self.is_meta, "Can't manually finish meta-job"
+
+        self._finish_workable(node)
+
+    def _finish_meta(self, outputs: JobOutputQuerySet):
+        assert self.is_meta, "_finish_meta called on workable job"
+        assert not self.is_created, "_finish_meta called in the Created phase"
+        assert not self.is_finished, "_finish_meta called in the Finished phase"
+
+        # Attach the given outputs
+        for output in outputs.select_related("job").all():
+            JobOutput(
+                job=self,
+                name=f"{output.job.child_name}:{output.name}",
+                type=output.type,
+                data=output.data,
+                creator=output.creator
+            ).save()
+
+        # Try to start any child jobs to this one
+        all_children_finished, error = self._try_create_children()
+
+        # If an error occurred creating children, fail this meta-job
+        if error is not None:
+            self._finish_with_error_meta(f"Error creating child-jobs: {error}")
+
+        # If the meta-job is in the Errored phase, nothing more required
+        if self.is_errored:
+            return
+
+        # This meta-job is not finished if there are remaining children to finish
+        if not all_children_finished:
+            return
+
+        # Mark the job as finished
+        self.end_time = now()
+        self.save(update_fields=["end_time"])
+
+        # Let our parent know we've finished
+        if self.parent is not None:
+            self.parent._finish_meta(self.outputs)
+
+    def _finish_workable(self, node: Node):
+        assert node.current_job == self, "_finish_workable called with incorrect node"
+
+        # Clear the current job from this node
+        node.current_job = None
+        node.save(update_fields=["current_job"])
+
+        # If this job has been removed from the node, stop here
+        if self.node != node:
+            return
+
+        # Make sure the job has been started
+        if not self.is_started:
+            raise IllegalPhaseTransition(self, "finish", "Job not in the Started phase")
+
+        # Mark the job as finished
+        self.end_time = now()
+        self.save(update_fields=["end_time"])
+
+        # Finish the parent if we have one
+        if self.parent is not None:
+            self.parent._finish_meta(self.outputs)
+
+    def finish_with_error(self, node: Node, error: str):
+        """
+        Finishes the job with an error.
+
+        :param node:
+                    Then node finishing the job.
+        :param error:
+                    The error that occurred.
+        """
+        if self.is_meta:
+            self._finish_with_error_meta(error)
+        else:
+            self._finish_with_error_workable(node, error)
+
+    def _finish_with_error_meta(self, error: str):
+        assert self.is_meta, "_finish_meta called on workable job"
+        assert not self.is_created, "_finish_meta called in the Created phase"
+        assert not self.is_finished, "_finish_meta called in the Finished phase"
+
+        # If the meta-job is in the Errored phase, nothing more required
+        if self.is_errored:
+            return
+
+        # Mark the job as finished
+        self.end_time = now()
+        self.error = error
+        self.save(update_fields=["end_time", "error"])
+
+        # Let our parent know we've finished
+        if self.parent is not None:
+            self.parent._finish_with_error_meta(self._format_error_for_parent(error))
+
+    def _finish_with_error_workable(self, node: Node, error: str):
+        assert node.current_job == self, "_finish_with_error_workable called with incorrect node"
+
+        # Clear the current job from this node
+        node.current_job = None
+        node.save(update_fields=["current_job"])
+
+        # If this job has been removed from the node, stop here
+        if self.node != node:
+            return
+
+        # Make sure the job has been started
+        if not self.is_started:
+            raise IllegalPhaseTransition(self, "finish", "Job not in the Started phase")
+
+        # Mark the job as errored
+        self.end_time = now()
+        self.error = error
+        self.save(update_fields=["end_time", "error"])
+
+        # Error the parent if we have one
+        if self.parent is not None:
+            self.parent._finish_with_error_meta(self._format_error_for_parent(error))
+
+    def reset(self, attempt_reset_parent: bool = True):
+        """
+        Resets a job.
+        """
+        if self.is_meta:
+            return self._reset_meta(attempt_reset_parent)
+        else:
+            return self._reset_workable(attempt_reset_parent)
+
+    def _reset_meta(self, attempt_reset_parent: bool = True):
+        assert self.is_meta, "_reset_meta called on workable job"
+
+        # Make sure the job is in the Errored phase
+        if not self.is_errored:
+            raise IllegalPhaseTransition(self, "reset", "Job is not in the Errored phase")
+
+        # Reset all errored children
+        for child in self.children.filter(error__isnull=False).all():
+            child.reset(False)
+
+        # Reset the lifecycle to the Started phase
+        self.end_time = None
+        self.error = None
+        self.save(update_fields=['end_time', 'error'])
+
+        if attempt_reset_parent:
+            self._attempt_reset_parent()
+
+    def _reset_workable(self, attempt_reset_parent: bool = True):
+        assert not self.is_meta, "_reset_workable called on meta-job"
+
+        # Make sure the job is in the Errored phase
+        if not self.is_errored:
+            raise IllegalPhaseTransition(self, "reset", "Job is not in the Errored phase")
+
+        # Remove any outputs
+        self.outputs.all().delete()
+
+        # Reset the lifecycle to the Acquired phase
+        self.start_time = None
+        self.end_time = None
+        self.error = None
+        self.save(update_fields=['start_time', 'end_time', 'error'])
+
+        if attempt_reset_parent:
+            self._attempt_reset_parent()
+
+    def abort(self):
+        """
+        Aborts a job.
+        """
+        assert not self.is_meta, "abort called on meta-job"
+
+        return self._abort_workable()
+
+    def _abort_workable(self):
+        assert not self.is_meta, "_abort_workable called on meta-job"
+
+        # If the job is in the Created phase, this is a no-op
+        if self.is_created:
+            return
+
+        # If the job is in the Acquired phase, this is a release
+        if self.is_acquired:
+            self._release_workable()
+            return
+
+        # If the job is in the Errored phase, this is a reset and release
+        if self.is_errored:
+            self._reset_workable()
+            self._release_workable()
+            return
+
+        # Can't abort a successfully-finished job
+        if self.is_finished:
+            raise IllegalPhaseTransition(self, "abort", "Can't abort a successfully-completed job")
+
+        assert self.is_started, "_abort_workable not in Started phase"
+
+        # Remove any outputs
+        self.outputs.all().delete()
+
+        # Force-remove this job from the acquiring node
+        if self.node.current_job == self:
+            self.node.current_job = None
+            self.node.save(update_fields=['current_job'])
+
+        # Reset the lifecycle to the 'un-acquired' state
+        self.start_time = None
+        self.end_time = None
+        self.error = None
+        self.node = None
+        self.save(update_fields=['start_time', 'end_time', 'error', 'node'])
+
+    # endregion
 
     def add_output(
             self,
@@ -236,7 +596,7 @@ class Job(SoftDeleteModel):
 
         return output
 
-    def try_create_children(self) -> Tuple[bool, Optional[str]]:
+    def _try_create_children(self) -> Tuple[bool, Optional[str]]:
         """
         Attempts to create any sub-jobs of this meta-job if the input is
         available to them.
@@ -244,14 +604,13 @@ class Job(SoftDeleteModel):
         :return:
                     Whether all child jobs have finished, and any error
                     that occurred starting children.
-
         """
-        # We don't have children if we're not a meta-job
-        if not self.is_meta:
-            return True, None
-
         # Keep track of any errors that occur starting children
         error = None
+
+        # We don't have children if we're not a meta-job
+        if not self.is_meta:
+            return True, error
 
         # Get our meta-template
         template = self.template.upcast()
@@ -293,7 +652,7 @@ class Job(SoftDeleteModel):
                 ).all()
             }
 
-            # If all dependencies are finish, create a new sub-job for this child
+            # If all dependencies are finished, create a new sub-job for this child
             if all(dependency_name in finished_child_jobs for dependency_name in dependency_names):
                 try:
                     template.create_sub_job(
@@ -309,130 +668,27 @@ class Job(SoftDeleteModel):
         # start in future, wait until the next child finishes
         return False, error
 
-    def inherit_child_outputs(self):
+    def _format_error_for_parent(self, error: str) -> str:
         """
-        Adds all outputs of child jobs to this job.
+        Formats the given error message for the parent job.
+
+        :param error:
+                    The error message to format.
+        :return:
+                    The message formatted for the parent.
         """
-        # Get the outputs of all children
-        child_outputs = JobOutput.objects.filter(
-            job__parent=self
+        return (
+            f"Error in child job '{self.child_name}':\n"
+            f"{error}"
         )
 
-        # Add a copy of each to this meta-job
-        for child_output in child_outputs.select_related("job").all():
-            JobOutput(
-                job=self,
-                name=f"{child_output.job.child_name}:{child_output.name}",
-                type=child_output.type,
-                data=child_output.data,
-                creator=child_output.creator
-            ).save()
-
-    def finish(self, finisher: Union[Node, 'Job'], error: Optional[str] = None):
+    def _attempt_reset_parent(self):
         """
-        Finishes the job.
-
-        :param finisher:
-                    The object finishing the job (either a node or sub-job).
-        :param error:
-                    Any error that occurred while running the job.
+        Attempts to reset the parent job.
         """
-        # Make sure the job has been started
-        if not self.is_started:
-            raise JobNotStarted("finish")
-
-        # Make sure the job isn't already finished (idempotent for meta-jobs)
-        if self.is_finished:
-            if self.is_meta:
-                return
-            else:
-                raise JobFinished("finish")
-
-        # If we finished successfully, check if we need to start any more sub-jobs
-        if error is None:
-            # Try to start any child jobs to this one
-            all_children_finished, error = self.try_create_children()
-
-            # This meta-job is not finished if there are remaining children to finish
-            if not all_children_finished and error is None:
-                return
-
-            # Just before finishing, add all child outputs to this meta-job
-            if error is None:
-                self.inherit_child_outputs()
-
-        # Mark the job as finished
-        self.end_time = now()
-        self.error = error
-        self.save(update_fields=["end_time", "error"])
-
-        # Clear the current job from this node
-        if not self.is_meta:
-            finisher.current_job = None
-            finisher.save(update_fields=["current_job"])
-
-        # Finish the parent
-        if self.parent is not None:
-            # If we finished in error, format a related error message for our parent
-            parent_error = (
-                f"Error in child job '{self.child_name}':\n"
-                f"{error}"
-                if error is not None else
-                None
-            )
-
-            self.parent.finish(self, parent_error)
-
-    def reset(self):
-        """
-        Resets a job.
-        """
-        # Make sure the job is finished
-        if not self.is_finished:
-            raise JobNotFinished("reset")
-
-        # If the job completed without error, it cannot be reset
-        if self.error is not None:
-            raise JobFinished("reset")
-
-        # Remove any outputs
-        self.outputs.all().delete()
-
-        # Reset the lifecycle to the 'acquired' state
-        self.start_time = None
-        self.end_time = None
-        self.error = None
-        self.save(update_fields=['start_time', 'end_time', 'error'])
-
-        # Reset all errored children
-        for child in self.children.filter(error__isnull=False).all():
-            child.reset()
-
-    def abort(self):
-        """
-        Aborts a job.
-        """
-        # If the job is not acquired, this is a no-op
-        if not self.is_acquired:
-            return
-
-        # Can't abort a successfully-finished job
-        if self.is_finished and self.error is None:
-            raise JobFinished("abort")
-
-        # Remove any outputs
-        self.outputs.all().delete()
-
-        # Force-remove this job from the acquiring node
-        if self.node.current_job == self:
-            self.node.current_job = None
-            self.node.save(update_fields=['current_job'])
-
-        # Reset the lifecycle to the 'un-acquired' state
-        self.start_time = None
-        self.end_time = None
-        self.error = None
-        self.node = None
-        self.save(update_fields=['start_time', 'end_time', 'error', 'node'])
-
-    # endregion
+        parent = self.parent
+        if parent is not None:
+            if not parent.children.filter(error__isnull=False).exists():
+                parent.end_time = None
+                parent.error = None
+                parent.save(update_fields=['start_time', 'end_time', 'error'])

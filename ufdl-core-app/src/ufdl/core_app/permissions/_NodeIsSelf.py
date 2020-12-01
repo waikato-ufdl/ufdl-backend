@@ -15,7 +15,9 @@ class NodeIsSelf(NodePermission):
 
         # Only applies to object permissions on jobs
         if not isinstance(obj, Node):
-            raise TypeError(f"{NodeIsSelf.__name__} permission only applies to actions on nodes "
-                            f"(received object of type {obj.__class__.__name__})")
+            raise TypeError(
+                f"{NodeIsSelf.__name__} permission only applies to actions on nodes "
+                f"(received object of type {obj.__class__.__name__})"
+            )
 
         return obj == node

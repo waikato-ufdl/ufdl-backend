@@ -5,9 +5,8 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from ...exceptions import BadName, JobNotStarted, JobFinished
-from ...models.files import File
-from ...models.jobs import Job, JobOutput
+from ...exceptions import BadName
+from ...models.jobs import Job
 from ...renderers import BinaryFileRenderer
 from ...serialisers.jobs import JobOutputSerialiser
 from ._RoutedViewSet import RoutedViewSet

@@ -1,0 +1,33 @@
+{
+  "name": "tensorflow_1_14_image_class_train_and_predict",
+  "version": 1,
+  "description": "Training image classification models using Tensorflow 1.14 and making predictions from them",
+  "scope": "public",
+  "domain": "ic",
+  "licence": "Apache 2.0",
+  "specific": {
+    "nodes": {
+      "train": {
+        "name": "tensorflow_1_14_image_class_train",
+        "version": 1,
+        "parameter_default_overrides": {}
+      },
+      "predict": {
+        "name": "tensorflow_1_14_image_class_predict",
+        "version": 1,
+        "parameter_default_overrides": {}
+      }
+    },
+    "dependencies": [
+      {
+        "from_node": "train",
+        "from_output": {
+          "value": "model",
+          "type": "tficmodel"
+        },
+        "to_node": "predict",
+        "to_input": "model"
+      }
+    ]
+  }
+}

@@ -14,7 +14,7 @@
     [
       {
         "name": "model",
-        "types": ["joboutput"],
+        "types": ["job_output<tficmodel>"],
         "options": "tficmodel",
         "help": "The Tensorflow image classification model to use for making predictions."
       },

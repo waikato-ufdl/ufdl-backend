@@ -33,8 +33,8 @@ def reset():
 
     # Remove the file-system
     import shutil
-    from ufdl.core_app.settings import ufdl_settings
-    FS_PATH = ufdl_settings.LOCAL_DISK_FILE_DIRECTORY
+    from ufdl.core_app.settings import core_settings
+    FS_PATH = core_settings.LOCAL_DISK_FILE_DIRECTORY
     if os.path.exists(FS_PATH):
         print(f"Deleting filesystem '{FS_PATH}'")
         shutil.rmtree(FS_PATH)

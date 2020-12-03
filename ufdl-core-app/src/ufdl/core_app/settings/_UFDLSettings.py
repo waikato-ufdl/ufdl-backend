@@ -1,23 +1,34 @@
-from ..backend.filesystem import FileSystemBackend
-from .validators import IS_SUBCLASS_OF
-from ._UFDLSetting import UFDLSetting
-from ._UFDLClassSetting import UFDLClassSetting
-
-
 class UFDLSettings:
     """
     Class representing all of the available settings for the UFDL.
     """
-    # ==================== #
-    # File-System Settings #
-    # ==================== #
-    # The backend to use for storing files
-    FILESYSTEM_BACKEND = UFDLClassSetting(default="ufdl.core_app.backend.filesystem.LocalDiskBackend",
-                                          validator=IS_SUBCLASS_OF(FileSystemBackend))
+    # The registry of settings classes, keyed by their declared namespace
+    __registry = {}
 
-    # The directory to store files under when using a local-disk file-system backend
-    LOCAL_DISK_FILE_DIRECTORY = UFDLSetting(default="./fs")
+    @classmethod
+    def namespace(cls) -> str:
+        """
+        The namespace for the settings.
+        """
+        raise NotImplementedError(UFDLSettings.namespace.__qualname__)
 
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
 
-# Create a singleton instance to export
-ufdl_settings: UFDLSettings = UFDLSettings()
+        # Get the provided namespace
+        namespace = cls.namespace()
+
+        # Make sure it's a string
+        if not isinstance(namespace, str):
+            raise Exception("Must provide a namespace as a string")
+
+        # Make sure it's an identifier
+        if not namespace.isidentifier():
+            raise Exception(f"'{namespace}' is not a valid identifier")
+
+        # Make sure it's not already taken
+        if namespace in UFDLSettings.__registry:
+            raise Exception(f"Namespace '{namespace}' already in use")
+
+        # Add the new class to the registry
+        UFDLSettings.__registry[namespace] = cls

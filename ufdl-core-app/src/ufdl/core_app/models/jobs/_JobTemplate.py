@@ -3,7 +3,9 @@ from typing import Optional, Dict
 from django.db import models
 
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet
+
 from ufdl.json.core.jobs import JobTemplateSpec
+from ufdl.json.core.jobs.notification import NotificationOverride
 
 from ...apps import UFDLCoreAppConfig
 from ...exceptions import InvalidJobInput
@@ -173,7 +175,9 @@ class JobTemplate(SoftDeleteModel):
             parent: Optional['Job'],
             input_values: Dict[str, Dict[str, str]],
             parameter_values: Dict[str, str],
-            description: Optional[str] = None
+            description: Optional[str] = None,
+            notification_override: Optional[NotificationOverride] = None,
+            child_notification_overrides: Optional[Dict[str, NotificationOverride]] = None
     ) -> Job:
         """
         Creates a new job from this template.
@@ -189,11 +193,23 @@ class JobTemplate(SoftDeleteModel):
                     The parameter values to the job.
         :param description:
                     A description to help identify the job.
+        :param notification_override:
+                    The override for this jobs notifications.
+        :param child_notification_overrides:
+                    The overrides for any children of this job.
         :return:
                     The created job.
         """
         # Call the override on the specific template type (will cause cycle if not overridden properly)
-        return self.upcast().create_job(user, parent, input_values, parameter_values, description)
+        return self.upcast().create_job(
+            user,
+            parent,
+            input_values,
+            parameter_values,
+            description,
+            notification_override,
+            child_notification_overrides
+        )
 
     def to_json(self) -> JobTemplateSpec:
         """

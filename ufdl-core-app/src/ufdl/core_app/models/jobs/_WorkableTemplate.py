@@ -2,7 +2,10 @@ import json
 from typing import Optional, Dict
 
 from django.db import models
+
 from ufdl.json.core.jobs import JobTemplateSpec, WorkableTemplateSpec, InputSpec, ParameterSpec
+from ufdl.json.core.jobs.notification import NotificationOverride
+
 from wai.json.object import Absent
 
 from ...apps import UFDLCoreAppConfig
@@ -53,8 +56,13 @@ class WorkableTemplate(JobTemplate):
             parent: Optional[Job],
             input_values: Dict[str, Dict[str, str]],
             parameter_values: Dict[str, str],
-            description: Optional[str] = None
+            description: Optional[str] = None,
+            notification_override: Optional[NotificationOverride] = None,
+            child_notification_overrides: Optional[Dict[str, NotificationOverride]] = None
     ) -> Job:
+        # Should never pass child notification overrides to a workable job
+        assert child_notification_overrides is None, "Workable jobs can't have children"
+
         # Check all inputs values are present and of a valid type
         if parent is None:
             self.check_input_values(input_values)
@@ -69,6 +77,9 @@ class WorkableTemplate(JobTemplate):
             creator=user
         )
         job.save()
+
+        # Attach the notification overrides
+        job.set_notifications_from_override(notification_override)
 
         return job
 

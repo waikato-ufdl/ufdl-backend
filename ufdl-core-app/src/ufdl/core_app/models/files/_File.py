@@ -46,9 +46,9 @@ class File(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
         :return:    The file data.
         """
         # Get the file-system backend from the settings
-        from ...settings import ufdl_settings
+        from ...settings import core_settings
         from ...backend.filesystem import FileSystemBackend
-        backend: FileSystemBackend = ufdl_settings.FILESYSTEM_BACKEND.instance()
+        backend: FileSystemBackend = core_settings.FILESYSTEM_BACKEND.instance()
 
         return backend.load(backend.Handle.from_database_string(self.handle))
 
@@ -62,9 +62,9 @@ class File(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
         :return:        The file record.
         """
         # Get the file-system backend from the settings
-        from ...settings import ufdl_settings
+        from ...settings import core_settings
         from ...backend.filesystem import FileSystemBackend
-        backend: FileSystemBackend = ufdl_settings.FILESYSTEM_BACKEND.instance()
+        backend: FileSystemBackend = core_settings.FILESYSTEM_BACKEND.instance()
 
         # Save the data to the file-system
         handle: FileSystemBackend.Handle = backend.save(data)
@@ -92,9 +92,9 @@ class File(DeleteOnNoRemainingReferencesOnlyModel, models.Model):
         # If we were deleted, delete our data from the backend
         if deletion_accumulator[0] == 1:
             # Get the file-system backend from the settings
-            from ...settings import ufdl_settings
+            from ...settings import core_settings
             from ...backend.filesystem import FileSystemBackend
-            backend: FileSystemBackend = ufdl_settings.FILESYSTEM_BACKEND.instance()
+            backend: FileSystemBackend = core_settings.FILESYSTEM_BACKEND.instance()
 
             # Get the backend handle
             handle = backend.Handle.from_database_string(handle)

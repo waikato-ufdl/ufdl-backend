@@ -1,15 +1,23 @@
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, Dict
 
+from django.core.mail import EmailMessage
 from django.db import models
 from django.utils.timezone import now
 
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet
 
+from ufdl.json.core.jobs.notification import (
+    NotificationActions,
+    NotificationOverride as JSONNotificationOverride
+)
+
 from ...apps import UFDLCoreAppConfig
 from ...exceptions import *
+from ...settings import core_settings
 from ..files import File
 from ..nodes import Node
 from .._User import User
+from .notifications import *
 from ._JobOutput import JobOutput, JobOutputQuerySet
 
 
@@ -155,6 +163,13 @@ class Job(SoftDeleteModel):
         return isinstance(self.template.upcast(), MetaTemplate)
 
     @property
+    def has_parent(self) -> bool:
+        """
+        Whether this job has a parent job.
+        """
+        return self.parent is not None
+
+    @property
     def child_name(self) -> str:
         """
         Gets the name of this job in the parent workflow.
@@ -162,10 +177,43 @@ class Job(SoftDeleteModel):
         :return:
                     The child name.
         """
-        assert self.parent is not None, "Job is not a child"
+        assert self.has_parent, "Job is not a child"
 
         # Get our name from our description
         return self.description[11:].split("'", maxsplit=1)[0]
+
+    @property
+    def full_child_name(self) -> str:
+        """
+        Gets the fully-qualified child name of this job in
+        the outermost parent job.
+
+        :return:
+                    The fully-qualified child name.
+        """
+        assert self.has_parent, "Job is not a child"
+
+        return ":".join(map(lambda job: job.child_name, self.parent_hierarchy[1:]))
+
+    @property
+    def parent_hierarchy(self) -> Tuple['Job', ...]:
+        """
+        Gets the hierarchy of jobs that this job is part of,
+        from outermost parent to this job (inclusive).
+        """
+        return (
+            (*self.parent.parent_hierarchy, self)
+            if self.has_parent else
+            (self,)
+        )
+
+    @property
+    def top_level_parent(self) -> 'Job':
+        """
+        Gets the top-level parent job in the job hierarchy that this
+        job participates in.
+        """
+        return self.parent_hierarchy[0]
 
     # region Lifecycle Phases
 
@@ -253,6 +301,8 @@ class Job(SoftDeleteModel):
         self.node = node
         self.save(update_fields=['node'])
 
+        self._perform_notifications(Transition.ACQUIRE)
+
     def release(self):
         """
         Releases an acquired job.
@@ -272,6 +322,8 @@ class Job(SoftDeleteModel):
         self.node = None
         self.save(update_fields=['node'])
 
+        self._perform_notifications(Transition.RELEASE)
+
     def start(self, node):
         """
         Starts the job.
@@ -289,12 +341,14 @@ class Job(SoftDeleteModel):
             return
 
         # Start the parent meta-job, if any
-        if self.parent is not None:
+        if self.has_parent:
             self.parent._start_meta()
 
         # Mark the job as started
         self.start_time = now()
         self.save(update_fields=["start_time"])
+
+        self._perform_notifications(Transition.START)
 
     def _start_workable(self, node: Node):
         assert not self.is_meta, "_start_workable called on meta-job"
@@ -310,7 +364,7 @@ class Job(SoftDeleteModel):
         assert self.node == node, "_start_workable called by another node"
 
         # Start the parent meta-job, if any
-        if self.parent is not None:
+        if self.has_parent:
             self.parent._start_meta()
 
         # Mark the job as started
@@ -320,6 +374,8 @@ class Job(SoftDeleteModel):
         # Mark the job as this node's current job
         node.current_job = self
         node.save(update_fields=["current_job"])
+
+        self._perform_notifications(Transition.START)
 
     def finish(self, node: Node):
         """
@@ -366,8 +422,10 @@ class Job(SoftDeleteModel):
         self.end_time = now()
         self.save(update_fields=["end_time"])
 
+        self._perform_notifications(Transition.FINISH)
+
         # Let our parent know we've finished
-        if self.parent is not None:
+        if self.has_parent:
             self.parent._finish_meta(self.outputs)
 
     def _finish_workable(self, node: Node):
@@ -389,8 +447,10 @@ class Job(SoftDeleteModel):
         self.end_time = now()
         self.save(update_fields=["end_time"])
 
+        self._perform_notifications(Transition.FINISH)
+
         # Finish the parent if we have one
-        if self.parent is not None:
+        if self.has_parent:
             self.parent._finish_meta(self.outputs)
 
     def finish_with_error(self, node: Node, error: str):
@@ -420,8 +480,10 @@ class Job(SoftDeleteModel):
         self.error = error
         self.save(update_fields=["end_time", "error"])
 
+        self._perform_notifications(Transition.ERROR)
+
         # Let our parent know we've finished
-        if self.parent is not None:
+        if self.has_parent:
             self.parent._finish_with_error_meta(self._format_error_for_parent(error))
 
     def _finish_with_error_workable(self, node: Node, error: str):
@@ -444,8 +506,10 @@ class Job(SoftDeleteModel):
         self.error = error
         self.save(update_fields=["end_time", "error"])
 
+        self._perform_notifications(Transition.ERROR)
+
         # Error the parent if we have one
-        if self.parent is not None:
+        if self.has_parent:
             self.parent._finish_with_error_meta(self._format_error_for_parent(error))
 
     def reset(self, attempt_reset_parent: bool = True):
@@ -473,6 +537,8 @@ class Job(SoftDeleteModel):
         self.error = None
         self.save(update_fields=['end_time', 'error'])
 
+        self._perform_notifications(Transition.RESET)
+
         if attempt_reset_parent:
             self._attempt_reset_parent()
 
@@ -491,6 +557,8 @@ class Job(SoftDeleteModel):
         self.end_time = None
         self.error = None
         self.save(update_fields=['start_time', 'end_time', 'error'])
+
+        self._perform_notifications(Transition.RESET)
 
         if attempt_reset_parent:
             self._attempt_reset_parent()
@@ -541,6 +609,8 @@ class Job(SoftDeleteModel):
         self.error = None
         self.node = None
         self.save(update_fields=['start_time', 'end_time', 'error', 'node'])
+
+        self._perform_notifications(Transition.ABORT)
 
     # endregion
 
@@ -689,3 +759,238 @@ class Job(SoftDeleteModel):
                 parent.end_time = None
                 parent.error = None
                 parent.save(update_fields=['start_time', 'end_time', 'error'])
+
+    # region Notifications
+
+    def attach_notification_overrides(self, overrides: Dict[str, JSONNotificationOverride]):
+        """
+        Attaches notification overrides for child jobs to this job. Only valid
+        for meta-jobs that are top-level in their job-hierarchy.
+
+        :param overrides:
+                    The dictionary from children names to overrides.
+        """
+        # Must be a top-level job
+        assert not self.has_parent, (
+            "Attempted to attach child notification overrides to a job other "
+            "than the top-level job in the hierarchy"
+        )
+
+        # Must be a meta-job
+        from .meta import MetaTemplate
+        template = self.template.upcast()
+        if not isinstance(template, MetaTemplate):
+            raise ChildNotificationOverridesForWorkableJob()
+
+        # Process overrides for each descendant
+        for descendant_name, descendant_overrides in overrides.items():
+            # Get the descendant template
+            descendant_template = template.get_descendant(descendant_name)
+
+            # If there is no descendant by that name, error
+            if descendant_template is None:
+                raise BadDescendantName(template, descendant_name)
+
+            # Create the override
+            NotificationOverride(
+                job=self,
+                name=descendant_name,
+                override=descendant_overrides.to_json_string()
+            ).save()
+
+    def attach_notifications(self, actions: NotificationActions):
+        """
+        Sets the notifications for the job to those provided.
+
+        :param actions:
+                    The specifications of the notifications to send
+                    and when.
+        """
+        # Check for notifications for each transition
+        for transition in Transition:
+            # Get the notifications to send for this transition
+            notifications = actions.get_property(transition.json_property_name)
+
+            # Attach an instance of each notification to this job
+            for notification_json in notifications:
+                # Get an instance of the notification
+                notification_instance = create_notification_from_json(notification_json)
+
+                # Create the association with this job
+                action = NotificationAction(
+                    job=self,
+                    transition_index=transition.value,
+                    notification=notification_instance,
+                    suppress=notification_json.suppress_for_parent
+                )
+                action.save()
+
+    def attach_default_notifications(self):
+        """
+        Attaches the server-wide default notifications to this job.
+        """
+        self.attach_notifications(
+            core_settings.DEFAULT_META_NOTIFICATIONS
+            if self.is_meta else
+            core_settings.DEFAULT_WORKABLE_NOTIFICATIONS
+        )
+
+    def set_notifications_from_override(self, override: Optional[JSONNotificationOverride]):
+        """
+        Sets the notifications for this job, given the specified
+        overrides.
+
+        :param override:
+                    The override specification.
+        """
+        # If there is no override, just use the default notifications
+        if override is None:
+            return self.attach_default_notifications()
+
+        # If the override says to keep the defaults, attach them first
+        if override.keep_default:
+            self.attach_default_notifications()
+
+        # Attach the notifications from the override
+        self.attach_notifications(override.actions)
+
+    def _perform_notifications(self, transition: Transition):
+        """
+        Performs any notifications specified for this job, based
+        on the phase transition it is going through.
+
+        :param transition:
+                    The transition the job is making.
+        """
+        # Get our notifications for this transition
+        notification_actions = self.notification_actions.for_transition(transition)
+
+        # Perform the notifications
+        for notification_action in notification_actions.all():
+            # Suppress if part of a workflow
+            if notification_action.suppress and self.has_parent:
+                continue
+
+            self._perform_notification(notification_action.notification, transition)
+
+    def _perform_notification(
+            self,
+            notification: Notification,
+            transition: Transition
+    ):
+        """
+        Performs a single notification as part of a phase transition.
+
+        :param notification:
+                    The notification to perform.
+        :param transition:
+                    The phase transition the job is going through.
+        """
+        # Get the specific type of notification
+        notification = notification.upcast()
+
+        # Dispatch to the handler for the notification type
+        if isinstance(notification, PrintNotification):
+            self._perform_print_notification(notification, transition)
+        elif isinstance(notification, EmailNotification):
+            self._perform_email_notification(notification, transition)
+        else:
+            raise Exception(f"Unknown notification type: {type(notification)}")
+
+    def _perform_print_notification(
+            self,
+            notification: PrintNotification,
+            transition: Transition
+    ):
+        """
+        Performs a print notification for the given phase transition.
+
+        :param notification:
+                    The print notification to perform.
+        :param transition:
+                    The phase transition the job is going through.
+        """
+        try:
+            # Format the message to be printed
+            formatted_message: str = notification.message.format(
+                **self._get_notification_format_kwargs(transition)
+            )
+
+            # Print the message
+            print(formatted_message)
+        except Exception as e:
+            print(f"Error formatting print notification: {e}")
+
+    def _perform_email_notification(
+            self,
+            notification: EmailNotification,
+            transition: Transition
+    ):
+        """
+        Performs an email notification for the given phase transition.
+
+        :param notification:
+                    The email notification to perform.
+        :param transition:
+                    The phase transition the job is going through.
+        """
+        # Get the format strings for formatting the subject/body of the email
+        format_kwargs = self._get_notification_format_kwargs(transition)
+
+        # Create and format the email to send
+        message = EmailMessage(
+            subject=notification.subject.format(**format_kwargs),
+            body=notification.body.format(**format_kwargs),
+            to=(
+                notification.to.split("\n")
+                if notification.to is not None else
+                [self.creator.email]
+            ),
+            cc=(
+                notification.cc.split("\n")
+                if notification.cc is not None else
+                None
+            ),
+            bcc=(
+                notification.bcc.split("\n")
+                if notification.bcc is not None else
+                None
+            )
+        )
+
+        # Send the email
+        try:
+            message.send()
+        except Exception as e:
+            print(f"Error sending email notification: {e}")
+
+    def _get_notification_format_kwargs(
+            self,
+            transition: Transition
+    ) -> Dict[str, str]:
+        """
+        Get the format strings for formatting notification messages.
+
+        :param transition:
+                    The phase transition that the job is going through.
+        :return:
+                    The format keyword arguments.
+        """
+        # These kwargs are always present
+        kwargs = dict(
+            transition=transition.name.lower(),
+            description=self.description,
+            pk=str(self.pk)
+        )
+
+        # Add the node's primary key if there is one
+        if self.node is not None:
+            kwargs['node'] = str(self.node.pk)
+
+        # Add the error message if there is one
+        if self.error is not None:
+            kwargs['error'] = self.error
+
+        return kwargs
+
+    # endregion

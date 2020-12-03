@@ -1,9 +1,10 @@
 import json
-from typing import Optional, Dict
+from typing import Optional, Dict, Iterator
 
 from django.db import models
 from ufdl.json.core.jobs import JobTemplateSpec, ValueTypePair
 from ufdl.json.core.jobs.meta import DependencyGraph, Node, Dependency
+from ufdl.json.core.jobs.notification import NotificationOverride
 from wai.json.object import Absent
 
 from ....exceptions import InvalidJobInput
@@ -26,13 +27,43 @@ class MetaTemplate(JobTemplate):
     """
     objects = MetaTemplateQuerySet.as_manager()
 
+    @property
+    def child_names(self) -> Iterator[str]:
+        """
+        Gets the names of all direct children of this meta-template.
+        """
+        for child_relation in self.child_relations.all():
+            yield child_relation.name
+
+    @property
+    def descendant_names(self) -> Iterator[str]:
+        """
+        Gets the names of all descendants of this meta-template.
+        """
+        for child_relation in self.child_relations.all():
+            # Get the direct child name
+            child_name = child_relation.name
+
+            # Yield the direct child name
+            yield child_name
+
+            # Get the child template
+            child_template = child_relation.child
+
+            # If the child is also a parent, yield its descendants as well
+            if isinstance(child_template, MetaTemplate):
+                for descendant_name in child_template.descendant_names:
+                    yield f"{child_name}:{descendant_name}"
+
     def create_job(
             self,
             user: User,
             parent: Optional[Job],
             input_values: Dict[str, Dict[str, str]],
             parameter_values: Dict[str, str],
-            description: Optional[str] = None
+            description: Optional[str] = None,
+            notification_override: Optional[NotificationOverride] = None,
+            child_notification_overrides: Optional[Dict[str, NotificationOverride]] = None
     ) -> Job:
         # Check all inputs values are present and of a valid type
         if parent is None:
@@ -48,6 +79,11 @@ class MetaTemplate(JobTemplate):
             creator=user
         )
         meta_job.save()
+
+        # Add the notification override for this job and any children
+        meta_job.set_notifications_from_override(notification_override)
+        if child_notification_overrides is not None:
+            meta_job.attach_notification_overrides(child_notification_overrides)
 
         # Get the children which have no dependencies
         dependencyless_children = (
@@ -157,13 +193,37 @@ class MetaTemplate(JobTemplate):
                 self.get_parameter_by_name(parent_parameter_name).default
             )
 
-        return child_relation.child.create_job(
+        # Get the fully-qualified name of the new job in its parent hierarchy
+        full_child_name = (
+            f"{parent_job.full_child_name}:{child_relation.name}"
+            if parent_job.has_parent else
+            child_relation.name
+        )
+
+        # Get the notification overrides for this child from the top-level parent
+        override = (
+            parent_job
+                .top_level_parent
+                .notification_overrides
+                .with_name(full_child_name)
+                .first()
+        )
+
+        # Convert the overrides to JSON
+        if override is not None:
+            override = NotificationOverride.from_json_string(override.override)
+
+        # Create the child job
+        child_job = child_relation.child.create_job(
             parent_job.creator,
             parent_job,
             child_input_values,
             child_parameter_values,
-            f"child job '{child_relation.name}' of meta-job {self.name_and_version}"
+            f"child job '{child_relation.name}' of meta-job {self.name_and_version}",
+            override
         )
+
+        return child_job
 
     def to_json(self) -> JobTemplateSpec:
         return JobTemplateSpec(
@@ -204,3 +264,50 @@ class MetaTemplate(JobTemplate):
                 ]
             )
         )
+
+    def get_child(self, name: str) -> Optional[JobTemplate]:
+        """
+        Gets the child job-template with the given name.
+
+        :param name:
+                    The name of the child.
+        :return:
+                    The child job-template.
+        """
+        # Get the child-relation for the name
+        relation = self.child_relations.with_name(name).select_related("child").first()
+
+        # If there's no relation, there's no child
+        if relation is None:
+            return None
+
+        return relation.child
+
+    def get_descendant(self, name: str) -> Optional[JobTemplate]:
+        """
+        Gets a descendant template by fully-qualified name.
+
+        :param name:
+                    The fully-qualified name of the descendant.
+        :return:
+                    The descendant template, or None
+                    if name is not a descendant.
+        """
+        # Split the name of the top-most child from the fully-qualified name
+        if ":" in name:
+            head, tail = name.split(sep=":", maxsplit=1)
+        else:
+            head, tail = name, None
+
+        # Get the child with the given name
+        child = self.get_child(head)
+
+        # If there are no more name parts to process, return the child
+        if tail is None:
+            return child
+
+        # If the child has no children, return None
+        if not isinstance(child, MetaTemplate):
+            return None
+
+        return child.get_descendant(tail)

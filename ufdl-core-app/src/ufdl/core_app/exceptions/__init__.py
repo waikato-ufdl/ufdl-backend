@@ -4,11 +4,13 @@ Package for exceptions in processing requests.
 from ._AcquireMetaJobAttempt import AcquireMetaJobAttempt
 from ._BadArgumentType import BadArgumentType
 from ._BadArgumentValue import BadArgumentValue
+from ._BadDescendantName import BadDescendantName
 from ._BadJobTemplate import BadJobTemplate
 from ._BadModelType import BadModelType
 from ._BadName import BadName
 from ._BadNodeID import BadNodeID
 from ._BadSource import BadSource
+from ._ChildNotificationOverridesForWorkableJob import ChildNotificationOverridesForWorkableJob
 from ._IllegalPhaseTransition import IllegalPhaseTransition
 from ._InvalidJobInput import InvalidJobInput
 from ._JobAcquired import JobAcquired

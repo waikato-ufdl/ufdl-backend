@@ -22,10 +22,10 @@ class LocalDiskBackend(FileSystemBackend):
     @classmethod
     def _initialise_backend(cls) -> 'LocalDiskBackend':
         # Import the UFDL settings
-        from ...settings import ufdl_settings
+        from ...settings import core_settings
 
         # Get the root directory setting
-        root_dir: str = ufdl_settings.LOCAL_DISK_FILE_DIRECTORY
+        root_dir: str = core_settings.LOCAL_DISK_FILE_DIRECTORY
 
         return LocalDiskBackend(root_dir)
 

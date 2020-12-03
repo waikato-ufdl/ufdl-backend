@@ -1,5 +1,7 @@
 from typing import List
 
+from django.db import transaction
+
 from rest_framework import routers
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -8,8 +10,8 @@ from ufdl.json.core.jobs import CreateJobSpec
 
 from wai.json.object import Absent
 
-from ...exceptions import JSONParseFailure
-from ...models.jobs import JobTemplate
+from ...exceptions import JSONParseFailure, ChildNotificationOverridesForWorkableJob
+from ...models.jobs import JobTemplate, WorkableTemplate
 from ...serialisers.jobs import JobSerialiser
 from ._RoutedViewSet import RoutedViewSet
 
@@ -34,6 +36,7 @@ class CreateJobViewSet(RoutedViewSet):
             )
         ]
 
+    @transaction.atomic
     def create_job(self, request: Request, pk=None):
         """
         Action to create a job from the template.
@@ -43,10 +46,18 @@ class CreateJobViewSet(RoutedViewSet):
         :return:            The response containing the job.
         """
         # Get the job template the job is being created from
-        job_template = self.get_object_of_type(JobTemplate)
+        job_template = self.get_object_of_type(JobTemplate).upcast()
 
         # Parse the job specification from the request
         spec = JSONParseFailure.attempt(dict(request.data), CreateJobSpec)
+
+        # Can't supply child notification overrides to a workable job
+        if (
+                isinstance(job_template, WorkableTemplate)
+                and
+                spec.child_notification_overrides is not Absent
+        ):
+            raise ChildNotificationOverridesForWorkableJob()
 
         # Format the input values
         input_values = {
@@ -67,7 +78,17 @@ class CreateJobViewSet(RoutedViewSet):
             None,
             input_values,
             parameter_values,
-            spec.description
+            spec.description,
+            (
+                spec.notification_override
+                if spec.notification_override is not Absent else
+                None
+            ),
+            (
+                spec.child_notification_overrides
+                if spec.child_notification_overrides is not Absent else
+                None
+            )
         )
 
         return Response(JobSerialiser().to_representation(job))

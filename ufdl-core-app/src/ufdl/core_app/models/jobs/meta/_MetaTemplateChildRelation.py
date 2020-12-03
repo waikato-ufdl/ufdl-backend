@@ -8,7 +8,16 @@ class MetaTemplateChildRelationQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySe
     """
     A query-set of the relations between a meta-template and its sub-templates.
     """
-    pass
+    def with_name(self, name: str) -> 'MetaTemplateChildRelationQuerySet':
+        """
+        Filter to the child-relations with a particular name.
+
+        :param name:
+                    The name to filter for.
+        :return:
+                    The filtered query-set.
+        """
+        return self.filter(name=name)
 
 
 class MetaTemplateChildRelation(DeleteOnNoRemainingReferencesOnlyModel):

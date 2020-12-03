@@ -9,5 +9,6 @@ from ._JobTemplate import JobTemplate, JobTemplateQuerySet
 from ._JobType import JobType, JobTypeQuerySet
 from ._Parameter import Parameter, ParameterQuerySet
 
-# Include the meta sub-package as well
+# Include all sub-packages as well
 from .meta import *
+from .notifications import *

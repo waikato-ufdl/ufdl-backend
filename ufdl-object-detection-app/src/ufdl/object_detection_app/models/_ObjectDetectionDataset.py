@@ -7,7 +7,7 @@ from ufdl.core_app.models import Dataset, DatasetQuerySet
 
 from ufdl.json.object_detection import AnnotationsFile, Image
 
-from wai.annotations.core.instance import Instance
+from wai.annotations.core.domain import Instance
 
 from wai.json.raw import RawJSONObject, RawJSONArray
 

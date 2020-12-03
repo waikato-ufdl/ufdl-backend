@@ -10,7 +10,7 @@ from simple_django_teams.models import Team
 
 from ufdl.annotation_utils import converted_annotations_iterator
 
-from wai.annotations.core.instance import Instance
+from wai.annotations.core.domain import Instance
 
 from ..apps import UFDLCoreAppConfig
 from ..exceptions import *

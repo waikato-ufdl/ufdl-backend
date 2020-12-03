@@ -282,7 +282,7 @@ class Job(SoftDeleteModel):
 
     def _start_meta(self):
         assert self.is_meta, "_start_meta called on workable job"
-        assert self.is_finished, "_start_meta called on finished meta-job"
+        assert not self.is_finished, "_start_meta called on finished meta-job"
 
         # Idempotent
         if not self.is_created:

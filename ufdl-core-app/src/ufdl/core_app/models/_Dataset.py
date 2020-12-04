@@ -130,12 +130,15 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         """
         return None
 
-    def merge(self, other) -> 'Dataset':
-        # Make sure the other object is the same kind of data-set as we are.
-        if not type(self) is type(other):
-            raise Exception(f"Expected to merge with another {type(self).__name__} but "
-                            f"received a {type(other).__name__} instead")
+    def can_merge(self, other) -> Optional[str]:
+        return (
+            None
+            if type(self) is type(other) else
+            f"Expected to merge with another {type(self).__name__} but "
+            f"received a {type(other).__name__} instead"
+        )
 
+    def merge(self, other) -> 'Dataset':
         # Gather a mapping from source file to new file
         new_files = []
 
@@ -180,11 +183,14 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
 
     def merge_annotations(self, other, files):
         """
-        Merges the annotations for a particular file in another
-        data-set into this one.
+        Merges the annotations for another data-set into this one. Should
+        overwrite all existing annotations for files in this data-set that
+        have annotations from the 'other' data-set.
 
-        :param other:   The other data-set.
-        :param files:   A list of pairs of (source_file, target_file).
+        :param other:
+                    The other data-set.
+        :param files:
+                    A list of pairs of (source_file, target_file).
         """
         # Default implementation is to do nothing
         pass

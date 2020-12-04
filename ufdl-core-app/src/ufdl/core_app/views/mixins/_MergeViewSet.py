@@ -8,7 +8,7 @@ from simple_django_teams.mixins import SoftDeleteModel
 
 from ufdl.json.core import MergeSpec
 
-from ...exceptions import JSONParseFailure
+from ...exceptions import JSONParseFailure, MergeDisallowed
 from ...models.mixins import MergableModel
 from ._RoutedViewSet import RoutedViewSet
 
@@ -47,6 +47,11 @@ class MergeViewSet(RoutedViewSet):
 
         # Get the source mergable
         source = self.get_object_of_type(MergableModel, other="pk")
+
+        # Check if the source can be merged into the target
+        reason = target.can_merge(source)
+        if reason is not None:
+            raise MergeDisallowed(reason)
 
         # Deserialise the merge specification
         spec = JSONParseFailure.attempt(dict(request.data), MergeSpec)

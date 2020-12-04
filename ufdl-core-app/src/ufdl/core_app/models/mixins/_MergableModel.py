@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db import models
 
 
@@ -7,6 +9,18 @@ class MergableModel(models.Model):
     """
     class Meta:
         abstract = True
+
+    def can_merge(self, other) -> Optional[str]:
+        """
+        Whether the 'other' object can be merged into this one.
+
+        :param other:
+                    The other model being merged into this one.
+        :return:
+                    None if the merge is allowable, or a reason
+                    why not.
+        """
+        return None
 
     def merge(self, other) -> 'MergableModel':
         """

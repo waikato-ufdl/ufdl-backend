@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     'ufdl.object_detection_app',
     'ufdl.speech_app',
     'ufdl.image_segmentation_app',
-    'simple_django_teams'
+    'simple_django_teams',
+    'ufdl.html_client_app'
 ]
 
 MIDDLEWARE = [
@@ -197,6 +198,10 @@ UFDL = {
     "FILESYSTEM_BACKEND": "ufdl.core_app.backend.filesystem.LocalDiskBackend",
 
     "LOCAL_DISK_FILE_DIRECTORY": "fs"
+}
+
+UFDL_HTML_CLIENT = {
+    "SERVE_CLIENT": True
 }
 
 APPEND_SLASH = False

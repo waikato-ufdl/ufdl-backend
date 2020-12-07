@@ -24,6 +24,7 @@ urlpatterns = [
     path('v1/objdet/', include('ufdl.object_detection_app.urls')),
     path('v1/speech/', include('ufdl.speech_app.urls')),
     path('v1/segments/', include('ufdl.image_segmentation_app.urls')),
+    path('v1/html', include('ufdl.html_client_app.urls')),
     re_path('v1/auth/refresh/?', token_refresh, name='refresh_jwt_token'),
     re_path('v1/auth/verify/?', token_verify, name='verify_jwt_token'),
     re_path('v1/auth/obtain/?', token_obtain_pair, name='obtain_jwt_token')

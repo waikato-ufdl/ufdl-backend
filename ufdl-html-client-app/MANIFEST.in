@@ -1,0 +1,4 @@
+recursive-include python *.txt
+recursive-include python *.csv
+recursive-include python *.json
+recursive-include python *.html

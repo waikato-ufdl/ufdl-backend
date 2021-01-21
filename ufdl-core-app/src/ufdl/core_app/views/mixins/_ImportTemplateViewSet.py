@@ -85,6 +85,6 @@ class ImportTemplateViewSet(RoutedViewSet):
         :return:            The response containing the job-template JSON.
         """
         # Get the job-template
-        job_template = self.get_object_of_type(JobTemplate)
+        job_template = self.get_object_of_type(JobTemplate).upcast()
 
         return Response(job_template.to_json().to_raw_json())

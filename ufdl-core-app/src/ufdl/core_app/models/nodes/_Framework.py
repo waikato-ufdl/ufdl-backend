@@ -18,7 +18,7 @@ class Framework(DeleteOnNoRemainingReferencesOnlyModel):
     name = models.CharField(max_length=32)
 
     # The version of the framework
-    version = models.CharField(max_length=16)
+    version = models.CharField(max_length=32)
 
     @property
     def name_and_version(self) -> str:

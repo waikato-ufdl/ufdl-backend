@@ -1,17 +1,15 @@
 from typing import List, Iterator
 
-from django.db import models
-
 from ufdl.annotation_utils.image_classification import annotations_iterator
 
 from ufdl.core_app.exceptions import *
-from ufdl.core_app.models import Dataset, DatasetQuerySet
+from ufdl.core_app.models import Dataset, DatasetQuerySet, FileReference
 
 from ufdl.json.image_classification import CategoriesFile
 
 from wai.annotations.domain.image.classification import ImageClassificationInstance
 
-from wai.common.iterate import count
+from ._Category import Category
 
 
 class ImageClassificationDatasetQuerySet(DatasetQuerySet):
@@ -19,27 +17,16 @@ class ImageClassificationDatasetQuerySet(DatasetQuerySet):
 
 
 class ImageClassificationDataset(Dataset):
-    # Serialised representation of the categories of this data-set
-    categories = models.TextField()
-
     objects = ImageClassificationDatasetQuerySet.as_manager()
-
-    def __init__(self, *args, **kwargs):
-        # Initialise as usual
-        super().__init__(*args, **kwargs)
-
-        # Set a default of no categories
-        if self.categories == "":
-            self.categories = "{}"
-
-        # Make sure the unstructured data is valid
-        CategoriesFile.validate_json_string(self.categories)
 
     @classmethod
     def domain_code(cls) -> str:
         return "ic"
 
     def merge_annotations(self, other, files):
+        # TODO
+        raise NotImplementedError(ImageClassificationDataset.merge_annotations.__qualname__)
+
         # Load the categories files
         self_categories_file = self.get_categories()
         other_categories_file = other.get_categories()
@@ -52,25 +39,35 @@ class ImageClassificationDataset(Dataset):
         self.set_categories(self_categories_file)
 
     def clear_annotations(self):
-        self.categories = "{}"
+        self.files.categories.delete()
 
     def delete_file(self, filename: str):
+        # Get the reference to the file
+        reference: FileReference = self.get_file_reference(filename)
+
+        # Delete the categories of the file
+        if reference is not None:
+            reference.categories.delete()
+
         # Delete the file as usual
-        file = super().delete_file(filename)
-
-        # Remove the file from the categories as well
-        categories = self.get_categories()
-        if categories.has_property(filename):
-            categories.delete_property(filename)
-            self.set_categories(categories)
-
-        return file
+        return super().delete_file(filename)
 
     def get_annotations_iterator(self) -> Iterator[ImageClassificationInstance]:
-        # Get the categories file
-        categories_file = self.get_categories()
+        return annotations_iterator(self.iterate_filenames(), self.get_categories_for_file, self.get_file)
 
-        return annotations_iterator(self.iterate_filenames(), categories_file.get_property, self.get_file)
+    def get_categories_for_file(self, filename: str) -> List[str]:
+        """
+        Gets the categories for a particular file in the dataset.
+
+        :param filename:
+                    The name of the file.
+        :return:
+                    The list of categories.
+        """
+        reference: FileReference = self.get_file_reference(filename)
+        if reference is None:
+            return []
+        return [category.category for category in reference.categories.all()]
 
     def get_categories(self) -> CategoriesFile:
         """
@@ -78,7 +75,15 @@ class ImageClassificationDataset(Dataset):
 
         :return:    The categories for each image.
         """
-        return CategoriesFile.from_json_string(self.categories)
+        categories_file = CategoriesFile()
+
+        for filename in self.iterate_filenames():
+            categories = self.get_categories_for_file(filename)
+
+            if len(categories) > 0:
+                categories_file.set_property(filename, categories)
+
+        return categories_file
 
     def set_categories(self, categories_file: CategoriesFile):
         """
@@ -86,8 +91,8 @@ class ImageClassificationDataset(Dataset):
 
         :param categories_file:     The new categories file.
         """
-        self.categories = categories_file.to_json_string()
-        self.save()
+        #self.clear_annotations()
+        raise NotImplementedError(ImageClassificationDataset.set_categories.__qualname__)
 
     def add_categories(self, images: List[str], categories: List[str]) -> CategoriesFile:
         """
@@ -109,32 +114,26 @@ class ImageClassificationDataset(Dataset):
         images = list(set(images))
         categories = list(set(categories))
 
-        # Load the categories file
-        categories_file = self.get_categories()
-
         # Create a dictionary of additions to make
         additions = CategoriesFile()
         for image in images:
+            reference = self.files.with_filename(image).first()
+
             # Make sure the image is a file we have
-            if not self.files.with_filename(image).exists():
+            if reference is None:
                 raise BadName(image, "Data-set has no image with this name")
 
-            # Determine the set of categories to add to the image
-            if image not in categories_file:
-                additions[image] = categories
-            else:
-                categories_to_add = list(set(categories) - set(categories_file[image]))
-                if len(categories_to_add) > 0:
-                    additions[image] = categories_to_add
-
-        # If there are additions to be made, make them
-        if count(additions.properties()) > 0:
-            # Add the additions
-            for image in additions:
-                categories_file[image] += additions[image]
-
-            # Replace the old categories with the new one
-            self.set_categories(categories_file)
+            for category in categories:
+                if not reference.categories.with_category(category).exists():
+                    instance = Category(
+                        file=reference,
+                        category=category
+                    )
+                    instance.save()
+                    if image not in additions:
+                        additions[image] = [category]
+                    else:
+                        additions[image] += [category]
 
         return additions
 
@@ -158,30 +157,22 @@ class ImageClassificationDataset(Dataset):
         images = list(set(images))
         categories = list(set(categories))
 
-        # Load the categories file
-        categories_file = self.get_categories()
-
         # Create a dictionary of removals to make
         removals = CategoriesFile()
         for image in images:
+            reference = self.files.with_filename(image).first()
+
             # Make sure the image is a file we have
-            if not self.files.with_filename(image).exists():
+            if reference is None:
                 raise BadName(image, "Data-set has no image with this name")
 
-            # Determine the set of categories to remove from the image
-            if image in categories_file:
-                categories_to_remove = list(set(categories).intersection(set(categories_file[image])))
-                if len(categories_to_remove) > 0:
-                    removals[image] = categories_to_remove
-
-        # If there are removals to be made, make them
-        if sum(1 for _ in removals.properties()) > 0:
-            # Make the removals
-            for image in removals:
-                for category in removals[image]:
-                    categories_file[image].remove(category)
-
-            # Replace the old categories with the new one
-            self.set_categories(categories_file)
+            for category in categories:
+                qs = reference.categories.with_category(category)
+                if qs.exists():
+                    qs.delete()
+                    if image not in removals:
+                        removals[image] = [category]
+                    else:
+                        removals[image] += [category]
 
         return removals

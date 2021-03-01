@@ -1,1 +1,2 @@
+from ._Category import Category, CategoryQuerySet
 from ._ImageClassificationDataset import ImageClassificationDataset, ImageClassificationDatasetQuerySet

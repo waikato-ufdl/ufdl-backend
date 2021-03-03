@@ -34,10 +34,10 @@ class Node(DeleteOnNoRemainingReferencesOnlyModel):
                                             null=True)
 
     # The amount of GPU memory available on the node, in MB
-    gpu_mem = models.PositiveIntegerField(null=True)
+    gpu_mem = models.BigIntegerField(null=True)
 
     # The amount of CPU memory available on the node, in MB
-    cpu_mem = models.PositiveIntegerField()
+    cpu_mem = models.BigIntegerField()
 
     # The timestamp when the node last made contact
     last_seen = models.DateTimeField(null=True, default=None)

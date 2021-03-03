@@ -29,6 +29,7 @@ class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDL
         "add_output": IsAdminUser | NodeOwnsJob,
         "delete_output": IsAdminUser,
         "get_output": IsAuthenticated,
+        "get_output_info": IsAuthenticated,
         "acquire_job": IsNode & JobIsWorkable,
         "release_job": NodeOwnsJob,
         "start_job": NodeOwnsJob,

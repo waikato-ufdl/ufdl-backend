@@ -19,6 +19,7 @@ class AddJobOutputViewSet(RoutedViewSet):
     """
     # The keyword used to specify when the view-set is in add-outputs mode
     MODE_KEYWORD: str = "add-job-output"
+    INFO_KEYWORD: str = "job-outputs-info"
 
     @classmethod
     def get_routes(cls) -> List[routers.Route]:
@@ -31,6 +32,15 @@ class AddJobOutputViewSet(RoutedViewSet):
                 name='{basename}-job-outputs',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: AddJobOutputViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/outputs/(?P<name>[^/]+)/(?P<type>[^/]+)/info$',
+                mapping={
+                    'get': 'get_output_info'
+                },
+                name='{basename}-job-outputs-info',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: AddJobOutputViewSet.INFO_KEYWORD}
             )
         ]
 
@@ -115,3 +125,25 @@ class AddJobOutputViewSet(RoutedViewSet):
             raise BadName(name, f"Job has no output by this name/type ({name}/{type})")
 
         return Response(output.data.get_data())
+
+    def get_output_info(self, request: Request, pk=None, name=None, type=None):
+        """
+        Action to get the data from a job output.
+
+        :param request:     The request.
+        :param pk:          The primary key of the job.
+        :param name:        The name of the output.
+        :param type:        The type of the output.
+        :return:            The response containing the output data.
+        """
+        # Get the job the output belongs to
+        job = self.get_object_of_type(Job)
+
+        # Get the named output
+        output = job.outputs.filter(name=name, type=type).first()
+
+        # Make sure the output exists
+        if output is None:
+            raise BadName(name, f"Job has no output by this name/type ({name}/{type})")
+
+        return Response(JobOutputSerialiser().to_representation(output))

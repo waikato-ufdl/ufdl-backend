@@ -28,6 +28,17 @@ def reset():
             cursor.execute(f"drop database `{database_name}`;"
                            f"create database `{database_name}` character set utf8;"
                            f"use `{database_name}`;")
+    elif database_type == "postgresql":
+        with connection.cursor() as cursor:
+            cursor.execute(f"select tablename from pg_catalog.pg_tables "
+                           f"where tableowner = '{connection.settings_dict['USER']}';")
+            next = cursor.fetchone()
+            tables = []
+            while next is not None:
+                tables.append(next[0])
+                next = cursor.fetchone()
+            for table in tables:
+                cursor.execute(f"drop table \"{table}\" cascade;")
     else:
         raise Exception(f"Can't reset database type: {database_type}")
 

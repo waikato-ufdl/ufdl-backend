@@ -46,7 +46,7 @@ class ImageClassificationDataset(Dataset):
         self.set_categories(self_categories_file)
 
     def clear_annotations(self):
-        self.files.categories.delete()
+        self.categories.delete()
 
     def delete_file(self, filename: str):
         # Get the reference to the file
@@ -54,7 +54,7 @@ class ImageClassificationDataset(Dataset):
 
         # Delete the categories of the file
         if reference is not None:
-            reference.categories.delete()
+            reference.categories.all().delete()
 
         # Delete the file as usual
         return super().delete_file(filename)

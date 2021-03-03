@@ -9,7 +9,7 @@ from ufdl.json.image_classification import CategoriesFile
 
 from wai.annotations.domain.image.classification import ImageClassificationInstance
 
-from ._Category import Category
+from ._Category import Category, CategoryQuerySet
 
 
 class ImageClassificationDatasetQuerySet(DatasetQuerySet):
@@ -22,6 +22,13 @@ class ImageClassificationDataset(Dataset):
     @classmethod
     def domain_code(cls) -> str:
         return "ic"
+
+    @property
+    def categories(self) -> CategoryQuerySet:
+        """
+        All categories in this dataset.
+        """
+        return Category.objects.filter(file__in=self.files.all())
 
     def merge_annotations(self, other, files):
         # TODO

@@ -61,7 +61,7 @@ class NamedFile(CopyableModel, DeleteOnNoRemainingReferencesOnlyModel, models.Mo
                                     condition=models.Q(canonical_source__isnull=False))
         ]
 
-    def has_same_contents_as(self, other: 'NamedFile') -> bool:
+    def has_same_data_as(self, other: 'NamedFile') -> bool:
         """
         Whether this file has identical contents to another.
 

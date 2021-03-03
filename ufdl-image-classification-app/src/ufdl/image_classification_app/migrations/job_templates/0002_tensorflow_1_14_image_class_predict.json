@@ -21,7 +21,7 @@
       {
         "name": "data",
         "types": ["dataset"],
-        "options": "to-subdir",
+        "options": "to-subdir-ic",
         "help": "The dataset to generate predictions for."
       }
     ],

@@ -268,7 +268,7 @@ class Job(SoftDeleteModel):
             return "Finished"
         elif self.is_errored:
             return "Errored"
-        elif self.is_meta and self.is_acquired:
+        elif not self.is_meta and self.is_acquired:
             return "Acquired"
         else:
             raise Exception(

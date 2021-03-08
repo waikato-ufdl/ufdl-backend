@@ -24,7 +24,7 @@ class CategoryQuerySet(models.QuerySet):
 
         return self.filter(file__file__name__filename=file)
 
-    def with_category(self, category: str):
+    def with_category(self, category: Union['Category', str]):
         """
         Returns all categories with the given label.
 
@@ -33,7 +33,11 @@ class CategoryQuerySet(models.QuerySet):
         :return:
                     The filtered query-set.
         """
+        if isinstance(category, Category):
+            category = category.category
+
         return self.filter(category=category)
+
 
 class Category(models.Model):
     # The file in the dataset that the category applies to

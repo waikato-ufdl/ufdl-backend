@@ -13,8 +13,10 @@ class FileContainerModel(models.Model):
     an object.
     """
     # The files that the objects contain
-    files = models.ManyToManyField(f"{UFDLCoreAppConfig.label}.FileReference",
-                                   related_name="+")
+    files = models.ManyToManyField(
+        f"{UFDLCoreAppConfig.label}.FileReference",
+        related_name="+"
+    )
 
     class Meta:
         abstract = True

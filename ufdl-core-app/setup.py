@@ -33,6 +33,8 @@ setup(
         "simple-django-teams==0.0.6",
         "ufdl.json-messages",
         "requests-file>=1.5,<1.6",
-        "ufdl-annotation-utils"
+        "ufdl-annotation-utils",
+        "channels",
+        "channels_redis"
     ]
 )

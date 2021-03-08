@@ -1,5 +1,9 @@
 from typing import Optional, Union, Tuple, Dict
 
+from asgiref.sync import async_to_sync
+
+from channels.layers import get_channel_layer
+
 from django.core.mail import EmailMessage
 from django.db import models
 from django.utils.timezone import now
@@ -214,6 +218,13 @@ class Job(SoftDeleteModel):
         job participates in.
         """
         return self.parent_hierarchy[0]
+
+    @property
+    def websocket_group_name(self) -> str:
+        """
+        The name of the group that this job should broadcast transitions to.
+        """
+        return f"Job-{self.pk}"
 
     # region Lifecycle Phases
 
@@ -894,6 +905,8 @@ class Job(SoftDeleteModel):
             self._perform_print_notification(notification, transition)
         elif isinstance(notification, EmailNotification):
             self._perform_email_notification(notification, transition)
+        elif isinstance(notification, WebSocketNotification):
+            self._perform_websocket_notification(notification, transition)
         else:
             raise Exception(f"Unknown notification type: {type(notification)}")
 
@@ -920,6 +933,32 @@ class Job(SoftDeleteModel):
             print(formatted_message)
         except Exception as e:
             print(f"Error formatting print notification: {e}")
+
+    def _perform_websocket_notification(
+            self,
+            notification: WebSocketNotification,
+            transition: Transition
+    ):
+        """
+        Performs a web-socket notification for the given phase transition.
+
+        :param notification:
+                    The web-socket notification to perform.
+        :param transition:
+                    The phase transition the job is going through.
+        """
+        try:
+            channel_layer = get_channel_layer()
+
+            async_to_sync(channel_layer.group_send)(
+                self.websocket_group_name,
+                {
+                    'type': 'transition.enact',
+                    'content': self._get_notification_format_kwargs(transition)
+                }
+            )
+        except Exception as e:
+            print(f"Error sending web-socket message: {e}")
 
     def _perform_email_notification(
             self,

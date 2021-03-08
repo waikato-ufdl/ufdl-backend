@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 
 import os
 
+from channels.routing import ProtocolTypeRouter
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ufdl.api_site.settings')
 
-application = get_wsgi_application()
+application = ProtocolTypeRouter({
+    'http': get_wsgi_application()
+})

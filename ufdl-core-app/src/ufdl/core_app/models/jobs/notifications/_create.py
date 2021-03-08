@@ -5,6 +5,7 @@ from ufdl.json.core.jobs.notification import *
 from ._EmailNotification import EmailNotification as EmailNotificationModel
 from ._Notification import Notification as NotificationModel
 from ._PrintNotification import PrintNotification as PrintNotificationModel
+from ._WebSocketNotification import WebSocketNotification as WebSocketNotificationModel
 
 
 def create_notification_from_json(json: NotificationUnionType) -> NotificationModel:
@@ -23,6 +24,8 @@ def create_notification_from_json(json: NotificationUnionType) -> NotificationMo
         if isinstance(json, PrintNotification) else
         EmailNotificationModel
         if isinstance(json, EmailNotification) else
+        WebSocketNotificationModel
+        if isinstance(json, WebSocketNotification) else
         None
     )
 

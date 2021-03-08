@@ -31,7 +31,8 @@ class Notification(DeleteOnNoRemainingReferencesOnlyModel):
         # Try each of the different specialisations
         for name in (
             "emailnotification",
-            "printnotification"
+            "printnotification",
+            "websocketnotification"
         ):
             if hasattr(self, name):
                 return getattr(self, name)

@@ -9,3 +9,8 @@ from ._NotificationAction import NotificationAction, NotificationActionQuerySet
 from ._NotificationOverride import NotificationOverride, NotificationOverrideQuerySet
 from ._PrintNotification import PrintNotification, PrintNotificationQuerySet
 from ._Transition import Transition
+from ._WebSocketNotification import (
+    WebSocketNotification,
+    WebSocketNotificationQuerySet,
+    WebSocketNotificationConsumer
+)

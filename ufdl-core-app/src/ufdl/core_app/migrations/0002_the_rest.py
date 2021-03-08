@@ -373,6 +373,13 @@ class Migration(migrations.Migration):
             bases=('ufdl-core.notification',),
         ),
         migrations.CreateModel(
+            name='WebSocketNotification',
+            fields=[
+                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Notification')),
+            ],
+            bases=('ufdl-core.notification',),
+        ),
+        migrations.CreateModel(
             name='WorkableTemplate',
             fields=[
                 ('jobtemplate_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.JobTemplate')),

@@ -335,7 +335,7 @@ class Job(SoftDeleteModel):
 
         self._perform_notifications(Transition.RELEASE)
 
-    def start(self, node):
+    def start(self, node: Node):
         """
         Starts the job.
         """

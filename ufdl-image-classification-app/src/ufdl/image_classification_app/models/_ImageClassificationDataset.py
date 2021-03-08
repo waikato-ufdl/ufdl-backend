@@ -1,4 +1,4 @@
-from typing import List, Iterator
+from typing import List, Iterator, Tuple
 
 from ufdl.annotation_utils.image_classification import annotations_iterator
 
@@ -30,20 +30,16 @@ class ImageClassificationDataset(Dataset):
         """
         return Category.objects.filter(file__in=self.files.all())
 
-    def merge_annotations(self, other, files):
-        # TODO
-        raise NotImplementedError(ImageClassificationDataset.merge_annotations.__qualname__)
+    def merge_annotations(self, other: Dataset, files: List[Tuple[FileReference, FileReference]]):
+        for source_file_reference, destination_file_reference in files:
+            for category in source_file_reference.categories.all():
+                label: str = category.category
+                if not destination_file_reference.categories.with_category(label).exists():
+                    Category(
+                        file=destination_file_reference,
+                        category=label
+                    ).save()
 
-        # Load the categories files
-        self_categories_file = self.get_categories()
-        other_categories_file = other.get_categories()
-
-        # Overwrite the annotations for the target files
-        for source_file, target_file in files:
-            self_categories_file[target_file.filename] = other_categories_file[source_file.filename]
-
-        # Save the annotations
-        self.set_categories(self_categories_file)
 
     def clear_annotations(self):
         self.categories.delete()

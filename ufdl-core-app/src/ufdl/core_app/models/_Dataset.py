@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import Iterator, Tuple, Optional
+from typing import Iterator, Tuple, Optional, List
 from zipfile import ZipFile
 from tarfile import TarFile, TarInfo
 
@@ -15,6 +15,7 @@ from wai.annotations.core.domain import Instance
 from ..apps import UFDLCoreAppConfig
 from ..exceptions import *
 from ..util import QueryParameterValue, for_user, format_suffix, max_value
+from .files import FileReference
 from .mixins import (
     PublicModel, PublicQuerySet, AsFileModel, CopyableModel, FileContainerModel, UserRestrictedQuerySet,
     MergableModel
@@ -138,50 +139,50 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
             f"received a {type(other).__name__} instead"
         )
 
-    def merge(self, other) -> 'Dataset':
-        # Gather a mapping from source file to new file
-        new_files = []
+    def merge(self, other: 'Dataset') -> 'Dataset':
+        # Gather a mapping from source file reference to destination file reference
+        file_reference_map: List[Tuple[FileReference, FileReference]] = []
 
-        # Add the other data-set's file to this one
-        for other_file in other.files.all():
+        # Add the other data-set's files to this data-set
+        for source_file_reference in other.files.all():
             # Get the filename of the file
-            filename = other_file.filename
+            filename: str = source_file_reference.filename
 
-            # See if we have a file by the same name
-            self_file = self.get_file_reference(filename)
+            # Get the file in the destination data-set with the same name, if any
+            self_file_reference: Optional[FileReference] = self.get_file_reference(filename)
 
-            # If we do...
-            if self_file is not None:
-                # If it has different contents, copy it with an extended filename
-                if not self_file.has_same_contents_as(other_file):
-                    # Search for an unused filename
-                    extension = 1
+            # If the destination data-set doesn't have a file by that name, copy the source file
+            if self_file_reference is None:
+                destination_file_reference: FileReference = source_file_reference.copy()
+
+            # If it has a file by the same name, but with different contents, copy it with an extended filename
+            elif not self_file_reference.has_same_data_as(source_file_reference):
+                # Search for an unused filename
+                extension: int = 1
+
+                new_filename: str = format_suffix(filename, extension)
+                while self.has_file(new_filename):
+                    extension += 1
                     new_filename = format_suffix(filename, extension)
-                    while self.has_file(new_filename):
-                        extension += 1
-                        new_filename = format_suffix(filename, extension)
 
-                    # Create a copy with the new filename
-                    new_file = other_file.copy(new_name=new_filename)
+                # Create a copy with the new filename
+                destination_file_reference: FileReference = source_file_reference.copy(new_name=new_filename)
 
-                # If it has the same contents and name, just keep the current file
-                else:
-                    new_file = self_file
-
-            # If we don't have a file by that name, copy the source file
+            # If it has a file with the same name and contents, just keep it
             else:
-                new_file = other_file.copy()
+                destination_file_reference: FileReference = self_file_reference
 
-            # Add the new file if we made a copy of the original
-            if new_file is not self_file:
-                self.files.add(new_file)
+            # If we copied a file from the source data-set, add it to our files
+            if destination_file_reference is not self_file_reference:
+                self.files.add(destination_file_reference)
 
-            new_files.append((other_file, new_file))
+            # Update the mapping
+            file_reference_map.append((source_file_reference, destination_file_reference))
 
         # Merge any annotations for the files
-        self.merge_annotations(other, new_files)
+        self.merge_annotations(other, file_reference_map)
 
-    def merge_annotations(self, other, files):
+    def merge_annotations(self, other: 'Dataset', files: List[Tuple[FileReference, FileReference]]):
         """
         Merges the annotations for another data-set into this one. Should
         overwrite all existing annotations for files in this data-set that

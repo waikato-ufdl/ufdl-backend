@@ -25,8 +25,11 @@ class JobOutputSerialiser(serializers.ModelSerializer):
     """
     class Meta:
         model = JobOutput
-        fields = ["name",
-                  "type"]
+        fields = [
+            "pk",
+            "name",
+            "type"
+        ]
 
 
 class JobSerialiser(SoftDeleteModelSerialiser):

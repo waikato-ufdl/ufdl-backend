@@ -1,8 +1,11 @@
-from ufdl.json.core.jobs.notification import WebSocketNotification as JSONWebSocketNotification
-
 from asgiref.sync import async_to_sync
 
 from channels.generic.websocket import JsonWebsocketConsumer
+from channels.layers import get_channel_layer
+
+from ufdl.json.core.jobs.notification import WebSocketNotification as JSONWebSocketNotification
+
+from wai.json.raw import RawJSONElement
 
 from ._Notification import Notification, NotificationQuerySet
 
@@ -45,6 +48,20 @@ class WebSocketNotification(Notification):
 
     def to_json(self) -> JSONWebSocketNotification:
         return JSONWebSocketNotification()
+
+    def perform(self, job: 'Job', **data: RawJSONElement):
+        try:
+            channel_layer = get_channel_layer()
+
+            async_to_sync(channel_layer.group_send)(
+                job.websocket_group_name,
+                {
+                    'type': 'transition.enact',
+                    'content': data
+                }
+            )
+        except Exception as e:
+            print(f"Error sending web-socket message: {e}")
 
 
 class WebSocketNotificationConsumer(JsonWebsocketConsumer):

@@ -1,5 +1,7 @@
 from ufdl.json.core.jobs.notification import Notification as JSONNotification
 
+from wai.json.raw import RawJSONElement
+
 from ...mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet
 
 
@@ -60,3 +62,9 @@ class Notification(DeleteOnNoRemainingReferencesOnlyModel):
                     The JSON representation.
         """
         raise NotImplementedError(self.to_json.__qualname__)
+
+    def perform(self, job: 'Job', **data: RawJSONElement):
+        """
+        Performs the notification.
+        """
+        raise NotImplementedError(self.perform.__qualname__)

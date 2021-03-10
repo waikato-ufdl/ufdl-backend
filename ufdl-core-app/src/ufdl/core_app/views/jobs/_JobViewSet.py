@@ -33,6 +33,7 @@ class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDL
         "acquire_job": IsNode & JobIsWorkable,
         "release_job": NodeOwnsJob,
         "start_job": NodeOwnsJob,
+        "progress_job": NodeOwnsJob,
         "finish_job": NodeOwnsJob | NodeWorkingJob,
         "reset_job": NodeOwnsJob,
         "abort_job": IsAdminUser,

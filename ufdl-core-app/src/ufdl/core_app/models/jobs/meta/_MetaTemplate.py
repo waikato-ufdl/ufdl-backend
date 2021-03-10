@@ -28,6 +28,13 @@ class MetaTemplate(JobTemplate):
     objects = MetaTemplateQuerySet.as_manager()
 
     @property
+    def num_children(self) -> int:
+        """
+        Gets the number of direct children of this meta-template.
+        """
+        return self.child_relations.count()
+
+    @property
     def child_names(self) -> Iterator[str]:
         """
         Gets the names of all direct children of this meta-template.

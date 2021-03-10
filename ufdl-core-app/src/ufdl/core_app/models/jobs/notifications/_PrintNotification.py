@@ -1,6 +1,10 @@
+from typing import Dict
+
 from django.db import models
 
 from ufdl.json.core.jobs.notification import PrintNotification as JSONPrintNotification
+
+from wai.json.raw import RawJSONElement
 
 from ._Notification import Notification, NotificationQuerySet
 
@@ -58,3 +62,15 @@ class PrintNotification(Notification):
 
     def to_json(self) -> JSONPrintNotification:
         return JSONPrintNotification(message=self.message)
+
+    def perform(self, job: 'Job', **data: RawJSONElement):
+        try:
+            # Format the message to be printed
+            formatted_message: str = self.message.format(
+                **data
+            )
+
+            # Print the message
+            print(formatted_message)
+        except Exception as e:
+            print(f"Error formatting print notification: {e}")

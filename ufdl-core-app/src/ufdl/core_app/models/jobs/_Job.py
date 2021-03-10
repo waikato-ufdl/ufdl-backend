@@ -1,10 +1,5 @@
 from typing import Optional, Union, Tuple, Dict
 
-from asgiref.sync import async_to_sync
-
-from channels.layers import get_channel_layer
-
-from django.core.mail import EmailMessage
 from django.db import models
 from django.utils.timezone import now
 
@@ -14,6 +9,8 @@ from ufdl.json.core.jobs.notification import (
     NotificationActions,
     NotificationOverride as JSONNotificationOverride
 )
+
+from wai.json.raw import RawJSONElement
 
 from ...apps import UFDLCoreAppConfig
 from ...exceptions import *
@@ -65,6 +62,7 @@ class Job(SoftDeleteModel):
     Acquired --abort-> Created      := Equivalent to release.
     Acquired --start-> Started      := The node begins work on the job.
 
+    Started --progress-> Started    := The node has made progress on the job.
     Started --finish-> Finished     := The node has successfully completed the job.
     Started --error-> Errored       := The node could not complete the job.
     Started --abort-> Created       := The node gives up on the job, or a client steals
@@ -87,6 +85,7 @@ class Job(SoftDeleteModel):
     -- Transitions --
     Created --start-> Started       := Any sub-job has started.
 
+    Started --progress-> Started    := A sub-job has made progress.
     Started --start-> Started       := A no-op to make start idempotent.
     Started --finish-> Started      := A no-op if there are unfinished sub-jobs.
     Started --finish-> Finished     := All sub-jobs are in the Finished phase.
@@ -153,6 +152,9 @@ class Job(SoftDeleteModel):
 
     # A brief description of the job
     description = models.TextField(blank=True)
+
+    # The last progress made on the job
+    progress_amount = models.FloatField(default=0.0)
 
     objects = JobQuerySet.as_manager()
 
@@ -387,6 +389,71 @@ class Job(SoftDeleteModel):
         node.save(update_fields=["current_job"])
 
         self._perform_notifications(Transition.START)
+
+    def progress(self, node: Node, progress: float, **other: RawJSONElement):
+        """
+        Updates any followers of the job on progress toward completion.
+
+        :param progress:
+                    The percentage of completion, from 0.0 -> 1.0.
+        :param other:
+                    Any other progress meta-data.
+        """
+        assert not self.is_meta, "Can't manually progress meta-job"
+
+        self._progress_workable(node, progress, **other)
+
+    def _progress_meta(self, **other: RawJSONElement):
+        assert not self.is_meta, "_progress_meta called on workable job"
+        assert self.is_started, "_progress_meta called on job not in started phase"
+
+        # Progress is the average child progress (including as-yet-uncreated children)
+        progress = self.children.aggregate(
+            total=models.Sum("progress_amount")
+        )['total'] / self.template.num_children
+
+        # Update our progress amount
+        self.progress_amount = progress
+        self.save(update_fields=['progress_amount'])
+
+        self._perform_notifications(Transition.PROGRESS, **other)
+
+        if self.has_parent:
+            self.parent._progress_meta(
+                triggered_by=self.pk,
+                progress=progress,
+                in_turn=other
+            )
+
+    def _progress_workable(self, node: Node, progress: float, **other: RawJSONElement):
+        assert not self.is_meta, "_progress_workable called on meta-job"
+
+        # Can only progress from the Started phase
+        if not self.is_started:
+            raise IllegalPhaseTransition(self, "progress", "Can only progress from the Started phase")
+
+        assert self.node == node, "_progress_workable called by another node"
+
+        # Progress value must be in [0.0, 1.0]
+        if not (0.0 <= progress <= 1.0):
+            raise BadArgumentValue(
+                "progress",
+                "progress",
+                str(progress),
+                reason="progress must be in [0.0, 1.0]"
+            )
+
+        # Update our progress amount
+        self.progress_amount = progress
+        self.save(update_fields=['progress_amount'])
+
+        self._perform_notifications(Transition.PROGRESS, **other)
+
+        if self.has_parent:
+            self.parent._progress_meta(
+                triggered_by=self.pk,
+                progress=progress
+            )
 
     def finish(self, node: Node):
         """
@@ -865,7 +932,7 @@ class Job(SoftDeleteModel):
         # Attach the notifications from the override
         self.attach_notifications(override.actions)
 
-    def _perform_notifications(self, transition: Transition):
+    def _perform_notifications(self, transition: Transition, **other: RawJSONElement):
         """
         Performs any notifications specified for this job, based
         on the phase transition it is going through.
@@ -876,137 +943,22 @@ class Job(SoftDeleteModel):
         # Get our notifications for this transition
         notification_actions = self.notification_actions.for_transition(transition)
 
+        # Get the notification data for this transition
+        notification_data: Dict[str, RawJSONElement] = self._get_notification_data(transition)
+        notification_data['transition_data'] = other
+
         # Perform the notifications
         for notification_action in notification_actions.all():
             # Suppress if part of a workflow
             if notification_action.suppress and self.has_parent:
                 continue
 
-            self._perform_notification(notification_action.notification, transition)
+            notification_action.notification.upcast().perform(self, **notification_data)
 
-    def _perform_notification(
-            self,
-            notification: Notification,
-            transition: Transition
-    ):
-        """
-        Performs a single notification as part of a phase transition.
-
-        :param notification:
-                    The notification to perform.
-        :param transition:
-                    The phase transition the job is going through.
-        """
-        # Get the specific type of notification
-        notification = notification.upcast()
-
-        # Dispatch to the handler for the notification type
-        if isinstance(notification, PrintNotification):
-            self._perform_print_notification(notification, transition)
-        elif isinstance(notification, EmailNotification):
-            self._perform_email_notification(notification, transition)
-        elif isinstance(notification, WebSocketNotification):
-            self._perform_websocket_notification(notification, transition)
-        else:
-            raise Exception(f"Unknown notification type: {type(notification)}")
-
-    def _perform_print_notification(
-            self,
-            notification: PrintNotification,
-            transition: Transition
-    ):
-        """
-        Performs a print notification for the given phase transition.
-
-        :param notification:
-                    The print notification to perform.
-        :param transition:
-                    The phase transition the job is going through.
-        """
-        try:
-            # Format the message to be printed
-            formatted_message: str = notification.message.format(
-                **self._get_notification_format_kwargs(transition)
-            )
-
-            # Print the message
-            print(formatted_message)
-        except Exception as e:
-            print(f"Error formatting print notification: {e}")
-
-    def _perform_websocket_notification(
-            self,
-            notification: WebSocketNotification,
-            transition: Transition
-    ):
-        """
-        Performs a web-socket notification for the given phase transition.
-
-        :param notification:
-                    The web-socket notification to perform.
-        :param transition:
-                    The phase transition the job is going through.
-        """
-        try:
-            channel_layer = get_channel_layer()
-
-            async_to_sync(channel_layer.group_send)(
-                self.websocket_group_name,
-                {
-                    'type': 'transition.enact',
-                    'content': self._get_notification_format_kwargs(transition)
-                }
-            )
-        except Exception as e:
-            print(f"Error sending web-socket message: {e}")
-
-    def _perform_email_notification(
-            self,
-            notification: EmailNotification,
-            transition: Transition
-    ):
-        """
-        Performs an email notification for the given phase transition.
-
-        :param notification:
-                    The email notification to perform.
-        :param transition:
-                    The phase transition the job is going through.
-        """
-        # Get the format strings for formatting the subject/body of the email
-        format_kwargs = self._get_notification_format_kwargs(transition)
-
-        # Create and format the email to send
-        message = EmailMessage(
-            subject=notification.subject.format(**format_kwargs),
-            body=notification.body.format(**format_kwargs),
-            to=(
-                notification.to.split("\n")
-                if notification.to is not None else
-                [self.creator.email]
-            ),
-            cc=(
-                notification.cc.split("\n")
-                if notification.cc is not None else
-                None
-            ),
-            bcc=(
-                notification.bcc.split("\n")
-                if notification.bcc is not None else
-                None
-            )
-        )
-
-        # Send the email
-        try:
-            message.send()
-        except Exception as e:
-            print(f"Error sending email notification: {e}")
-
-    def _get_notification_format_kwargs(
+    def _get_notification_data(
             self,
             transition: Transition
-    ) -> Dict[str, str]:
+    ) -> Dict[str, RawJSONElement]:
         """
         Get the format strings for formatting notification messages.
 
@@ -1019,12 +971,13 @@ class Job(SoftDeleteModel):
         kwargs = dict(
             transition=transition.name.lower(),
             description=self.description,
-            pk=str(self.pk)
+            pk=self.pk,
+            progress=self.progress_amount
         )
 
         # Add the node's primary key if there is one
         if self.node is not None:
-            kwargs['node'] = str(self.node.pk)
+            kwargs['node'] = self.node.pk
 
         # Add the error message if there is one
         if self.error is not None:

@@ -48,6 +48,13 @@ class AcquireJobViewSet(RoutedViewSet):
                 initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
             ),
             routers.Route(
+                url=r'^{prefix}/{lookup}/progress/(?P<progress>(0.[0-9]+)|(1.(0)+)){trailing_slash}$',
+                mapping={'post': 'progress_job'},
+                name='{basename}-progress-job',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
                 url=r'^{prefix}/{lookup}/finish{trailing_slash}$',
                 mapping={'post': 'finish_job'},
                 name='{basename}-finish-job',
@@ -124,6 +131,36 @@ class AcquireJobViewSet(RoutedViewSet):
 
         # Start the job
         job.start(node)
+
+        return Response(JobSerialiser().to_representation(job))
+
+    def progress_job(self, request: Request, pk=None, progress=None):
+        """
+        Action for a node to update the progress of a job.
+
+        :param request:
+                    The request containing the progress-job specification.
+        :param pk:
+                    The primary key of the job.
+        :param progress:
+                    The amount of progress ma
+        :return:
+                    A response containing the job.
+        """
+        # Get the job that is being updated
+        job = self.get_object_of_type(Job)
+
+        # Get the node making the request
+        node = Node.from_request(request)
+
+        # Parse the progress amount
+        progress_amount = float(progress)
+
+        # Parse the progress-job specification
+        progress_job_spec = dict(request.data)
+
+        # Progress the job
+        job.progress(node, progress_amount, **progress_job_spec)
 
         return Response(JobSerialiser().to_representation(job))
 

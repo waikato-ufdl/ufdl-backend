@@ -1,10 +1,12 @@
-from typing import List
+from typing import List, Dict
 
+from django.core.mail import EmailMessage
 from django.db import models
 
 from ufdl.json.core.jobs.notification import EmailNotification as JSONEmailNotification
 
 from wai.json.object import Absent
+from wai.json.raw import RawJSONElement, is_raw_json_primitive
 
 from ._Notification import Notification, NotificationQuerySet
 
@@ -109,3 +111,38 @@ class EmailNotification(Notification):
             cc=self.cc.split("\n") if self.cc is not None else Absent,
             bcc=self.bcc.split("\n") if self.bcc is not None else Absent,
         )
+
+    def perform(self, job: 'Job', **data: RawJSONElement):
+        # Stringify the data
+        all_data_str: Dict[str, str] = {key: str(value) for key, value in data.items()}
+        primitive_data_str: Dict[str, str] = {
+            key: str(value) for key, value in data.items()
+            if is_raw_json_primitive(value)
+        }
+
+        # Create and format the email to send
+        message = EmailMessage(
+            subject=self.subject.format(**primitive_data_str),
+            body=self.body.format(**all_data_str),
+            to=(
+                self.to.split("\n")
+                if self.to is not None else
+                [job.creator.email]
+            ),
+            cc=(
+                self.cc.split("\n")
+                if self.cc is not None else
+                None
+            ),
+            bcc=(
+                self.bcc.split("\n")
+                if self.bcc is not None else
+                None
+            )
+        )
+
+        # Send the email
+        try:
+            message.send()
+        except Exception as e:
+            print(f"Error sending email notification: {e}")

@@ -165,6 +165,7 @@ class Migration(migrations.Migration):
                 ('input_values', models.TextField()),
                 ('parameter_values', models.TextField(null=True)),
                 ('description', models.TextField(blank=True)),
+                ('progress_amount', models.FloatField(default=0.0)),
             ],
             options={
                 'abstract': False,

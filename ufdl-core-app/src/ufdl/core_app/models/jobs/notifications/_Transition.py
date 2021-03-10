@@ -12,6 +12,7 @@ class Transition(Enum):
     ERROR = 4
     RESET = 5
     ABORT = 6
+    PROGRESS = 7
 
     @property
     def json_property_name(self) -> str:

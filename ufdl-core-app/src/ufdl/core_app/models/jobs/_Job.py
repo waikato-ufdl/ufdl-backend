@@ -100,6 +100,10 @@ class Job(SoftDeleteModel):
 
     There are no transitions out of the Finished state for either type of job.
     """
+    # ============= #
+    # Static Fields #
+    # ============= #
+
     # The template on which the job is based
     template = models.ForeignKey(
         f"{UFDLCoreAppConfig.label}.JobTemplate",
@@ -113,6 +117,28 @@ class Job(SoftDeleteModel):
         on_delete=models.DO_NOTHING,
         related_name="children",
         null=True
+    )
+
+    # A brief description of the job
+    description = models.TextField(blank=True)
+
+    # The inputs to the job
+    input_values = models.TextField()
+
+    # The arguments to the job template's parameters
+    parameter_values = models.TextField(null=True)
+
+    # ================ #
+    # Lifecycle Fields #
+    # ================ #
+
+    # The worker node executing the job
+    node = models.ForeignKey(
+        f"{UFDLCoreAppConfig.label}.Node",
+        on_delete=models.DO_NOTHING,
+        related_name="jobs",
+        null=True,
+        default=None
     )
 
     # The time the job was started
@@ -134,24 +160,6 @@ class Job(SoftDeleteModel):
         null=True,
         default=None
     )
-
-    # The inputs to the job
-    input_values = models.TextField()
-
-    # The arguments to the job template's parameters
-    parameter_values = models.TextField(null=True)
-
-    # The worker node executing the job
-    node = models.ForeignKey(
-        f"{UFDLCoreAppConfig.label}.Node",
-        on_delete=models.DO_NOTHING,
-        related_name="jobs",
-        null=True,
-        default=None
-    )
-
-    # A brief description of the job
-    description = models.TextField(blank=True)
 
     # The last progress made on the job
     progress_amount = models.FloatField(default=0.0)

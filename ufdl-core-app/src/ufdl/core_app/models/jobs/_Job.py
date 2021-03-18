@@ -100,9 +100,7 @@ class Job(SoftDeleteModel):
 
     There are no transitions out of the Finished state for either type of job.
     """
-    # ============= #
-    # Static Fields #
-    # ============= #
+    # region Static Fields
 
     # The template on which the job is based
     template = models.ForeignKey(
@@ -128,9 +126,9 @@ class Job(SoftDeleteModel):
     # The arguments to the job template's parameters
     parameter_values = models.TextField(null=True)
 
-    # ================ #
-    # Lifecycle Fields #
-    # ================ #
+    # endregion
+
+    # region Lifecycle Fields
 
     # The worker node executing the job
     node = models.ForeignKey(
@@ -164,7 +162,11 @@ class Job(SoftDeleteModel):
     # The last progress made on the job
     progress_amount = models.FloatField(default=0.0)
 
+    # endregion
+
     objects = JobQuerySet.as_manager()
+
+    # region Static Properties
 
     @property
     def is_meta(self) -> bool:
@@ -235,6 +237,8 @@ class Job(SoftDeleteModel):
         The name of the group that this job should broadcast transitions to.
         """
         return f"Job-{self.pk}"
+
+    # endregion
 
     # region Lifecycle Phases
 

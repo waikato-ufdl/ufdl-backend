@@ -1,11 +1,11 @@
 from ...models.jobs import JobOutput
 from ...serialisers.jobs import JobOutputSerialiser
 from ...permissions import IsAuthenticated, AllowNone
-from ..mixins import SoftDeleteViewSet
+from ..mixins import SoftDeleteViewSet, DownloadableViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class JobOutputViewSet(SoftDeleteViewSet, UFDLBaseViewSet):
+class JobOutputViewSet(DownloadableViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
     queryset = JobOutput.objects.all()
     serializer_class = JobOutputSerialiser
 
@@ -19,5 +19,6 @@ class JobOutputViewSet(SoftDeleteViewSet, UFDLBaseViewSet):
         "partial_update": AllowNone,
         "destroy": AllowNone,
         "hard_delete": AllowNone,
-        "reinstate": AllowNone
+        "reinstate": AllowNone,
+        "download": IsAuthenticated
     }

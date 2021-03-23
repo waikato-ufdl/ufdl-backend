@@ -2,6 +2,8 @@ from django.db import models
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet
 
 from ...apps import UFDLCoreAppConfig
+from ...util import QueryParameterValue
+from ..mixins import AsFileModel
 
 
 class JobOutputQuerySet(SoftDeleteQuerySet):
@@ -37,7 +39,7 @@ class JobOutputQuerySet(SoftDeleteQuerySet):
         return self.filter(name=name, type=type)
 
 
-class JobOutput(SoftDeleteModel):
+class JobOutput(AsFileModel, SoftDeleteModel):
     """
     An output from a job.
     """
@@ -69,3 +71,15 @@ class JobOutput(SoftDeleteModel):
             models.UniqueConstraint(name="unique_job_outputs",
                                     fields=["job", "name", "type"])
         ]
+
+    def supports_file_format(self, file_format: str):
+        return True
+
+    def default_format(self) -> str:
+        return self.type
+
+    def filename_without_extension(self) -> str:
+        return self.name
+
+    def as_file(self, file_format: str, **parameters: QueryParameterValue) -> bytes:
+        return self.data.get_data()

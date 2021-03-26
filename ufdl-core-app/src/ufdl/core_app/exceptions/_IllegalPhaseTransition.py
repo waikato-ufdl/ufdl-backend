@@ -23,7 +23,7 @@ class IllegalPhaseTransition(APIException):
         )
 
         super().__init__(
-            f"Attempted an illegal phase-transition"
+            f"Attempted an illegal phase-transition "
             f"on {job_type} {job.pk} in phase {job.lifecycle_phase}: {transition}\n"
             f"{reason}."
         )

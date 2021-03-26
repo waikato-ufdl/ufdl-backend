@@ -54,18 +54,20 @@ class JobSerialiser(SoftDeleteModelSerialiser):
                   "parent",
                   "start_time",
                   "end_time",
-                  "error",
+                  "error_reason",
                   "input_values",
                   "parameter_values",
                   "node",
                   "outputs",
-                  "description"] + SoftDeleteModelSerialiser.base_fields
+                  "description",
+                  "is_cancelled"] + SoftDeleteModelSerialiser.base_fields
         read_only_fields = ["template",
                             "parent",
                             "start_time",
                             "end_time",
-                            "error",
+                            "error_reason",
                             "input_values",
                             "parameter_values",
                             "node",
-                            "outputs"]
+                            "outputs",
+                            "is_cancelled"]

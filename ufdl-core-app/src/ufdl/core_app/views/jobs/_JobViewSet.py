@@ -31,12 +31,13 @@ class JobViewSet(AcquireJobViewSet, AddJobOutputViewSet, SoftDeleteViewSet, UFDL
         "get_output": IsAuthenticated,
         "get_output_info": IsAuthenticated,
         "acquire_job": IsNode & JobIsWorkable,
-        "release_job": NodeOwnsJob,
+        "release_job": NodeOwnsJob | NodeWorkingJob,
         "start_job": NodeOwnsJob,
         "progress_job": NodeOwnsJob,
         "finish_job": NodeOwnsJob | NodeWorkingJob,
         "reset_job": NodeOwnsJob,
         "abort_job": IsAdminUser,
+        "cancel_job": IsAdminUser,
         "hard_delete": IsAdminUser,
         "reinstate": IsAdminUser
     }

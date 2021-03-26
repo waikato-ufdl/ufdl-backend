@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Optional, Union, Tuple, Dict
 
 from django.db import models
@@ -10,7 +11,7 @@ from ufdl.json.core.jobs.notification import (
     NotificationOverride as JSONNotificationOverride
 )
 
-from wai.json.raw import RawJSONElement
+from wai.json.raw import RawJSONElement, RawJSONObject
 
 from ...apps import UFDLCoreAppConfig
 from ...exceptions import *
@@ -20,6 +21,17 @@ from ..nodes import Node
 from .._User import User
 from .notifications import *
 from ._JobOutput import JobOutput, JobOutputQuerySet
+
+
+class LifecyclePhase(Enum):
+    """
+    The phases of a job's lifecycle.
+    """
+    CREATED = 0
+    STARTED = 1
+    FINISHED = 2
+    ERRORED = 3
+    CANCELLED = 4
 
 
 class JobQuerySet(SoftDeleteQuerySet):
@@ -36,69 +48,58 @@ class Job(SoftDeleteModel):
     A job is an instantiation of a job-template with specific settings
     to inform how the work is performed.
 
-    There are 2 types of job, workable jobs (with come from workable templates)
+    There are 2 types of job, workable jobs (which come from workable templates)
     and meta-jobs (which come from meta-templates). Both types of job have a
     lifecycle with transitions between phases of the lifecycle caused by actions performed by
     clients or worker-nodes executing the job. Workable jobs are designed to be
     performed by external worker nodes, which manage their lifecycle by making
-    appropriate calls to the server. Meta-jobs co-ordinate a group of sub-jobs in their
+    appropriate calls to the server (a node must first 'acquire' the job before it can
+    make these calls). Meta-jobs co-ordinate a group of sub-jobs in their
     workflow, and transitions in their lifecycle are triggered by the transitions of
     lifecycle phases in those sub-jobs.
 
-    Workable Job Lifecycle
+    Job Lifecycle
     ----------------------
     -- Phases --
-    Created     := The initial phase of the job's lifecycle.
-    Acquired    := The job has been reserved for work by a node.
-    Started     := The work of completing a job has been started by the acquiring node.
-    Finished    := The job has been successfully completed by the node.
-    Errored     := No more work can be done on the job, but it was not completed.
+    CREATED     := The initial phase of the job's lifecycle.
+    STARTED     := The work of completing a job has been started.
+    FINISHED    := The job has been successfully completed.
+    ERRORED     := No more work can be done on the job, but it was not completed.
+    CANCELLED   := The job was cancelled by the client.
 
     -- Transitions --
-    Created --acquire-> Acquired    := A node reserves the job for work.
-    Created --abort-> Created       := A no-op.
-
-    Acquired --release-> Created    := The acquiring node releases the job back to the pool.
-    Acquired --abort-> Created      := Equivalent to release.
-    Acquired --start-> Started      := The node begins work on the job.
-
-    Started --progress-> Started    := The node has made progress on the job.
-    Started --finish-> Finished     := The node has successfully completed the job.
-    Started --error-> Errored       := The node could not complete the job.
-    Started --abort-> Created       := The node gives up on the job, or a client steals
-                                       the job back from the node.
-
-    Errored --reset-> Acquired      := The node wishes to re-attempt the failed job.
-    Errored --abort-> Created       := A client requests that the job be re-attempted.
+    Start       :=  Work on completing the job has begun.
+                    Meta: Triggered by any child job starting.
+                    Phases: CREATED --> STARTED
+    Progress    :=  Some progress has been made on a job.
+                    Meta: Triggered by progress on any child job.
+                    Phases: STARTED --> STARTED
+    Finish      :=  The job has been successfully completed.
+                    Meta: Triggered when the last child job has successfully completed.
+                    Phases: STARTED --> FINISHED
+                            CANCELLED --> CANCELLED (a no-op)
+    Error       :=  The job cannot proceed due to some problem.
+                    Meta: Triggered by an error transition in any child job.
+                    Phases: STARTED --> ERRORED
+                            CANCELLED --> CANCELLED (a no-op)
+    Reset       :=  The error preventing progress has been potentially cleared.
+                    Meta: Triggered by resetting a child job, only proceeds if there are no
+                          errored sibling jobs.
+                    Phases: ERRORED --> STARTED
+    Abort       :=  Returns the job to its initial state. Used to reset jobs that have been
+                    locked by nodes that have gone offline.
+                    Meta: Meta-jobs cannot be aborted.
+                    Phases: CREATED --> CREATED
+                            STARTED, ERRORED --> STARTED
+    Cancel      :=  The job is no longer needed.
+                    Meta: If the job is part of a heirarchy, only the top-level meta-job can
+                          be cancelled, and it automatically cancels all child jobs.
+                    Phases: CREATED, STARTED, ERRORED --> CANCELLED
+                            FINISHED --> FINISHED (no-op)
+                            CANCELLED --> CANCELLED (no-op)
 
     Outputs can only be added to jobs in the Started lifecycle-phase, and all outputs
-    are removed from a job on any transition except finish.
-
-    Meta-Job Lifecycle
-    ------------------
-    -- Phases --
-    Created     := The initial phase of the job's lifecycle.
-    Started     := The work of completing the sub-jobs has begun.
-    Finished    := All sub-jobs have successfully completed.
-    Errored     := Any sub-job is in the Errored phase.
-
-    -- Transitions --
-    Created --start-> Started       := Any sub-job has started.
-
-    Started --progress-> Started    := A sub-job has made progress.
-    Started --start-> Started       := A no-op to make start idempotent.
-    Started --finish-> Started      := A no-op if there are unfinished sub-jobs.
-    Started --finish-> Finished     := All sub-jobs are in the Finished phase.
-    Started --error-> Errored       := Any sub-job is in the Errored phase.
-
-    Errored --start-> Errored       := A no-op to make start idempotent.
-    Errored --reset-> Started       := Resets all Errored sub-jobs.
-    Errored --finish-> Errored      := A no-op.
-    Errored --error-> Errored       := A no-op.
-
-    Finished --finish-> Finished    := A no-op.
-
-    There are no transitions out of the Finished state for either type of job.
+    are removed from a job when it is reset/aborted.
     """
     # region Static Fields
 
@@ -130,7 +131,7 @@ class Job(SoftDeleteModel):
 
     # region Lifecycle Fields
 
-    # The worker node executing the job
+    # The worker node that has acquired the job
     node = models.ForeignKey(
         f"{UFDLCoreAppConfig.label}.Node",
         on_delete=models.DO_NOTHING,
@@ -154,7 +155,7 @@ class Job(SoftDeleteModel):
     )
 
     # The body of the error that occurred if the job failed
-    error = models.TextField(
+    error_reason = models.TextField(
         null=True,
         default=None
     )
@@ -240,66 +241,85 @@ class Job(SoftDeleteModel):
 
     # endregion
 
+    @property
+    def is_acquired(self) -> bool:
+        """
+        Whether this job has been acquired.
+        """
+        # Meta-jobs have no Acquired phase
+        assert not self.is_meta, "Meta-jobs cannot be acquired"
+
+        return self.node is not None
+
     # region Lifecycle Phases
+
+    @property
+    def lifecycle_phase(self) -> LifecyclePhase:
+        """
+        Gets the name of the job's current lifecycle phase.
+        """
+        if self.start_time is None:
+            return LifecyclePhase.CREATED
+        elif self.end_time is None:
+            if self.error_reason is None:
+                return LifecyclePhase.STARTED
+            else:
+                return LifecyclePhase.CANCELLED
+        else:
+            if self.error_reason is None:
+                return LifecyclePhase.FINISHED
+            else:
+                return LifecyclePhase.ERRORED
 
     @property
     def is_created(self) -> bool:
         """
-        Whether this job is in the Created phase.
+        Whether this job is in the CREATED phase.
         """
-        return self.start_time is None and self.node is None
-
-    @property
-    def is_acquired(self) -> bool:
-        """
-        Whether this job is in the Acquired phase.
-        """
-        # Meta-jobs have no Acquired phase
-        if self.is_meta:
-            raise Exception("Meta-jobs have no Acquired phase")
-        return self.start_time is None and self.node is not None
+        return self.lifecycle_phase is LifecyclePhase.CREATED
 
     @property
     def is_started(self) -> bool:
         """
-        Whether this job is in the Started phase.
+        Whether this job is in the STARTED phase.
         """
-        return self.start_time is not None and self.end_time is None
+        return self.lifecycle_phase is LifecyclePhase.STARTED
 
     @property
     def is_finished(self) -> bool:
         """
-        Whether this job is in the Finished phase.
+        Whether this job is in the FINISHED phase.
         """
-        return self.end_time is not None and self.error is None
+        return self.lifecycle_phase is LifecyclePhase.FINISHED
 
     @property
     def is_errored(self):
         """
-        Whether the job is in the Errored phase
+        Whether the job is in the ERRORED phase.
         """
-        return self.error is not None
+        return self.lifecycle_phase is LifecyclePhase.ERRORED
 
     @property
-    def lifecycle_phase(self) -> str:
+    def is_cancelled(self):
         """
-        Gets the name of the job's current lifecycle phase.
+        Whether the job is in the CANCELLED phase.
         """
-        if self.is_created:
-            return "Created"
-        elif self.is_started:
-            return "Started"
-        elif self.is_finished:
-            return "Finished"
-        elif self.is_errored:
-            return "Errored"
-        elif not self.is_meta and self.is_acquired:
-            return "Acquired"
-        else:
-            raise Exception(
-                f"Failed to determine lifecycle phase of job\n"
-                f"{self}"
-            )
+        return self.lifecycle_phase is LifecyclePhase.CANCELLED
+
+    @property
+    def has_been_started(self):
+        """
+        Whether this job has been started (not necessarily still
+        in the STARTED phase).
+        """
+        return self.start_time is not None
+
+    @property
+    def has_been_finalised(self) -> bool:
+        """
+        Whether this job is in a finalised state (FINISHED/CANCELLED).
+        """
+        return self.lifecycle_phase in {LifecyclePhase.FINISHED, LifecyclePhase.CANCELLED}
 
     # endregion
 
@@ -316,32 +336,44 @@ class Job(SoftDeleteModel):
 
         self._acquire_workable(node)
 
-    def _acquire_workable(self, node):
+    def _acquire_workable(self, node: Node):
         assert not self.is_meta, "_acquire_workable called on meta-job"
 
-        # Only valid from the Created phase
-        if not self.is_created:
-            raise IllegalPhaseTransition(self, "acquire", "Job has already been acquired")
+        # Cannot acquire an acquired job, unless it's acquired by the calling
+        # node, in which case it's a no-op
+        acquiring_node = self.node
+        if acquiring_node == node:
+            return
+        elif acquiring_node is not None:
+            raise JobAcquired(self)
+
+        # Cannot acquire a finalised job
+        if self.has_been_finalised:
+            raise IllegalPhaseTransition(self, "acquire", "Job has already been finalised")
 
         self.node = node
         self.save(update_fields=['node'])
 
         self._perform_notifications(Transition.ACQUIRE)
 
-    def release(self):
+    def release(self, node: Node):
         """
         Releases an acquired job.
         """
         assert not self.is_meta, "Can't release meta-job"
 
-        self._release_workable()
+        self._release_workable(node)
 
-    def _release_workable(self):
+    def _release_workable(self, node: Node):
         assert not self.is_meta, "_release_workable called on meta-job"
+        assert node.current_job != self, "_release_workable called on job in progress"
 
-        # Can only release from the Acquired phase
-        if not self.is_acquired:
-            raise IllegalPhaseTransition(self, "release", "Can only release from the Acquired phase")
+        # Releasing a job that is not acquired by the calling node is a no-op
+        if self.node != node:
+            return
+
+        if self.lifecycle_phase not in [LifecyclePhase.CREATED, LifecyclePhase.ERRORED]:
+            raise IllegalPhaseTransition(self, "release", "Can't release a started or finalised job")
 
         # Mark the job as un-acquired
         self.node = None
@@ -377,14 +409,15 @@ class Job(SoftDeleteModel):
 
     def _start_workable(self, node: Node):
         assert not self.is_meta, "_start_workable called on meta-job"
-
-        # Can only start from the Acquired phase
-        if not self.is_acquired:
-            raise IllegalPhaseTransition(self, "start", "Can only start from the Acquired phase")
+        assert self.node == node, "_start_workable called from non-acquiring node"
 
         # Make sure the node isn't already working a job
         if node.is_working_job:
             raise NodeAlreadyWorking()
+
+        # Can only start from the CREATED phase
+        if not self.is_created:
+            raise IllegalPhaseTransition(self, "start", "Job already started")
 
         assert self.node == node, "_start_workable called by another node"
 
@@ -416,7 +449,7 @@ class Job(SoftDeleteModel):
         self._progress_workable(node, progress, **other)
 
     def _progress_meta(self, **other: RawJSONElement):
-        assert not self.is_meta, "_progress_meta called on workable job"
+        assert self.is_meta, "_progress_meta called on workable job"
         assert self.is_started, "_progress_meta called on job not in started phase"
 
         # Progress is the average child progress (including as-yet-uncreated children)
@@ -439,12 +472,12 @@ class Job(SoftDeleteModel):
 
     def _progress_workable(self, node: Node, progress: float, **other: RawJSONElement):
         assert not self.is_meta, "_progress_workable called on meta-job"
+        assert node.current_job == self, "_progress_workable called by incorrect node"
+        assert self.node == node, "_progress_workable called by another node"
 
         # Can only progress from the Started phase
         if not self.is_started:
-            raise IllegalPhaseTransition(self, "progress", "Can only progress from the Started phase")
-
-        assert self.node == node, "_progress_workable called by another node"
+            raise IllegalPhaseTransition(self, "progress", "Can only progress from the STARTED phase")
 
         # Progress value must be in [0.0, 1.0]
         if not (0.0 <= progress <= 1.0):
@@ -474,14 +507,14 @@ class Job(SoftDeleteModel):
         :param node:
                     The node finishing the job.
         """
-        assert not self.is_meta, "finish called on meta-job"
+        assert not self.is_meta, "Cannot manually finish a meta-job"
 
         self._finish_workable(node)
 
     def _finish_meta(self, outputs: JobOutputQuerySet):
         assert self.is_meta, "_finish_meta called on workable job"
-        assert not self.is_created, "_finish_meta called in the Created phase"
-        assert not self.is_finished, "_finish_meta called in the Finished phase"
+        assert not self.is_created, "_finish_meta called in the CREATED phase"
+        assert not self.is_finished, "_finish_meta called in the FINISHED phase"
 
         # Attach the given outputs
         for output in outputs.select_related("job").all():
@@ -493,12 +526,16 @@ class Job(SoftDeleteModel):
                 creator=output.creator
             ).save()
 
+        # If this job has been cancelled, nothing more is required
+        if self.is_cancelled:
+            return
+
         # Try to start any child jobs to this one
         all_children_finished, error = self._try_create_children()
 
         # If an error occurred creating children, fail this meta-job
         if error is not None:
-            self._finish_with_error_meta(f"Error creating child-jobs: {error}")
+            self._error_meta(f"Error creating child-jobs: {error}")
 
         # If the meta-job is in the Errored phase, nothing more required
         if self.is_errored:
@@ -525,8 +562,9 @@ class Job(SoftDeleteModel):
         node.current_job = None
         node.save(update_fields=["current_job"])
 
-        # If this job has been removed from the node, stop here
-        if self.node != node:
+        # If this job has been removed from the node, or the
+        # job has been cancelled, stop here
+        if self.node != node or self.is_cancelled:
             return
 
         # Make sure the job has been started
@@ -537,13 +575,14 @@ class Job(SoftDeleteModel):
         self.end_time = now()
         self.save(update_fields=["end_time"])
 
+        # Fire notifications
         self._perform_notifications(Transition.FINISH)
 
         # Finish the parent if we have one
         if self.has_parent:
             self.parent._finish_meta(self.outputs)
 
-    def finish_with_error(self, node: Node, error: str):
+    def error(self, node: Node, error: str):
         """
         Finishes the job with an error.
 
@@ -552,14 +591,15 @@ class Job(SoftDeleteModel):
         :param error:
                     The error that occurred.
         """
-        assert not self.is_meta, "finish_with_error called on meta-job"
+        assert not self.is_meta, "error called on meta-job"
 
-        self._finish_with_error_workable(node, error)
+        self._error_workable(node, error)
 
-    def _finish_with_error_meta(self, error: str):
-        assert self.is_meta, "_finish_meta called on workable job"
-        assert not self.is_created, "_finish_meta called in the Created phase"
-        assert not self.is_finished, "_finish_meta called in the Finished phase"
+    def _error_meta(self, error: str):
+        assert self.is_meta, "_error_meta called on workable job"
+        assert not self.is_created, "_error_meta called in the Created phase"
+        assert not self.is_finished, "_error_meta called in the Finished phase"
+        assert not self.is_cancelled, "_error_meta called in the Cancelled phase"
 
         # If the meta-job is in the Errored phase, nothing more required
         if self.is_errored:
@@ -567,40 +607,41 @@ class Job(SoftDeleteModel):
 
         # Mark the job as finished
         self.end_time = now()
-        self.error = error
-        self.save(update_fields=["end_time", "error"])
+        self.error_reason = error
+        self.save(update_fields=["end_time", "error_reason"])
 
         self._perform_notifications(Transition.ERROR)
 
         # Let our parent know we've finished
         if self.has_parent:
-            self.parent._finish_with_error_meta(self._format_error_for_parent(error))
+            self.parent._error_meta(self._format_error_for_parent(error))
 
-    def _finish_with_error_workable(self, node: Node, error: str):
-        assert node.current_job == self, "_finish_with_error_workable called with incorrect node"
+    def _error_workable(self, node: Node, error: str):
+        assert node.current_job == self, "_error_workable called with incorrect node"
 
         # Clear the current job from this node
         node.current_job = None
         node.save(update_fields=["current_job"])
 
-        # If this job has been removed from the node, stop here
-        if self.node != node:
+        # If this job has been removed from the node, or the
+        # job has been cancelled, stop here
+        if self.node != node or self.is_cancelled:
             return
 
         # Make sure the job has been started
         if not self.is_started:
-            raise IllegalPhaseTransition(self, "finish", "Job not in the Started phase")
+            raise IllegalPhaseTransition(self, "error", "Job not in the Started phase")
 
         # Mark the job as errored
         self.end_time = now()
-        self.error = error
-        self.save(update_fields=["end_time", "error"])
+        self.error_reason = error
+        self.save(update_fields=["end_time", "error_reason"])
 
         self._perform_notifications(Transition.ERROR)
 
         # Error the parent if we have one
         if self.has_parent:
-            self.parent._finish_with_error_meta(self._format_error_for_parent(error))
+            self.parent._error_meta(self._format_error_for_parent(error))
 
     def reset(self, attempt_reset_parent: bool = True):
         """
@@ -616,7 +657,7 @@ class Job(SoftDeleteModel):
 
         # Make sure the job is in the Errored phase
         if not self.is_errored:
-            raise IllegalPhaseTransition(self, "reset", "Job is not in the Errored phase")
+            raise IllegalPhaseTransition(self, "reset", "Job is not in the ERRORED phase")
 
         # Reset all errored children
         for child in self.children.filter(error__isnull=False).all():
@@ -624,8 +665,8 @@ class Job(SoftDeleteModel):
 
         # Reset the lifecycle to the Started phase
         self.end_time = None
-        self.error = None
-        self.save(update_fields=['end_time', 'error'])
+        self.error_reason = None
+        self.save(update_fields=['end_time', 'error_reason'])
 
         self._perform_notifications(Transition.RESET)
 
@@ -635,18 +676,17 @@ class Job(SoftDeleteModel):
     def _reset_workable(self, attempt_reset_parent: bool = True):
         assert not self.is_meta, "_reset_workable called on meta-job"
 
-        # Make sure the job is in the Errored phase
+        # Make sure the job is in the ERRORED phase
         if not self.is_errored:
-            raise IllegalPhaseTransition(self, "reset", "Job is not in the Errored phase")
+            raise IllegalPhaseTransition(self, "reset", "Job is not in the ERRORED phase")
 
         # Remove any outputs
         self.outputs.all().delete()
 
         # Reset the lifecycle to the Acquired phase
-        self.start_time = None
         self.end_time = None
-        self.error = None
-        self.save(update_fields=['start_time', 'end_time', 'error'])
+        self.error_reason = None
+        self.save(update_fields=['end_time', 'error_reason'])
 
         self._perform_notifications(Transition.RESET)
 
@@ -664,43 +704,70 @@ class Job(SoftDeleteModel):
     def _abort_workable(self):
         assert not self.is_meta, "_abort_workable called on meta-job"
 
-        # If the job is in the Created phase, this is a no-op
-        if self.is_created:
-            return
-
-        # If the job is in the Acquired phase, this is a release
-        if self.is_acquired:
-            self._release_workable()
-            return
-
-        # If the job is in the Errored phase, this is a reset and release
-        if self.is_errored:
-            self._reset_workable()
-            self._release_workable()
-            return
-
-        # Can't abort a successfully-finished job
-        if self.is_finished:
-            raise IllegalPhaseTransition(self, "abort", "Can't abort a successfully-completed job")
-
-        assert self.is_started, "_abort_workable not in Started phase"
+        # Can't abort a finalised job
+        if self.has_been_finalised:
+            raise IllegalPhaseTransition(self, "abort", "Can't abort a finalised job")
 
         # Remove any outputs
         self.outputs.all().delete()
 
-        # Force-remove this job from the acquiring node
-        if self.node.current_job == self:
-            self.node.current_job = None
-            self.node.save(update_fields=['current_job'])
-
         # Reset the lifecycle to the 'un-acquired' state
-        self.start_time = None
         self.end_time = None
-        self.error = None
+        self.error_reason = None
         self.node = None
-        self.save(update_fields=['start_time', 'end_time', 'error', 'node'])
+        self.save(update_fields=['end_time', 'error_reason', 'node'])
 
         self._perform_notifications(Transition.ABORT)
+
+    def cancel(self, called_from_parent: bool = False):
+        """
+        Cancels a job.
+
+        :param called_from_parent
+                    Whether the parent is cancelling its children.
+        """
+        if self.is_meta:
+            self._cancel_meta(called_from_parent)
+        else:
+            self._cancel_workable(called_from_parent)
+
+    def _cancel_meta(self, called_from_parent: bool):
+        # No-op if already finalised
+        if self.has_been_finalised:
+            return
+
+        # Must be the top-level parent
+        if not called_from_parent and self.has_parent:
+            raise IllegalPhaseTransition(self, "cancel", "Job is a child job")
+
+        # Perform the transition
+        self.end_time = None
+        self.error_reason = "Cancelled"
+        self.save(update_fields=['end_time', 'error_reason'])
+
+        # Cancel all child jobs
+        for child in self.children.all():
+            child.cancel(True)
+
+        # Fire notifications
+        self._perform_notifications(Transition.CANCEL)
+
+    def _cancel_workable(self, called_from_parent: bool):
+        # No-op if already finalised
+        if self.has_been_finalised:
+            return
+
+        # Must be the top-level parent
+        if not called_from_parent and self.has_parent:
+            raise IllegalPhaseTransition(self, "cancel", "Job is a child job")
+
+        # Perform the transition
+        self.end_time = None
+        self.error_reason = "Cancelled"
+        self.save(update_fields=['end_time', 'error_reason'])
+
+        # Fire notifications
+        self._perform_notifications(Transition.CANCEL)
 
     # endregion
 
@@ -726,7 +793,7 @@ class Job(SoftDeleteModel):
                     The newly-created output.
         """
         # Make sure the job has been started
-        if not self.is_started:
+        if not self.has_been_started:
             raise JobNotStarted("add_output")
 
         # Make sure the job isn't already finished
@@ -848,7 +915,7 @@ class Job(SoftDeleteModel):
             if not parent.children.filter(error__isnull=False).exists():
                 parent.end_time = None
                 parent.error = None
-                parent.save(update_fields=['start_time', 'end_time', 'error'])
+                parent.save(update_fields=['end_time', 'error'])
 
     # region Notifications
 
@@ -970,7 +1037,7 @@ class Job(SoftDeleteModel):
     def _get_notification_data(
             self,
             transition: Transition
-    ) -> Dict[str, RawJSONElement]:
+    ) -> RawJSONObject:
         """
         Get the format strings for formatting notification messages.
 
@@ -984,7 +1051,8 @@ class Job(SoftDeleteModel):
             transition=transition.name.lower(),
             description=self.description,
             pk=self.pk,
-            progress=self.progress_amount
+            progress=self.progress_amount,
+            cancelled=self.is_cancelled
         )
 
         # Add the node's primary key if there is one
@@ -992,8 +1060,8 @@ class Job(SoftDeleteModel):
             kwargs['node'] = self.node.pk
 
         # Add the error message if there is one
-        if self.error is not None:
-            kwargs['error'] = self.error
+        if self.is_errored:
+            kwargs['error'] = self.error_reason
 
         return kwargs
 

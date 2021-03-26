@@ -8,11 +8,12 @@ class Transition(Enum):
     ACQUIRE = 0
     RELEASE = 1
     START = 2
-    FINISH = 3
-    ERROR = 4
-    RESET = 5
-    ABORT = 6
-    PROGRESS = 7
+    PROGRESS = 3
+    FINISH = 4
+    ERROR = 5
+    RESET = 6
+    ABORT = 7
+    CANCEL = 8
 
     @property
     def json_property_name(self) -> str:

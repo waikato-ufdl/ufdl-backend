@@ -161,7 +161,7 @@ class Migration(migrations.Migration):
                 ('deletion_time', models.DateTimeField(default=None, editable=False, null=True)),
                 ('start_time', models.DateTimeField(default=None, editable=False, null=True)),
                 ('end_time', models.DateTimeField(default=None, editable=False, null=True)),
-                ('error', models.TextField(default=None, null=True)),
+                ('error_reason', models.TextField(default=None, null=True)),
                 ('input_values', models.TextField()),
                 ('parameter_values', models.TextField(null=True)),
                 ('description', models.TextField(blank=True)),
@@ -292,7 +292,7 @@ class Migration(migrations.Migration):
             name='NotificationAction',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('transition_index', models.PositiveSmallIntegerField(choices=[(0, 'ACQUIRE'), (1, 'RELEASE'), (2, 'START'), (3, 'FINISH'), (4, 'ERROR'), (5, 'RESET'), (6, 'ABORT')])),
+                ('transition_index', models.PositiveSmallIntegerField(choices=[(0, 'ACQUIRE'), (1, 'RELEASE'), (2, 'START'), (3, 'PROGRESS'), (4, 'FINISH'), (5, 'ERROR'), (6, 'RESET'), (7, 'ABORT'), (8, 'CANCEL')])),
                 ('suppress', models.BooleanField()),
             ],
         ),

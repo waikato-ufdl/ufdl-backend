@@ -10,5 +10,5 @@ class JobNotAcquired(APIException):
     status_code = status.HTTP_406_NOT_ACCEPTABLE
     default_code = 'job_not_acquired'
 
-    def __init__(self):
-        super().__init__(f"Attempted to release job that has not been acquired")
+    def __init__(self, job):
+        super().__init__(f"Attempted to release job #{job.pk} that has not been acquired")

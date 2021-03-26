@@ -74,6 +74,13 @@ class AcquireJobViewSet(RoutedViewSet):
                 name='{basename}-abort-job',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/cancel{trailing_slash}$',
+                mapping={'delete': 'cancel_job'},
+                name='{basename}-cancel-job',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: AcquireJobViewSet.MODE_KEYWORD}
             )
         ]
 
@@ -186,7 +193,7 @@ class AcquireJobViewSet(RoutedViewSet):
         if error is Absent:
             job.finish(node)
         else:
-            job.finish_with_error(node, error)
+            job.error(node, error)
 
         return Response(JobSerialiser().to_representation(job))
 
@@ -219,5 +226,21 @@ class AcquireJobViewSet(RoutedViewSet):
 
         # Reset the job
         job.abort()
+
+        return Response(JobSerialiser().to_representation(job))
+
+    def cancel_job(self, request: Request, pk=None):
+        """
+        Action to cancel a job.
+
+        :param request:     The request.
+        :param pk:          The primary key of the job.
+        :return:            The response containing the job, after cancellation.
+        """
+        # Get the job that is being cancelled
+        job = self.get_object_of_type(Job)
+
+        # Cancel the job
+        job.cancel()
 
         return Response(JobSerialiser().to_representation(job))

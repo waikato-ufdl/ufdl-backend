@@ -203,8 +203,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     # Access for 1 hour, refresh for 1 day
-    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=5000),  # TODO: Change to reasonable value for production
-    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=1),  # TODO: Change to reasonable value for production
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(hours=8),
 
     # Must sign in for new refresh token, instead of receiving one automatically
     # on refresh

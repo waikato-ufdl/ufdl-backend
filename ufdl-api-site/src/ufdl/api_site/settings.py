@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import datetime
 import os
 
+import psycopg2.extensions
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -116,10 +118,30 @@ def gen_database_name() -> str:
     return os.path.join(BASE_DIR, 'db.sqlite3')
 
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': gen_database_name()
+#    }
+#}
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'OPTIONS': {
+#            'read_default_file': '/Scratch/ufdl-backend/config/my.cnf',
+#        },
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': gen_database_name()
+        'NAME': 'ufdl',
+        'ENGINE': 'django.db.backends.postgresql',
+        'USER': 'ufdl',
+        'OPTIONS': {
+            'client_encoding': 'UTF8'
+        },
     }
 }
 

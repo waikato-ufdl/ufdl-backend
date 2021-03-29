@@ -28,6 +28,7 @@ setup(
         "Django>=2.2.13,<3",
         "djangorestframework-simplejwt>=4.3.0,<5",
         "django-cors-headers>=3.2.1,<4",
+        "psycopg2",
         "ufdl-core-app",
         "ufdl-image-classification-app",
         "ufdl-object-detection-app",

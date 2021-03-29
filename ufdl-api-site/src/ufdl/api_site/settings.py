@@ -139,6 +139,7 @@ DATABASES = {
         'NAME': 'ufdl',
         'ENGINE': 'django.db.backends.postgresql',
         'USER': 'ufdl',
+        'HOST': 'localhost',
         'OPTIONS': {
             'client_encoding': 'UTF8'
         },

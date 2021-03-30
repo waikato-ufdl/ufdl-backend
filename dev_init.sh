@@ -15,6 +15,7 @@ function usage()
    echo " -h   this help"
    echo " -y   do not prompt user, assume 'yes'"
    echo " -u   update any repositories first"
+   echo " -r   skip database reset"
    echo
 }
 
@@ -74,7 +75,8 @@ function update_repository()
 VENV="venv.dev"
 PROMPT="yes"
 UPDATE="no"
-while getopts ":hyu" flag
+RESET="yes"
+while getopts ":hyur" flag
 do
    case $flag in
       y) PROMPT="no"
@@ -83,6 +85,8 @@ do
          ;;
       h) usage
          exit 0
+         ;;
+      r) RESET="no"
          ;;
       *) usage
          exit 1
@@ -213,8 +217,11 @@ echo "Installing UFDL modules..."
 ./$VENV/bin/pip install ufdl-html-client-app/
 ./$VENV/bin/pip install ufdl-api-site/
 
-echo "Configuring backend (admin/admin user)..."
-./$VENV/bin/python -m ufdl.api_site.scripts.reset
+if [ "$RESET" = "yes" ]
+then
+  echo "Configuring backend (admin/admin user)..."
+  ./$VENV/bin/python -m ufdl.api_site.scripts.reset
+fi
 
 echo "Start dev server with:"
 echo "  ./$VENV/bin/python -m ufdl.api_site.scripts.manage runserver [BIND]"

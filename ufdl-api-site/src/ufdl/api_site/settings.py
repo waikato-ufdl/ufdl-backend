@@ -138,9 +138,9 @@ DATABASES = {
     'default': {
         'NAME': 'ufdl',
         'ENGINE': 'django.db.backends.postgresql',
-        'USER': 'ufdl',
+        'USER': os.environ.get('UFDL_POSTGRESQL_USER', 'ufdl'),
         'PASSWORD': os.environ.get('UFDL_POSTGRESQL_PASSWORD', ''),
-        'HOST': 'localhost',
+        'HOST': os.environ.get('UFDL_POSTGRESQL_HOST', 'localhost'),
         'OPTIONS': {
             'client_encoding': 'UTF8'
         },

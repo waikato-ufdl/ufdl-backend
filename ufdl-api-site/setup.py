@@ -33,5 +33,11 @@ setup(
         "ufdl-image-classification-app",
         "ufdl-object-detection-app",
         "ufdl-speech-app",
-    ]
+    ],
+    entry_points={
+        "console_scripts": [
+            "ufdl-reset=ufdl.api_site.scripts.reset:reset",
+            "ufdl-manage=ufdl.api_site.scripts.manage:main"
+        ]
+    }
 )

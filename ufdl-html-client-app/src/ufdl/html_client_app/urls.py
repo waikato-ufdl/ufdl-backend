@@ -6,7 +6,7 @@ from django.views.static import serve
 from .settings import html_client_settings
 
 # The root directory of the static site files
-ROOT = f'{os.path.split(__file__)[0]}/static/build'
+ROOT = f'{os.path.split(__file__)[0]}/static'
 
 # The landing page of the client
 LANDING_PAGE = 'index.html'

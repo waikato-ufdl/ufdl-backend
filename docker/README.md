@@ -21,6 +21,7 @@ between runs of the container.
 
   ```commandline
   docker run \
+    --net=host \
     -p 8000:8000 \
     -v /local/dir/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3:/ufdl/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3 \
     -v /local/dir/ufdl-backend/fs:/fs \
@@ -47,6 +48,7 @@ between runs of the container.
 
   ```commandline
   docker run \
+    --net=host \
     -p 8000:8000 \
     -v /local/dir/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3:/ufdl/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3 \
     -v /local/dir/ufdl-backend/fs:/fs \
@@ -108,6 +110,7 @@ between runs of the container.
 
   ```commandline
   docker run \
+    --net=host \
     -p 8000:8000 \
     -v /local/dir/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3:/ufdl/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3 \
     -v /local/dir/ufdl-backend/fs:/fs \

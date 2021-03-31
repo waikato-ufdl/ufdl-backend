@@ -19,7 +19,7 @@ class FileReferenceQuerySet(models.QuerySet):
     def which_is_directory_prefix_of(self, string: str):
         return (
             self
-                .annotate(prefix_test_string=string)
+                .annotate(prefix_test_string=models.Value(string))
                 .filter(prefix_test_string__startswith=models.F('file__name__filename') + "/")
         )
 

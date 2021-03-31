@@ -23,8 +23,7 @@ class FileReferenceQuerySet(models.QuerySet):
                 .filter(
                     prefix_test_string__startswith=models.functions.Concat(
                         models.F('file__name__filename'),
-                        models.Value("/"),
-                        output_field=models.CharField()
+                        models.Value("/", output_field=models.CharField())
                     )
                 )
         )

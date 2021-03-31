@@ -20,7 +20,12 @@ class FileReferenceQuerySet(models.QuerySet):
         return (
             self
                 .annotate(prefix_test_string=models.Value(string))
-                .filter(prefix_test_string__startswith=models.F('file__name__filename') + "/")
+                .filter(
+                    prefix_test_string__startswith=models.functions.Concat(
+                        models.F('file__name__filename'),
+                        models.Value("/")
+                    )
+                )
         )
 
 

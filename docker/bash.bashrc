@@ -52,3 +52,6 @@ fi
 
 # Turn off colors
 echo -e "\e[m"
+
+# Start the Redis server
+/etc/init.d/redis_6379 start

@@ -206,10 +206,9 @@ class FileContainerModel(models.Model):
 
         :param filename:    The filename to check.
         """
-        for file in self.files.all():
-            if filename == file.filename:
-                raise BadName(filename, "Filename already in use")
-            elif file.filename.startswith(filename + "/"):
-                raise BadName(filename, "Filename is already a directory prefix")
-            elif filename.startswith(file.filename + "/"):
-                raise BadName(filename, "Directory prefix is already a filename")
+        if self.files.with_filename(filename).exists():
+            raise BadName(filename, "Filename already in use")
+        elif self.files.with_prefix(filename + "/").exists():
+            raise BadName(filename, "Filename is already a directory prefix")
+        elif self.files.which_is_directory_prefix_of(filename).exists():
+            raise BadName(filename, "Directory prefix is already a filename")

@@ -13,6 +13,16 @@ class FileReferenceQuerySet(models.QuerySet):
     def with_filename(self, filename: str):
         return self.filter(file__name__filename=filename)
 
+    def with_prefix(self, prefix: str):
+        return self.filter(file__name__filename__startswith=prefix)
+
+    def which_is_directory_prefix_of(self, string: str):
+        return (
+            self
+                .annotate(prefix_test_string=string)
+                .filter(prefix_test_string__startswith=models.F('file__name__filename') + "/")
+        )
+
 
 class FileReference(CopyableModel, models.Model):
     # The (named) file that is referred to

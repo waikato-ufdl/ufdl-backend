@@ -76,11 +76,14 @@ RUN \
     make install && \
     cd utils && \
     ./install_server.sh && \
-    # Cleanly stop the running Redis server (Docker can't remember running services)
-    /etc/init.d/redis_6379 stop && \
     # Remove the source
     cd / && \
     rm -rf redis-${REDIS_VERSION}.tar.gz redis-${REDIS_VERSION}
+
+# install_server.sh orphans a .pid file for the running Redis server.
+# Remove this (N.B. cleanly stopping the service still results in this
+# orphaned file, so have to do this the dirty way).
+RUN rm -f /var/run/redis_6379.pid
 
 COPY bash.bashrc /etc/bash.bashrc
 

@@ -80,6 +80,15 @@ RUN \
     cd / && \
     rm -rf redis-${REDIS_VERSION}.tar.gz redis-${REDIS_VERSION}
 
+# install_server.sh orphans a .pid file for the running Redis server.
+# Remove this
+RUN rm -f /var/run/redis_6379.pid
+
 COPY bash.bashrc /etc/bash.bashrc
 
 WORKDIR /
+
+# Need to start the Redis server again on launch (this is normally done by
+# install_server.sh on successful completion, but Docker doesn't remember
+# running processes)
+ENTRYPOINT /etc/init.d/redis_6379 start && /bin/bash

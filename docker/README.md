@@ -21,10 +21,10 @@ between runs of the container.
 
   ```commandline
   docker run \
-    --net=host \
     -p 8000:8000 \
     -v /local/dir/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3:/ufdl/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3 \
     -v /local/dir/ufdl-backend/fs:/fs \
+    --add-host=host.docker.internal:host-gateway \
     -it public.aml-repo.cms.waikato.ac.nz:443/ufdl/ufdl_backend:latest \
     /ufdl/ufdl-backend/venv.dev/bin/python -m ufdl.api_site.scripts.manage runserver 0.0.0.0:8000
   ```
@@ -48,10 +48,10 @@ between runs of the container.
 
   ```commandline
   docker run \
-    --net=host \
     -p 8000:8000 \
     -v /local/dir/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3:/ufdl/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3 \
     -v /local/dir/ufdl-backend/fs:/fs \
+    --add-host=host.docker.internal:host-gateway \
     -it ufdl_backend \
     /ufdl/ufdl-backend/venv.dev/bin/python -m ufdl.api_site.scripts.manage runserver 0.0.0.0:8000
   ```
@@ -110,10 +110,10 @@ between runs of the container.
 
   ```commandline
   docker run \
-    --net=host \
     -p 8000:8000 \
     -v /local/dir/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3:/ufdl/ufdl-backend/venv.dev/lib/python3.7/site-packages/ufdl/db.sqlite3 \
     -v /local/dir/ufdl-backend/fs:/fs \
+    --add-host=host.docker.internal:host-gateway \
     -it ufdl/ufdl_backend:latest \
     /ufdl/ufdl-backend/venv.dev/bin/python -m ufdl.api_site.scripts.manage runserver 0.0.0.0:8000
   ```

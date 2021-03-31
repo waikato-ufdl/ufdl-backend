@@ -85,6 +85,14 @@ RUN \
 # orphaned file, so have to do this the dirty way).
 RUN rm -f /var/run/redis_6379.pid
 
+# Add default values for the Postgres environment
+ENV UFDL_POSTGRESQL_USER=ufdl
+ENV UFDL_POSTGRESQL_PASSWORD=ufdl
+ENV UFDL_POSTGRESQL_HOST=host.docker.internal
+
+# Copy the Bash init script to the image. This will start the Redis server
+# and source the backend's Python venv
 COPY bash.bashrc /etc/bash.bashrc
 
-WORKDIR /
+# Start in the root dir of the backend
+WORKDIR /ufdl/ufdl-backend

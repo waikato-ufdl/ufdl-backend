@@ -55,3 +55,6 @@ echo -e "\e[m"
 
 # Start the Redis server
 /etc/init.d/redis_6379 start
+
+# Automatically assume the backend's Python venv
+source ./venv.dev/bin/activate

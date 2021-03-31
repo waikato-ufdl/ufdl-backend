@@ -48,7 +48,7 @@ def reset():
     FS_PATH = core_settings.LOCAL_DISK_FILE_DIRECTORY
     if os.path.exists(FS_PATH):
         print(f"Deleting filesystem '{FS_PATH}'")
-        shutil.rmtree(FS_PATH)
+        shutil.rmtree(FS_PATH, ignore_errors=True)
     else:
         print(f"Filesystem '{FS_PATH}' not present; skipping deletion...")
 

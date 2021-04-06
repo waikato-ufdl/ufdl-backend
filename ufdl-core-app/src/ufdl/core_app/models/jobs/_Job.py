@@ -43,8 +43,6 @@ class JobQuerySet(SoftDeleteQuerySet):
 
 class Job(SoftDeleteModel):
     """
-    A job.
-
     A job is an instantiation of a job-template with specific settings
     to inform how the work is performed.
 

@@ -14,8 +14,8 @@
     [
       {
         "name": "model",
-        "types": ["job_output<tficmodel>"],
-        "options": "tficmodel",
+        "types": ["job_output<tficmodeltflite>"],
+        "options": "tficmodeltflite",
         "help": "The Tensorflow image classification model to use for making predictions."
       },
       {
@@ -58,6 +58,6 @@
         "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
       }
     ],
-    "body": "tfic-poll --top_x ${top-x} --in_dir /prediction/in --out_dir /prediction/out --graph /output/graph.pb --info /output/info.json"
+    "body": "tfic-poll --top_x ${top-x} --graph_type tflite --in_dir /prediction/in --out_dir /prediction/out --graph /output/model.tflite --info /output/info.json"
   }
 }

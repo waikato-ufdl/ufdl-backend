@@ -22,8 +22,8 @@
       {
         "from_node": "train",
         "from_output": {
-          "value": "model",
-          "type": "tficmodel"
+          "value": "modeltflite",
+          "type": "tficmodeltflite"
         },
         "to_node": "predict",
         "to_input": "model"

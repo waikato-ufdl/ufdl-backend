@@ -1,3 +1,5 @@
+from django.db import models
+
 from rest_framework import serializers
 
 from ..models import Dataset
@@ -6,8 +8,15 @@ from .mixins import TeamOwnedModelSerialiser, SoftDeleteModelSerialiser
 
 class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
     # Files has to be explicitly specified to use the slug
-    files = serializers.SlugRelatedField("filename", many=True, read_only=True)
     domain = serializers.SlugRelatedField("name", read_only=True)
+
+    def to_representation(self, instance):
+        result = super().to_representation(instance)
+        result['files'] = [
+            file['filename']
+            for file in instance.files.annotate(filename=models.F('file__name__filename')).values()
+        ]
+        return result
 
     class Meta:
         model = Dataset
@@ -19,7 +28,6 @@ class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
                   "project",
                   "licence",
                   "is_public",
-                  "files",
                   "domain",
                   "tags"] + SoftDeleteModelSerialiser.base_fields
         read_only_fields = ["files"]

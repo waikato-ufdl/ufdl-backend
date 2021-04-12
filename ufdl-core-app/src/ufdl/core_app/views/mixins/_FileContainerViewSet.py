@@ -37,6 +37,13 @@ class FileContainerViewSet(RoutedViewSet):
                 initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.FILE_MODE_KEYWORD}
             ),
             routers.Route(
+                url=r'^{prefix}/{lookup}/file-handles/(?P<fh>.*)$',
+                mapping={'get': 'get_file_by_handle'},
+                name='{basename}-file-container',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.FILE_MODE_KEYWORD}
+            ),
+            routers.Route(
                 url=r'^{prefix}/{lookup}/metadata/(?P<fn>.+)$',
                 mapping={'post': 'set_metadata',
                          'get': 'get_metadata'},
@@ -114,6 +121,20 @@ class FileContainerViewSet(RoutedViewSet):
         record = container.delete_file(fn)
 
         return Response(NamedFileSerialiser().to_representation(record))
+
+    def get_file_by_handle(self, request: Request, pk=None, fh=None):
+        """
+        Gets a file from the dataset for download.
+
+        :param request:     The request.
+        :param pk:          The primary key of the dataset being accessed.
+        :param fh:          The file-handle of the file being asked for.
+        :return:            The response containing the file.
+        """
+        # Get the container object
+        container = self.get_object_of_type(FileContainerModel)
+
+        return Response(container.get_file_by_handle(fh))
 
     def set_metadata(self, request: Request, pk=None, fn=None):
         """

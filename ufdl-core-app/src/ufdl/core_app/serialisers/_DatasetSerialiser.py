@@ -12,10 +12,13 @@ class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
 
     def to_representation(self, instance):
         result = super().to_representation(instance)
-        result['files'] = [
-            file['filename']
-            for file in instance.files.annotate(filename=models.F('file__name__filename')).values()
-        ]
+        result['files'] = {
+            file['filename']: file['handle']
+            for file in instance.files.annotate(
+                filename=models.F('file__name__filename'),
+                handle=models.F('file__file__handle')
+            ).values()
+        }
         return result
 
     class Meta:

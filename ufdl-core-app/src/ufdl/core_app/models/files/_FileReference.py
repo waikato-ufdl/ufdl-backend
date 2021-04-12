@@ -28,6 +28,9 @@ class FileReferenceQuerySet(models.QuerySet):
                 )
         )
 
+    def with_handle(self, handle: str):
+        return self.filter(file__file__handle=handle)
+
 
 class FileReference(CopyableModel, models.Model):
     # The (named) file that is referred to

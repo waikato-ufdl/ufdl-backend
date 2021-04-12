@@ -87,7 +87,7 @@ class FileContainerModel(models.Model):
         :return:            The file reference.
         """
         # Get the (possible) file reference with the given name
-        file = self.files.all().with_filename(filename).first()  # TODO: Remove unnecessary? all() call
+        file = self.files.with_filename(filename).first()
 
         # If the file doesn't exist, raise an error
         if file is None and throw:
@@ -112,6 +112,22 @@ class FileContainerModel(models.Model):
         :return:            The file contents.
         """
         return self.get_named_file_record(filename).get_data()
+
+    def get_file_by_handle(self, handle: str) -> bytes:
+        """
+        Gets the contents of a file in this container.
+
+        :param handle:      The handle to the file.
+        :return:            The file contents.
+        """
+        # Get any (possible) file reference with the given handle
+        file = self.files.with_handle(handle).first()
+
+        # If no file with this handle exists, raise an error
+        if file is None:
+            raise BadName(handle, "Doesn't exist")
+
+        return file.get_data()
 
     def delete_file(self, filename: str):
         """

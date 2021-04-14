@@ -27,26 +27,3 @@ class JobTemplateViewSet(ImportTemplateViewSet,
         "import_template": IsAdminUser,
         "export_template": IsAdminUser
     }
-
-
-class WorkableTemplateViewSet(
-    JobTemplateViewSet
-):
-    queryset = WorkableTemplate.objects.all()
-    serializer_class = WorkableTemplateSerialiser
-
-    admin_permission_class = AllowNone
-
-    permission_classes = {
-        "list": IsAuthenticated,
-        "create": AllowNone,
-        "retrieve": IsAuthenticated,
-        "update": AllowNone,
-        "partial_update": AllowNone,
-        "destroy": IsAdminUser,
-        "create_job": IsAuthenticated,
-        "hard_delete": IsAdminUser,
-        "reinstate": IsAdminUser,
-        "import_template": IsAdminUser,
-        "export_template": IsAdminUser
-    }

@@ -1,12 +1,12 @@
 from ...models.jobs import WorkableTemplate
-from ...serialisers.jobs import JobTemplateSerialiser
+from ...serialisers.jobs import WorkableTemplateSerialiser
 from ...permissions import IsAuthenticated, AllowNone, IsAdminUser
 from ._JobTemplateViewSet import JobTemplateViewSet
 
 
 class WorkableTemplateViewSet(JobTemplateViewSet):
     queryset = WorkableTemplate.objects.all()
-    serializer_class = JobTemplateSerialiser
+    serializer_class = WorkableTemplateSerialiser
 
     admin_permission_class = AllowNone
 

@@ -9,5 +9,6 @@ class NamedFileSerialiser(serializers.BaseSerializer):
             raise TypeError(f"Expected a NamedFile but got a {type(instance).__name__}")
 
         return {
-            "filename": instance.filename
+            "filename": instance.filename,
+            "handle": instance.file.handle
         }

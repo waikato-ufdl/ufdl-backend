@@ -114,8 +114,11 @@ class AcquireJobViewSet(RoutedViewSet):
         # Get the job that is being acquired
         job = self.get_object_of_type(Job)
 
+        # Get the node making the request
+        node = Node.from_request(request)
+
         # Allow the node to acquire the job
-        job.release()
+        job.release(node)
 
         return Response(JobSerialiser().to_representation(job))
 

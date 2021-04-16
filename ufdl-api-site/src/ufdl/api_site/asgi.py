@@ -17,7 +17,7 @@ application = ProtocolTypeRouter({
     "websocket": AuthMiddlewareStack(
         URLRouter(
             [
-                re_path('ws/job/(?P<pk>[1-9][0-9]*)$', WebSocketNotificationConsumer.as_asgi())
+                re_path('v1/jobs/(?P<pk>[1-9][0-9]*)$', WebSocketNotificationConsumer.as_asgi())
             ]
         )
     ),

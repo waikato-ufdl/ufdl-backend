@@ -681,10 +681,11 @@ class Job(SoftDeleteModel):
         # Remove any outputs
         self.outputs.all().delete()
 
-        # Reset the lifecycle to the Acquired phase
+        # Reset the lifecycle to the CREATED phase
+        self.start_time = None
         self.end_time = None
         self.error_reason = None
-        self.save(update_fields=['end_time', 'error_reason'])
+        self.save(update_fields=['start_time', 'end_time', 'error_reason'])
 
         self._perform_notifications(Transition.RESET)
 
@@ -709,11 +710,13 @@ class Job(SoftDeleteModel):
         # Remove any outputs
         self.outputs.all().delete()
 
-        # Reset the lifecycle to the 'un-acquired' state
+        # Reset the lifecycle to the CREATED state, and forcefully remove
+        # the acquiring node
+        self.start_time = None
         self.end_time = None
         self.error_reason = None
         self.node = None
-        self.save(update_fields=['end_time', 'error_reason', 'node'])
+        self.save(update_fields=['start_time', 'end_time', 'error_reason', 'node'])
 
         self._perform_notifications(Transition.ABORT)
 

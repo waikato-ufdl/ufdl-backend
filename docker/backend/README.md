@@ -38,7 +38,7 @@ between runs of the container.
 
 ### Build local image
 
-* Build the image from Docker file (from within /path_to/ufdl/image_classification/docker/1.14)
+* Build the image from Docker file (from within /path_to/ufdl/docker/backend)
 
   ```commandline
   docker build -t ufdl_backend .

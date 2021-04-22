@@ -1,12 +1,12 @@
 """
 Script to run the server.
 """
+import sys
 
 
-def run():
-    import sys
+def run(argv=sys.argv):
     from .manage import main
-    script = sys.argv[0].replace("run.py", "manage.py")
+    script = argv[0].replace("run.py", "manage.py")
     main([script, "runserver"] + sys.argv[1:])
 
 

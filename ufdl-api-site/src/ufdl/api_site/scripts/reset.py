@@ -1,9 +1,10 @@
 """
 Script to delete and re-create the database.
 """
+import sys
 
 
-def reset():
+def reset(argv=sys.argv):
     # Make sure we have access to settings
     import os
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ufdl.api_site.settings')
@@ -53,9 +54,8 @@ def reset():
         print(f"Filesystem '{FS_PATH}' not present; skipping deletion...")
 
     # Apply the migrations to recreate the database
-    import sys
     from .manage import main
-    script = sys.argv[0].replace("reset.py", "manage.py")
+    script = argv[0].replace("reset.py", "manage.py")
     main([script, "migrate"])
 
     # Create the test superuser
@@ -63,7 +63,7 @@ def reset():
     User.objects.create_superuser("admin", "admin@admin.net", "admin")
 
     # Run the server if the option is given
-    if len(sys.argv) >= 2 and sys.argv[1] == "--run":
+    if len(argv) >= 2 and argv[1] == "--run":
         main([script, "runserver"])
 
 

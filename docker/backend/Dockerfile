@@ -96,3 +96,7 @@ COPY bash.bashrc /etc/bash.bashrc
 
 # Start in the root dir of the backend
 WORKDIR /ufdl/ufdl-backend
+
+ENTRYPOINT ["./venv.dev/bin/python", "-m", "ufdl.api_site.scripts.manage"]
+
+CMD ["runserver", "0.0.0.0:8000"]

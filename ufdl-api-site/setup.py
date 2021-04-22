@@ -37,7 +37,8 @@ setup(
     entry_points={
         "console_scripts": [
             "ufdl-reset=ufdl.api_site.scripts.reset:reset",
-            "ufdl-manage=ufdl.api_site.scripts.manage:main"
+            "ufdl-manage=ufdl.api_site.scripts.manage:main",
+            "ufdl-run=ufdl.api_site.scripts.run:run"
         ]
     }
 )

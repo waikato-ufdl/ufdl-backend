@@ -10,13 +10,13 @@ def main(argv=sys.argv):
     # If the command is reset, do that now
     if argv[1] == 'reset':
         from .reset import reset
-        reset(argv[0].replace("manage.py", "reset.py") + argv[1:])
+        reset([argv[0].replace("manage.py", "reset.py")] + argv[1:])
         return
 
     # If the command is run, do that now
     if argv[1] == 'run':
         from .run import run
-        run(argv[0].replace("manage.py", "run.py") + argv[1:])
+        run([argv[0].replace("manage.py", "run.py")] + argv[1:])
         return
 
     try:

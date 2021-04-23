@@ -1,5 +1,5 @@
-from ...models.jobs import JobTemplate, WorkableTemplate
-from ...serialisers.jobs import JobTemplateSerialiser, WorkableTemplateSerialiser
+from ...models.jobs import JobTemplate
+from ...serialisers.jobs import JobTemplateSerialiser
 from ...permissions import IsAuthenticated, AllowNone, IsAdminUser
 from ..mixins import SoftDeleteViewSet, CreateJobViewSet, ImportTemplateViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet

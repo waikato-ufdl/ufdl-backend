@@ -24,7 +24,6 @@ router.register("job-types", views.jobs.JobTypeViewSet)
 router.register("jobs", views.jobs.JobViewSet)
 router.register("job-templates", views.jobs.JobTemplateViewSet)
 router.register("job-outputs", views.jobs.JobOutputViewSet)
-router.register("workable-templates", views.jobs.WorkableTemplateViewSet)
 
 # The final set of URLs routed by this app
 urlpatterns = [

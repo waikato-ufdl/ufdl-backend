@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from ...models import DataDomain
-from ...models.jobs import JobTemplate, JobType, Input, Parameter, WorkableTemplate
+from ...models.jobs import JobTemplate, Input, Parameter, WorkableTemplate, MetaTemplate
 from ..mixins import SoftDeleteModelSerialiser
 
 
@@ -44,6 +44,24 @@ class JobTemplateSerialiser(SoftDeleteModelSerialiser):
     inputs = InputSerialiser(many=True, read_only=True)
     parameters = ParameterSerialiser(many=True, read_only=True)
 
+    def to_representation(self, instance: JobTemplate):
+        representation = super().to_representation(instance)
+
+        instance = instance.upcast()
+
+        if isinstance(instance, WorkableTemplate):
+            instance: WorkableTemplate
+            representation["framework"] = instance.framework.pk
+            representation["type"] = instance.type.name
+            representation["executor_class"] = instance.executor_class
+            representation["required_packages"] = instance.required_packages
+            representation["body"] = instance.body
+        else:
+            instance: MetaTemplate
+            pass  # Currently not adding any additional information for meta-templates
+
+        return representation
+
     class Meta:
         model = JobTemplate
         fields = ["pk",
@@ -55,17 +73,3 @@ class JobTemplateSerialiser(SoftDeleteModelSerialiser):
                   "inputs",
                   "parameters",
                   "licence"] + SoftDeleteModelSerialiser.base_fields
-
-
-class WorkableTemplateSerialiser(JobTemplateSerialiser):
-    type = serializers.SlugRelatedField("name", queryset=JobType.objects)
-
-    class Meta(JobTemplateSerialiser.Meta):
-        model = WorkableTemplate
-        fields = JobTemplateSerialiser.Meta.fields + [
-            "framework",
-            "type",
-            "executor_class",
-            "required_packages",
-            "body"
-        ]

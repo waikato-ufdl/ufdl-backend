@@ -103,7 +103,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [
+                (
+                    os.environ.get('UFDL_REDIS_HOST', 'localhost'),
+                    int(os.environ.get('UFDL_REDIS_PORT', '6379'))
+                )
+            ],
         },
     },
 }

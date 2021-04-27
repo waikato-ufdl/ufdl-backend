@@ -62,29 +62,6 @@ RUN \
     cd ufdl && \
     rm -rf ufdl-ts-client ufdl-frontend-ts
 
-# ================== #
-# Redis Installation #
-# ================== #
-RUN \
-    # Download and extract Redis
-    cd / && \
-    wget https://download.redis.io/releases/redis-${REDIS_VERSION}.tar.gz && \
-    tar xzf redis-${REDIS_VERSION}.tar.gz && \
-    # Build and install
-    cd redis-${REDIS_VERSION} && \
-    make && \
-    make install && \
-    cd utils && \
-    ./install_server.sh && \
-    # Remove the source
-    cd / && \
-    rm -rf redis-${REDIS_VERSION}.tar.gz redis-${REDIS_VERSION}
-
-# install_server.sh orphans a .pid file for the running Redis server.
-# Remove this (N.B. cleanly stopping the service still results in this
-# orphaned file, so have to do this the dirty way).
-RUN rm -f /var/run/redis_6379.pid
-
 # Add default values for the Postgres environment
 ENV UFDL_POSTGRESQL_USER=ufdl
 ENV UFDL_POSTGRESQL_PASSWORD=ufdl

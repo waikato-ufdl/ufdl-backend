@@ -4,7 +4,6 @@ FROM ${DOCKER_REGISTRY}ubuntu:bionic
 
 ARG PYTHON=python3.7
 ARG NODE_VERSION=v15.12.0
-ARG REDIS_VERSION=6.2.1
 
 # ======== #
 # OS Setup #

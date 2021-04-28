@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  database:
+    build:
+      context: ../database
+      args:
+        UFDL_POSTGRESQL_USER: ${UFDL_POSTGRESQL_USER}
+        UFDL_POSTGRESQL_PASSWORD: ${UFDL_POSTGRESQL_PASSWORD}
+    container_name: ufdl-postgres
+    expose:
+      - "5432/tcp"
+    image: public.aml-repo.cms.waikato.ac.nz:443/ufdl/ufdl_postgres:latest
+    volumes:
+      - pg:/var/lib/postgresql/10/main
+
+  redis:
+    container_name: ufdl-redis
+    expose:
+      - "6379/tcp"
+    image: public.aml-repo.cms.waikato.ac.nz:443/redis:latest
+
+  ufdl:
+    build:
+      context: ../backend
+    container_name: ufdl-backend
+    depends_on:
+      - database
+      - redis
+    environment:
+      UFDL_POSTGRESQL_USER: ${UFDL_POSTGRESQL_USER}
+      UFDL_POSTGRESQL_PASSWORD: ${UFDL_POSTGRESQL_PASSWORD}
+      UFDL_POSTGRESQL_HOST: database
+      UFDL_REDIS_HOST: redis
+    image: public.aml-repo.cms.waikato.ac.nz:443/ufdl/ufdl_backend:latest
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: host
+    volumes:
+      - fs:/ufdl/ufdl-backend/fs
+
+volumes:
+  pg:
+  fs:
+

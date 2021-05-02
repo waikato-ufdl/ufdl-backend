@@ -88,14 +88,17 @@ class ImageClassificationDataset(Dataset):
 
         return categories_file
 
-    def set_categories(self, categories_file: CategoriesFile):
+    def set_categories(self, categories_file: CategoriesFile) -> CategoriesFile:
         """
         Sets the categories to the given file.
 
         :param categories_file:     The new categories file.
         """
-        #self.clear_annotations()
-        raise NotImplementedError(ImageClassificationDataset.set_categories.__qualname__)
+        for filename in categories_file.properties():
+            self.categories.for_file(filename).delete()
+            self.add_categories([filename], categories_file[filename])
+
+        return categories_file
 
     def add_categories(self, images: List[str], categories: List[str]) -> CategoriesFile:
         """

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.views.mixins import RoutedViewSet
 
-from ufdl.json.image_classification import CategoriesModSpec
+from ufdl.json.image_classification import CategoriesModSpec, CategoriesFile
 
 from ...models import ImageClassificationDataset
 
@@ -24,8 +24,11 @@ class CategoriesViewSet(RoutedViewSet):
         return [
             routers.Route(
                 url=r'^{prefix}/{lookup}/categories{trailing_slash}$',
-                mapping={'get': 'get_categories',
-                         'patch': 'modify_categories'},
+                mapping={
+                    'get': 'get_categories',
+                    'patch': 'modify_categories',
+                    'post': 'set_categories'
+                },
                 name='{basename}-categories',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: CategoriesViewSet.MODE_KEYWORD}
@@ -64,6 +67,22 @@ class CategoriesViewSet(RoutedViewSet):
         method = dataset.add_categories if mod_spec.method == "add" else dataset.remove_categories
 
         return Response(method(mod_spec.images, mod_spec.categories).to_raw_json())
+
+    def set_categories(self, request: Request, pk=None):
+        """
+        Sets the categories of a data-set.
+
+        :param request:     The request containing the category data.
+        :param pk:          The primary key of the data-set being accessed.
+        :return:            The response containing the categories that were added.
+        """
+        # Get the image/category lists from the request
+        mod_spec = JSONParseFailure.attempt(dict(request.data), CategoriesFile)
+
+        # Get the data-set
+        dataset = self.get_object_of_type(ImageClassificationDataset)
+
+        return Response(dataset.set_categories(mod_spec).to_raw_json())
 
     @classmethod
     def _parse_parameters(cls, request: Request) -> CategoriesModSpec:

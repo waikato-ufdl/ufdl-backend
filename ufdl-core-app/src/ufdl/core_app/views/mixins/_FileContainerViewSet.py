@@ -37,6 +37,15 @@ class FileContainerViewSet(RoutedViewSet):
                 initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.FILE_MODE_KEYWORD}
             ),
             routers.Route(
+                url=r'^{prefix}/{lookup}/files-multi{trailing_slash}$',
+                mapping={
+                    'post': 'add_files'
+                },
+                name='{basename}-file-container',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: FileContainerViewSet.FILE_MODE_KEYWORD}
+            ),
+            routers.Route(
                 url=r'^{prefix}/{lookup}/file-handles/(?P<fh>.*)$',
                 mapping={'get': 'get_file_by_handle'},
                 name='{basename}-file-container',
@@ -90,6 +99,27 @@ class FileContainerViewSet(RoutedViewSet):
         record = container.add_file(fn, request.data['file'].file.read())
 
         return Response(NamedFileSerialiser().to_representation(record))
+
+    def add_files(self, request: Request, pk=None):
+        """
+        Action to add a set of files to an object.
+
+        :param request:     The request containing the file data.
+        :param pk:          The primary key of the container object.
+        :return:            The response containing the file records.
+        """
+        # Get the container object
+        container = self.get_object_of_type(FileContainerModel)
+
+        # Create the file record from the data
+        records = container.add_files(request.data['file'].file.read())
+
+        file_serialiser = NamedFileSerialiser()
+
+        return Response(
+            [file_serialiser.to_representation(instance)
+             for instance in records]
+        )
 
     def get_file(self, request: Request, pk=None, fn=None):
         """

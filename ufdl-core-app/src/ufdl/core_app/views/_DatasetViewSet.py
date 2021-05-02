@@ -31,6 +31,7 @@ class DatasetViewSet(
         "download": IsMember,
         "copy": IsMember,
         "add_file": WriteOrNodeExecutePermission,
+        "add_files": WriteOrNodeExecutePermission,
         "get_file": IsMember,
         "delete_file": WriteOrNodeExecutePermission,
         "set_metadata": WriteOrNodeExecutePermission,

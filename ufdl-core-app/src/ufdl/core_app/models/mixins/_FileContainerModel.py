@@ -1,5 +1,7 @@
 import os
-from typing import Iterator, Union, Optional
+from io import BytesIO
+from typing import Iterator, Union, Optional, List
+from zipfile import ZipFile
 
 from django.db import models
 
@@ -59,6 +61,28 @@ class FileContainerModel(models.Model):
         self.files.add(reference)
 
         return association
+
+    def add_files(self, data: bytes) -> List['NamedFile']:
+        """
+        Adds multiple files to the container at once.
+
+        :param data:
+                    The serialised file-names and data.
+        :return:
+                    The set of created files.
+        """
+        # Unzip all of the files
+        with ZipFile(BytesIO(data), 'r') as zip_file:
+            raw_files = {
+                filename: zip_file.read(filename)
+                for filename in zip_file.namelist()
+            }
+
+        # Add the files to the container
+        return [
+            self.add_file(filename, file_data)
+            for filename, file_data in raw_files.items()
+        ]
 
     def has_file(self, filename: str, throw: bool = False) -> bool:
         """

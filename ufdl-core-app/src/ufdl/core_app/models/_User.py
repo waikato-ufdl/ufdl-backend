@@ -1,4 +1,7 @@
 from django.contrib.auth.models import AbstractUser, UserManager as DjangoUserManager
+from django.db import models
+
+from .mixins import NamedModel
 
 
 class UserManager(DjangoUserManager):
@@ -12,7 +15,7 @@ class UserManager(DjangoUserManager):
         return num_deleted, {self.model._meta.label: num_deleted}
 
 
-class User(AbstractUser):
+class User(NamedModel, AbstractUser):
     """
     The base user model for all users of the UFDL system. Although this is currently
     identical to the Django User class, it is considered best practice to define
@@ -26,3 +29,8 @@ class User(AbstractUser):
         self.save()
 
         return 1, {User._meta.label: 1}
+
+    @classmethod
+    def name_filter_Q(cls, name: str) -> models.Q:
+        return models.Q(username=name)
+

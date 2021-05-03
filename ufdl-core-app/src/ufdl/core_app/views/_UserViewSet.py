@@ -1,10 +1,11 @@
 from ..models import User
 from ..permissions import IsSelf, AllowNone
 from ..serialisers import UserSerialiser
+from .mixins import GetByNameViewSet
 from ._UFDLBaseViewSet import UFDLBaseViewSet
 
 
-class UserViewSet(UFDLBaseViewSet):
+class UserViewSet(GetByNameViewSet, UFDLBaseViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerialiser
 
@@ -14,7 +15,8 @@ class UserViewSet(UFDLBaseViewSet):
         "retrieve": IsSelf,
         "update": AllowNone,
         "partial_update": AllowNone,
-        "destroy": AllowNone
+        "destroy": AllowNone,
+        "get_by_name": IsSelf
     }
 
     def format_request_log_message(self, request) -> str:

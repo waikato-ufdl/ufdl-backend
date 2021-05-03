@@ -12,7 +12,7 @@ class TeamViewSet(MembershipViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
 
     permission_classes = {
         "list": IsAuthenticated,
-        "create": MemberHasAdminPermission,
+        "create": AllowNone,
         "retrieve": IsMember,
         "update": MemberHasAdminPermission,
         "partial_update": MemberHasAdminPermission,

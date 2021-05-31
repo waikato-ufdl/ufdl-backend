@@ -215,17 +215,27 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         # Default implementation is to do nothing
         pass
 
-    def copy(self, *, creator=None, new_name=None, clear_files: bool = False, **kwargs) -> 'Dataset':
+    def copy(
+            self, *,
+            creator=None,
+            new_name: Optional[str] = None,
+            only_files: Optional[List[str]] = None,
+            **kwargs
+    ) -> 'Dataset':
         """
         Creates a copy of this dataset.
 
-        :param creator:     The user creating the dataset copy.
-        :param new_name:    Optional new name for the copied dataset. If absent,
-                            the copy will have the same name as this dataset but
-                            the version number will be incremented.
-        :param clear_files:
-                    Whether to remove all files from the copy.
-        :return:            The new dataset.
+        :param creator:
+                    The user creating the dataset copy.
+        :param new_name:
+                    Optional new name for the copied dataset. If absent,
+                    the copy will have the same name as this dataset but
+                    the version number will be incremented.
+        :param only_files:
+                    List of filenames to copy to the new dataset, or None to copy all
+                    files.
+        :return:
+                    The new dataset.
         """
         # New name parameter must be a string
         if new_name is not None and not isinstance(new_name, str):
@@ -262,18 +272,17 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         # Save the dataset
         new_dataset.save()
 
-        if not clear_files:
-            # Create a list of files to merge annotations for
-            merge_files = []
+        # Create a list of files to merge annotations for
+        merge_files = []
 
-            # Add our files to the new dataset
-            for reference in self.files.all():
-                new_file = reference.copy()
-                merge_files.append((reference, new_file))
-                new_dataset.files.add(new_file)
+        # Add our files to the new dataset
+        for reference in (self.files.all() if only_files is None else self.files.with_filenames(*only_files)):
+            new_file = reference.copy()
+            merge_files.append((reference, new_file))
+            new_dataset.files.add(new_file)
 
-            # Copy the annotations for this data-set
-            new_dataset.merge_annotations(self, merge_files)
+        # Copy the annotations for this data-set
+        new_dataset.merge_annotations(self, merge_files)
 
         return new_dataset
 

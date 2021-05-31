@@ -13,6 +13,9 @@ class FileReferenceQuerySet(models.QuerySet):
     def with_filename(self, filename: str):
         return self.filter(file__name__filename=filename)
 
+    def with_filenames(self, *filenames: str):
+        return self.filter(file__name__filename__in=filenames)
+
     def with_prefix(self, prefix: str):
         return self.filter(file__name__filename__startswith=prefix)
 

@@ -15,7 +15,7 @@
       {
         "name": "data",
         "types": ["dataset"],
-        "options": "to-coco --sort-categories --category-output-file labels.txt -o annotations.json --split-names train test val --split-ratios 70 15 15",
+        "options": "to-coco-od --sort-categories --category-output-file labels.txt -o annotations.json --split-names train test val --split-ratios 70 15 15",
         "help": "The dataset to use for building the model; gets split into 70% train, 15% test, 15% validation."
       }
     ],

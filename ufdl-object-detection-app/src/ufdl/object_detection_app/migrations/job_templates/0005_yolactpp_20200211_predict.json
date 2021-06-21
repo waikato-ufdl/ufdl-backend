@@ -20,7 +20,7 @@
       {
         "name": "data",
         "types": ["dataset"],
-        "options": "to-coco",
+        "options": "to-coco-od",
         "help": "The dataset to generate predictions for."
       }
     ],

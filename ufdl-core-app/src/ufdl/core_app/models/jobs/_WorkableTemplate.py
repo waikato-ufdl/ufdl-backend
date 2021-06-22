@@ -108,7 +108,7 @@ class WorkableTemplate(JobTemplate):
                         options=input.options,
                         help=input.help
                     )
-                    for input in self.inputs
+                    for input in self.inputs.all()
                 ],
                 parameters=[
                     ParameterSpec(
@@ -117,6 +117,7 @@ class WorkableTemplate(JobTemplate):
                         default=parameter.default,
                         help=parameter.help
                     )
-                    for parameter in self.parameters]
+                    for parameter in self.parameters.all()
+                ]
             )
         )

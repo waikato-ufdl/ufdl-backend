@@ -80,7 +80,7 @@ For more information, see the [Django documentation](https://docs.djangoproject.
 
 ## Docker
 
-See [here](docker/README.md) for more details.
+See [here](docker/) for more scripts or [documentation](https://ufdl.cms.waikato.ac.nz/getting-started/#docker-compose-docker).
 
 
 ## API documentation

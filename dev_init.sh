@@ -190,7 +190,7 @@ virtualenv -p /usr/bin/$PYTHON ./$VENV
 
 echo "Installing dependencies..."
 ./$VENV/bin/pip install --upgrade pip
-./$VENV/bin/pip install --upgrade setuptools
+./$VENV/bin/pip install --upgrade setuptools==59.4.0
 ./$VENV/bin/pip install Cython
 ./$VENV/bin/pip install numpy
 if [ "$MYSQLCONFIG_AVAILABLE" = "true" ]

@@ -28,6 +28,8 @@ RUN \
     # Clone the required repos
     git clone https://github.com/waikato-ufdl/ufdl-json-messages.git && \
     git clone https://github.com/waikato-ufdl/ufdl-backend.git && \
+    git clone https://github.com/waikato-ufdl/ufdl-job-types.git && \
+    git clone https://github.com/waikato-ufdl/ufdl-job-contracts.git && \
     # Run the dev-init script, no prompts, and don't try and reset the database
     cd /ufdl/ufdl-backend && \
     ./dev_init.sh -y -r

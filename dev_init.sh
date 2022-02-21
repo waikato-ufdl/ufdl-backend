@@ -208,6 +208,8 @@ fi
 
 echo "Installing UFDL modules..."
 ./$VENV/bin/pip install ../ufdl-json-messages/
+./$VENV/bin/pip install ../ufdl-job-types/
+./$VENV/bin/pip install ../ufdl-job-contracts/
 ./$VENV/bin/pip install ufdl-annotation-utils/
 ./$VENV/bin/pip install ufdl-core-app/
 ./$VENV/bin/pip install ufdl-image-classification-app/

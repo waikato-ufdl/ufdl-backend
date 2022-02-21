@@ -33,11 +33,7 @@ class MetaTemplateDependency(DeleteOnNoRemainingReferencesOnlyModel):
     )
 
     # The input of the child template that depends on the output
-    input = models.ForeignKey(
-        f"{UFDLCoreAppConfig.label}.Input",
-        on_delete=models.DO_NOTHING,
-        related_name="+"
-    )
+    input = models.TextField()
 
     objects = MetaTemplateDependencyQuerySet.as_manager()
 

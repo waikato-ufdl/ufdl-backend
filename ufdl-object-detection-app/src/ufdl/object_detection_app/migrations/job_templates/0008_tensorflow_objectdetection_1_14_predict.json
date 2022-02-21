@@ -6,80 +6,80 @@
   "domain": "od",
   "licence": "Apache 2.0",
   "specific": {
-    "framework": "tensorflow|1.14",
-    "job_type": "predict",
+    "job_type": "Predict<Domain<'Object Detection'>, Framework<'tensorflow', '1.14'>>",
     "executor_class": "ufdl.joblauncher.objdet.tensorflow.ObjectDetectionPredict_TF_1_14",
     "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
-    "inputs": [
-      {
-        "name": "model",
-        "types": ["joboutput"],
-        "options": "tfodmodel",
-        "help": "The Tensorflow object detection model to use for making predictions."
+    "parameters": {
+      "dataset_options": {
+        "types": ["Array<str>", "str"],
+        "default": ["to-tf-od"],
+        "help": "Options to the dataset input"
       },
-      {
-        "name": "data",
-        "types": ["dataset"],
-        "options": "to-tf-od",
-        "help": "The dataset to generate predictions for."
-      }
-    ],
-    "parameters": [
-      {
-        "name": "docker_image",
-        "type": "pk<docker_image>",
-        "default": "",
+      "docker_image": {
+        "types": [
+          "DockerImage<Domain<'Object Detection'>, Framework<'tensorflow', '1.14'>>",
+          "PK<DockerImage<Domain<'Object Detection'>, Framework<'tensorflow', '1.14'>>>",
+          "Name<DockerImage<Domain<'Object Detection'>, Framework<'tensorflow', '1.14'>>>"
+        ],
         "help": "The docker image to use"
       },
-      {
-        "name": "clear-dataset",
-        "type": "bool",
-        "default": "false",
+      "clear_dataset": {
+        "types": ["bool"],
+        "default": false,
         "help": "If enabled, any meta-data or predictions get removed from the dataset beforehand."
       },
-      {
-        "name": "min-score",
-        "type": "float",
-        "default": "0.0",
+      "min_score": {
+        "types": ["float"],
+        "default": 0.0,
         "help": "The minimum score (0-1) that the predictions need to achieve for being included."
       },
-      {
-        "name": "mask-threshold",
-        "type": "float",
-        "default": "0.1",
+      "mask_threshold": {
+        "types": ["float"],
+        "default": 0.1,
         "help": "The threshold (0-1) to use for determining the contour of a mask."
       },
-      {
-        "name": "top-x",
-        "type": "int",
-        "default": "5",
+      "top_x": {
+        "types": ["int"],
+        "default": 5,
         "help": "The top X predictions to output."
       },
-      {
-        "name": "store-predictions",
-        "type": "bool",
-        "default": "false",
+      "store_predictions": {
+        "types": ["bool"],
+        "default": false,
         "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
       },
-      {
-        "name": "generate-polygons",
-        "type": "bool",
-        "default": "false",
+      "generate_polygons": {
+        "types": ["bool"],
+        "default": false,
         "help": "If enabled, polygons are traced around the detected objects."
       },
-      {
-        "name": "generate-mask-images",
-        "type": "bool",
-        "default": "false",
+      "generate_mask_images": {
+        "types": ["bool"],
+        "default": false,
         "help": "If enabled, PNGs with an indexed palette are generated depicting the detected objects."
       },
-      {
-        "name": "confidence-scores",
-        "type": "str",
+      "confidence_scores": {
+        "types": ["str"],
         "default": "ufdl.joblauncher.objdet.confidence.Common",
         "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
+      },
+      "body": {
+        "types": ["Array<str>", "str"],
+        "default": [
+          "objdet_predict",
+          "--graph", "/output/frozen_inference_graph.pb",
+          "--labels", "/data/labels.pbtxt",
+          "--score", "${min_score}",
+          "--output_polygons",
+          "--output_width_height",
+          "--mask_threshold", "${mask_threshold}",
+          "--prediction_in", "/prediction/in/",
+          "--prediction_out", "/prediction/out/",
+          "${+generate_polygons:--output_polygons}",
+          "${+generate_mask_images:--output_mask_image}"
+        ],
+        "help": "The body of the function"
       }
-    ],
-    "body": "objdet_predict --graph /output/frozen_inference_graph.pb --labels /data/labels.pbtxt --score ${min-score} --output_polygons --output_width_height --mask_threshold ${mask-threshold} --prediction_in /prediction/in/ --prediction_out /prediction/out/"
+    }
   }
 }

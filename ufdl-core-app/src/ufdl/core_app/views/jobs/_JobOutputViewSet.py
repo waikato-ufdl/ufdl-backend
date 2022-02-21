@@ -1,6 +1,6 @@
 from ...models.jobs import JobOutput
 from ...serialisers.jobs import JobOutputSerialiser
-from ...permissions import IsAuthenticated, AllowNone
+from ...permissions import IsAuthenticated, AllowNone, IsAdminUser
 from ..mixins import SoftDeleteViewSet, DownloadableViewSet
 from .._UFDLBaseViewSet import UFDLBaseViewSet
 
@@ -12,13 +12,13 @@ class JobOutputViewSet(DownloadableViewSet, SoftDeleteViewSet, UFDLBaseViewSet):
     admin_permission_class = AllowNone
 
     permission_classes = {
-        "list": AllowNone,
+        "list": IsAuthenticated,
         "create": AllowNone,
         "retrieve": IsAuthenticated,
         "update": AllowNone,
         "partial_update": AllowNone,
-        "destroy": AllowNone,
-        "hard_delete": AllowNone,
-        "reinstate": AllowNone,
+        "destroy": IsAdminUser,
+        "hard_delete": IsAdminUser,
+        "reinstate": IsAdminUser,
         "download": IsAuthenticated
     }

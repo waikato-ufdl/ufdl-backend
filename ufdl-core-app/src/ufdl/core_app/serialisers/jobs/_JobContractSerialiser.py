@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from ...models.jobs import JobType
+from ...models.jobs import JobContract
 
 
-class JobTypeSerialiser(serializers.ModelSerializer):
+class JobContractSerialiser(serializers.ModelSerializer):
     class Meta:
-        model = JobType
+        model = JobContract
         fields = ["pk",
                   "name",
                   "pkg",

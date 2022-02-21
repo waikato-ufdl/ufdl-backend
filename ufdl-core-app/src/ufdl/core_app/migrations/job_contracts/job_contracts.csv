@@ -1,0 +1,4 @@
+name,package,cls
+Predict,ufdl.jobcontracts,ufdl.jobcontracts.standard.Predict
+Train,ufdl.jobcontracts,ufdl.jobcontracts.standard.Train
+Export,ufdl.jobcontracts,ufdl.jobcontracts.standard.Export

@@ -6,11 +6,14 @@ from rest_framework import routers
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from ufdl.jobtypes.error import TypeParsingException
+from ufdl.jobtypes.util import parse_type
+
 from ufdl.json.core.jobs import CreateJobSpec
 
 from wai.json.object import Absent
 
-from ...exceptions import JSONParseFailure, ChildNotificationOverridesForWorkableJob
+from ...exceptions import JSONParseFailure, ChildNotificationOverridesForWorkableJob, CouldntParseType
 from ...models.jobs import JobTemplate, WorkableTemplate
 from ...serialisers.jobs import JobSerialiser
 from ._RoutedViewSet import RoutedViewSet
@@ -59,18 +62,23 @@ class CreateJobViewSet(RoutedViewSet):
         ):
             raise ChildNotificationOverridesForWorkableJob()
 
-        # Format the input values
-        input_values = {
-            name: pair.to_raw_json()
-            for name, pair in spec.input_values.items()
-        }
+        try:
+            # Format the input values
+            input_values = {
+                name: (pair.value, parse_type(pair.type))
+                for name, pair in spec.input_values.items()
+            }
 
-        # Format the parameter values
-        parameter_values = (
-            spec.get_property_as_raw_json("parameter_values")
-            if spec.parameter_values is not Absent else
-            {}
-        )
+            # Format the parameter values
+            parameter_values = (
+                {
+                    name: (pair.value, parse_type(pair.type))
+                    for name, pair in spec.parameter_values.items()
+                } if spec.parameter_values is not Absent
+                else None
+            )
+        except TypeParsingException as e:
+            raise CouldntParseType(e) from e
 
         # Create the job from the template
         job = job_template.create_job(

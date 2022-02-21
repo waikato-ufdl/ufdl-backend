@@ -1,4 +1,4 @@
-from ._InputSerialiser import InputSerialiser
+from ._JobContractSerialiser import JobContractSerialiser
 from ._JobOutputSerialiser import JobOutputSerialiser
 from ._JobSerialiser import JobSerialiser
 from ._JobTemplateSerialiser import JobTemplateSerialiser

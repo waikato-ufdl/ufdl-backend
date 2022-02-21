@@ -4,14 +4,14 @@ from ...apps import UFDLCoreAppConfig
 from ..mixins import DeleteOnNoRemainingReferencesOnlyModel, DeleteOnNoRemainingReferencesOnlyQuerySet
 
 
-class DockerImageToJobTypeQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySet):
+class DockerImageToJobContractQuerySet(DeleteOnNoRemainingReferencesOnlyQuerySet):
     """
     Additional functionality for working with query-sets of Docker-image tasks.
     """
     pass
 
 
-class DockerImageToJobType(DeleteOnNoRemainingReferencesOnlyModel):
+class DockerImageToJobContract(DeleteOnNoRemainingReferencesOnlyModel):
     """
     Model relating docker-images to the tasks they perform.
     """
@@ -20,9 +20,9 @@ class DockerImageToJobType(DeleteOnNoRemainingReferencesOnlyModel):
                                      on_delete=models.DO_NOTHING,
                                      related_name="+")
 
-    # The reference to the file's data
-    job_type = models.ForeignKey(f"{UFDLCoreAppConfig.label}.JobType",
-                                 on_delete=models.DO_NOTHING,
-                                 related_name="+")
+    # The contract that the image can fulfil
+    job_contract = models.ForeignKey(f"{UFDLCoreAppConfig.label}.JobContract",
+                                     on_delete=models.DO_NOTHING,
+                                     related_name="+")
 
-    objects = DockerImageToJobTypeQuerySet.as_manager()
+    objects = DockerImageToJobContractQuerySet.as_manager()

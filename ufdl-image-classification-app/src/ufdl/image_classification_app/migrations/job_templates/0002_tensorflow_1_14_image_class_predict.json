@@ -6,58 +6,57 @@
   "domain": "ic",
   "licence": "Apache 2.0",
   "specific": {
-    "framework": "tensorflow|1.14",
-    "job_type": "predict",
+    "job_type": "Predict<Domain<'Image Classification'>, Framework<'tensorflow', '1.14'>>",
     "executor_class": "ufdl.joblauncher.classify.tensorflow.ImageClassificationPredict_TF_1_14",
     "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
-    "inputs":
-    [
-      {
-        "name": "model",
-        "types": ["job_output<tficmodeltflite>"],
-        "options": "tficmodeltflite",
-        "help": "The Tensorflow image classification model to use for making predictions."
-      },
-      {
-        "name": "data",
-        "types": ["dataset"],
-        "options": "to-subdir-ic",
-        "help": "The dataset to generate predictions for."
-      }
-    ],
     "parameters":
-    [
-      {
-        "name": "docker_image",
-        "type": "pk<docker_image>",
-        "default": "",
+    {
+      "dataset_options": {
+        "types": ["Array<str>", "str"],
+        "default": ["to-subdir-ic"],
+        "help": "Options to pass to wai-annotations when downloading the dataset"
+      },
+      "docker_image": {
+        "types": [
+          "Name<DockerImage<Domain<'Image Classification'>, Framework<'tensorflow', '1.14'>>>",
+          "DockerImage<Domain<'Image Classification'>, Framework<'tensorflow', '1.14'>>",
+          "PK<DockerImage<Domain<'Image Classification'>, Framework<'tensorflow', '1.14'>>>"
+        ],
         "help": "The docker image to use"
       },
-      {
-        "name": "clear-dataset",
-        "type": "bool",
-        "default": "false",
+      "clear_dataset": {
+        "types": ["bool"],
+        "default": false,
         "help": "If enabled, any meta-data or predictions get removed from the dataset beforehand."
       },
-      {
-        "name": "top-x",
-        "type": "int",
-        "default": "5",
+      "top_x": {
+        "types": ["int"],
+        "default": 5,
         "help": "The top X predictions to output."
       },
-      {
-        "name": "store-predictions",
-        "type": "bool",
-        "default": "false",
+      "store_predictions": {
+        "types": ["bool"],
+        "default": false,
         "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
       },
-      {
-        "name": "confidence-scores",
-        "type": "str",
-        "default": "ufdl.joblauncher.classify.confidence.Common",
-        "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
+      "confidence_scores": {
+        "types": ["Array<str>"],
+        "default": ["ufdl.joblauncher.classify.confidence.Common"],
+        "help": "The list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
+      },
+      "body": {
+        "types": ["Array<str>", "str"],
+        "default": [
+          "tfic-poll",
+          "--top_x", "${top_x}",
+          "--graph_type", "tflite",
+          "--in_dir", "/prediction/in",
+          "--out_dir", "/prediction/out",
+          "--graph", "/output/model.tflite",
+          "--info", "/output/info.json"
+        ],
+        "help": "The body of the function."
       }
-    ],
-    "body": "tfic-poll --top_x ${top-x} --graph_type tflite --in_dir /prediction/in --out_dir /prediction/out --graph /output/model.tflite --info /output/info.json"
+    }
   }
 }

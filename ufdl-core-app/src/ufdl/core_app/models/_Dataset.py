@@ -237,6 +237,16 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         :return:
                     The new dataset.
         """
+        # Use the specialised type of dataset always
+        domain_specific = self.domain_specific
+        if domain_specific is not self:
+            return domain_specific.copy(
+                creator=creator,
+                new_name=new_name,
+                only_files=only_files,
+                **kwargs
+            )
+
         # New name parameter must be a string
         if new_name is not None and not isinstance(new_name, str):
             raise BadName(str(new_name), "New dataset name must be a string")
@@ -321,6 +331,10 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
 
         :return:    An iterator of filename, file-contents pairs.
         """
+        # Automatically upcast to the actual dataset type
+        if type(self) is Dataset:
+            return self.domain_specific.archive_file_iterator()
+
         # Retrieve the annotations arguments
         annotations_args = getattr(self, "__annotations_args")
 
@@ -328,7 +342,7 @@ class Dataset(MergableModel, FileContainerModel, CopyableModel, AsFileModel, Tea
         delattr(self, "__annotations_args")
 
         # If no annotations arguments supplied, just return the files
-        if annotations_args is None or type(self) is Dataset:
+        if annotations_args is None:
             return ((file_reference.file.filename, file_reference.file.get_data())
                     for file_reference in self.files.all())
 

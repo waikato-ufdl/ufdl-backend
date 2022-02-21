@@ -1,17 +1,20 @@
-from typing import Optional, Dict
+from typing import Iterator, Optional, Dict, Tuple
 
 from django.db import models
 
 from simple_django_teams.mixins import SoftDeleteModel, SoftDeleteQuerySet
 
+from ufdl.jobtypes.base import UFDLJSONType
+
 from ufdl.json.core.jobs import JobTemplateSpec
 from ufdl.json.core.jobs.notification import NotificationOverride
 
+from wai.json.raw import RawJSONElement
+
 from ...apps import UFDLCoreAppConfig
-from ...exceptions import InvalidJobInput
+from ...exceptions import InvalidJobInput, MissingParameter, UnknownParameters
 from ...util import max_value
 from .._User import User
-from ._Input import Input
 from ._Job import Job
 from ._Parameter import Parameter
 
@@ -87,17 +90,6 @@ class JobTemplate(SoftDeleteModel):
                                     condition=SoftDeleteModel.active_Q)
         ]
 
-    def get_input_by_name(self, name: str) -> Optional[Input]:
-        """
-        Gets an input to this template by name.
-
-        :param name:
-                    The name of the input to get.
-        :return:
-                    The input, or None if it doesn't exist.
-        """
-        return self.inputs.filter(name=name).first()
-
     def get_parameter_by_name(self, name: str) -> Optional[Parameter]:
         """
         Gets a parameter to this template by name.
@@ -126,9 +118,16 @@ class JobTemplate(SoftDeleteModel):
         else:
             return getattr(self, "metatemplate")
 
+    def iterate_inputs(self) -> Iterator[Tuple[str, Tuple[UFDLJSONType, ...]]]:
+        """
+        TODO
+        :return:
+        """
+        raise NotImplementedError(self.iterate_inputs.__name__)
+
     def check_input_values(
             self,
-            input_values: Dict[str, Dict[str, str]]
+            input_values: Dict[str, Tuple[RawJSONElement, UFDLJSONType]]
     ):
         """
         Checks that the input values match the names/types expected
@@ -141,25 +140,24 @@ class JobTemplate(SoftDeleteModel):
         known_input_names = set()
 
         # Check each input in turn
-        for input in self.inputs.all():
+        for input_name, input_types in self.iterate_inputs():
             # Must have a value for the input
-            if input.name not in input_values:
+            if input_name not in input_values:
                 raise InvalidJobInput(
-                    f"No input value provided for input '{input.name}'"
+                    f"No input value provided for input '{input_name}'"
                 )
 
-            # Get the type of the input
-            input_type = input_values[input.name]['type']
+            # Get the value and type of the input
+            input_value, input_type = input_values[input_name]
 
             # Must be a valid type for the input
-            if input_type not in input.type_list:
+            if not any(input_type.is_subtype_of(allowed_input_type) for allowed_input_type in input_types):
                 raise InvalidJobInput(
-                    f"Input '{input.name}' received value of type {input_type} but expects "
-                    f"{input.type_string}"
+                    f"Input '{input_name}' received value of invalid type {input_type}"
                 )
 
             # Add the name of the input to the known set
-            known_input_names.add(input.name)
+            known_input_names.add(input_name)
 
         # Get the set of unknown input names
         unknown_input_names = set(input_values.keys())
@@ -169,12 +167,51 @@ class JobTemplate(SoftDeleteModel):
         for input_name in unknown_input_names:
             input_values.pop(input_name)
 
+    def check_parameter_values(
+            self,
+            parameter_values: Optional[Dict[str, Tuple[RawJSONElement, UFDLJSONType]]]
+    ):
+        """
+        TODO
+        """
+        if parameter_values is None:
+            parameter_values = {}
+
+        # Keep a set of known parameter names
+        known_parameter_names = set()
+
+        # Check all required parameters are set
+        for parameter in self.parameters.all():
+            parameter_name = parameter.name
+            if parameter.default is None:
+                if parameter_name not in parameter_values:
+                    raise MissingParameter(parameter_name)
+            elif parameter.const:
+                if parameter_name in parameter_values:
+                    raise InvalidJobInput(f"{parameter_name} is const")
+
+            if parameter_name in parameter_values:
+                parameter_value, parameter_type = parameter_values[parameter_name]
+
+                if not any(parameter_type.is_subtype_of(allowed_parameter_type) for allowed_parameter_type in parameter.realise_types()):
+                    raise InvalidJobInput(f"Parameter type {parameter_type} is invalid for '{parameter_name}'")
+
+                known_parameter_names.add(parameter_name)
+
+        # Get the set of unknown input names
+        unknown_input_names = set(parameter_values.keys())
+        unknown_input_names.difference_update(known_parameter_names)
+
+        # Remove any unknown inputs from the input values
+        if len(unknown_input_names) > 0:
+            raise InvalidJobInput(f"Unknown job parameters: {', '.join(unknown_input_names)}")
+
     def create_job(
             self,
             user: User,
             parent: Optional['Job'],
-            input_values: Dict[str, Dict[str, str]],
-            parameter_values: Dict[str, str],
+            input_values: Dict[str, Tuple[RawJSONElement, UFDLJSONType]],
+            parameter_values: Optional[Dict[str, Tuple[RawJSONElement, UFDLJSONType]]] = None,
             description: Optional[str] = None,
             notification_override: Optional[NotificationOverride] = None,
             child_notification_overrides: Optional[Dict[str, NotificationOverride]] = None

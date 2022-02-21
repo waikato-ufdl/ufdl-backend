@@ -52,7 +52,7 @@ class JobOutput(AsFileModel, SoftDeleteModel):
     name = models.CharField(max_length=200)
 
     # The type of output
-    type = models.CharField(max_length=64, blank=True, default="")
+    type = models.TextField(blank=True, default="")
 
     # The output data
     data = models.ForeignKey(f"{UFDLCoreAppConfig.label}.File",

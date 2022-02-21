@@ -23,6 +23,8 @@ class UFDLRouter(routers.DefaultRouter):
             CreateJobViewSet.get_routes() +
             DownloadableViewSet.get_routes() +
             FileContainerViewSet.get_routes() +
+            GetAllMatchingTemplatesViewSet.get_routes() +
+            GetAllValuesOfTypeViewSet.get_routes() +
             GetByNameViewSet.get_routes() +
             GetHardwareGenerationViewSet.get_routes() +
             ImportTemplateViewSet.get_routes() +

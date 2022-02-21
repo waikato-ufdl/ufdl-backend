@@ -11,6 +11,7 @@ from ._BadName import BadName
 from ._BadNodeID import BadNodeID
 from ._BadSource import BadSource
 from ._ChildNotificationOverridesForWorkableJob import ChildNotificationOverridesForWorkableJob
+from ._CouldntParseType import CouldntParseType
 from ._IllegalPhaseTransition import IllegalPhaseTransition
 from ._InvalidJobInput import InvalidJobInput
 from ._JobAcquired import JobAcquired
@@ -23,5 +24,7 @@ from ._JSONParseFailure import JSONParseFailure
 from ._MergeDisallowed import MergeDisallowed
 from ._MissingParameter import MissingParameter
 from ._NodeAlreadyWorking import NodeAlreadyWorking
+from ._NotServerResidentType import NotServerResidentType
 from ._PermissionsUndefined import PermissionsUndefined
+from ._TypeIsAbstract import TypeIsAbstract
 from ._UnknownParameters import UnknownParameters

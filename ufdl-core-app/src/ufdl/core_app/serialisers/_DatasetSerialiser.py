@@ -8,7 +8,7 @@ from .mixins import TeamOwnedModelSerialiser, SoftDeleteModelSerialiser
 
 class DatasetSerialiser(TeamOwnedModelSerialiser, SoftDeleteModelSerialiser):
     # Files has to be explicitly specified to use the slug
-    domain = serializers.SlugRelatedField("name", read_only=True)
+    domain = serializers.SlugRelatedField("description", read_only=True)
 
     def to_representation(self, instance):
         result = super().to_representation(instance)

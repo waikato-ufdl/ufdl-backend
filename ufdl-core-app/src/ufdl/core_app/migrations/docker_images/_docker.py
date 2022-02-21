@@ -61,7 +61,7 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
     docker_image_model = apps.get_model(UFDLCoreAppConfig.label, "DockerImage")
     framework_model = apps.get_model(UFDLCoreAppConfig.label, "Framework")
     data_domain_model = apps.get_model(UFDLCoreAppConfig.label, "DataDomain")
-    job_type_model = apps.get_model(UFDLCoreAppConfig.label, "JobType")
+    job_contract_model = apps.get_model(UFDLCoreAppConfig.label, "JobContract")
     licence_model = apps.get_model(UFDLCoreAppConfig.label, "Licence")
 
     # Add each Docker image to the database
@@ -75,12 +75,12 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
 
         # Validate the tasks
         tasks = tasks.split(",")
-        job_types = []
+        job_contracts = []
         for task in tasks:
-            job_type_instance = job_type_model.objects.filter(name=task).first()
-            if job_type_instance is None:
-                raise Exception(f"Unknown job-type '{task}'")
-            job_types.append(job_type_instance)
+            job_contract_instance = job_contract_model.objects.filter(name=task).first()
+            if job_contract_instance is None:
+                raise Exception(f"Unknown job-contract '{task}'")
+            job_contracts.append(job_contract_instance)
 
         # Validate the data-domain
         data_domain_instance = data_domain_model.objects.filter(name=domain).first()
@@ -139,5 +139,5 @@ def add_initial_docker_images(apps, schema_editor, docker_image_iterator):
         docker_image.save()
 
         # Add the job-types
-        for job_type in job_types:
-            docker_image.tasks.add(job_type)
+        for job_contract in job_contracts:
+            docker_image.tasks.add(job_contract)

@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='DockerImageToJobType',
+            name='DockerImageToJobContract',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
             ],
@@ -144,16 +144,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Input',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField()),
-                ('types', models.TextField()),
-                ('options', models.TextField(blank=True, default='')),
-                ('help', models.TextField(blank=True, default='')),
-            ],
-        ),
-        migrations.CreateModel(
             name='Job',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -174,13 +164,25 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='JobContract',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('name', models.CharField(max_length=64, unique=True)),
+                ('pkg', models.CharField(max_length=64)),
+                ('cls', models.CharField(max_length=256, unique=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
             name='JobOutput',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('creation_time', models.DateTimeField(auto_now_add=True)),
                 ('deletion_time', models.DateTimeField(default=None, editable=False, null=True)),
                 ('name', models.CharField(max_length=200)),
-                ('type', models.CharField(blank=True, default='', max_length=64)),
+                ('type', models.TextField(blank=True, default='')),
             ],
         ),
         migrations.CreateModel(
@@ -199,7 +201,9 @@ class Migration(migrations.Migration):
             name='JobType',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=32, unique=True)),
+                ('name', models.CharField(max_length=64, unique=True)),
+                ('pkg', models.CharField(max_length=64)),
+                ('cls', models.CharField(max_length=256, unique=True)),
             ],
             options={
                 'abstract': False,
@@ -309,8 +313,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=32)),
-                ('type', models.CharField(max_length=32)),
-                ('default', models.TextField()),
+                ('types', models.TextField()),
+                ('default', models.TextField(null=True)),
+                ('default_type', models.TextField()),
+                ('const', models.BooleanField()),
                 ('help', models.TextField(blank=True, default='')),
             ],
         ),
@@ -384,9 +390,9 @@ class Migration(migrations.Migration):
             name='WorkableTemplate',
             fields=[
                 ('jobtemplate_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.JobTemplate')),
+                ('type', models.CharField(max_length=256)),
                 ('executor_class', models.CharField(default='', max_length=128)),
                 ('required_packages', models.TextField(blank=True, default='')),
-                ('body', models.TextField(default='')),
             ],
             options={
                 'abstract': False,
@@ -493,7 +499,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='metatemplatedependency',
             name='input',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Input'),
+            field=models.TextField(),
         ),
         migrations.AddField(
             model_name='metatemplatechildrelation',
@@ -574,11 +580,6 @@ class Migration(migrations.Migration):
             name='template',
             field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='jobs', to='ufdl-core.JobTemplate'),
         ),
-        migrations.AddField(
-            model_name='input',
-            name='template',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='inputs', to='ufdl-core.JobTemplate'),
-        ),
         migrations.AddConstraint(
             model_name='hardware',
             constraint=models.UniqueConstraint(fields=('generation',), name='unique_generation_names'),
@@ -605,14 +606,14 @@ class Migration(migrations.Migration):
             constraint=models.UniqueConstraint(fields=('name',), name='unique_domain_names'),
         ),
         migrations.AddField(
-            model_name='dockerimagetojobtype',
+            model_name='dockerimagetojobcontract',
             name='docker_image',
             field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.DockerImage'),
         ),
         migrations.AddField(
-            model_name='dockerimagetojobtype',
-            name='job_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.JobType'),
+            model_name='dockerimagetojobcontract',
+            name='job_contract',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.JobContract'),
         ),
         migrations.AddField(
             model_name='dockerimage',
@@ -642,7 +643,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dockerimage',
             name='tasks',
-            field=models.ManyToManyField(related_name='docker_images', through='ufdl-core.DockerImageToJobType', to='ufdl-core.JobType'),
+            field=models.ManyToManyField(related_name='docker_images', through='ufdl-core.DockerImageToJobContract', to='ufdl-core.JobContract'),
         ),
         migrations.AddField(
             model_name='dataset',
@@ -672,16 +673,6 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='condition',
             constraint=models.UniqueConstraint(fields=('name',), name='unique_condition_names'),
-        ),
-        migrations.AddField(
-            model_name='workabletemplate',
-            name='framework',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl-core.Framework'),
-        ),
-        migrations.AddField(
-            model_name='workabletemplate',
-            name='type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl-core.JobType'),
         ),
         migrations.AddConstraint(
             model_name='project',
@@ -735,10 +726,6 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name='joboutput',
             constraint=models.UniqueConstraint(fields=('job', 'name', 'type'), name='unique_job_outputs'),
-        ),
-        migrations.AddConstraint(
-            model_name='input',
-            constraint=models.UniqueConstraint(fields=('template', 'name'), name='unique_template_input_names'),
         ),
         migrations.AddConstraint(
             model_name='emailnotification',

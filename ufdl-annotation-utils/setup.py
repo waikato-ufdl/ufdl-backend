@@ -27,7 +27,7 @@ setup(
     install_requires=[
         "wai.common>=0.0.35",
         "wai.json==0.0.5",
-        "wai.annotations==0.6.0",
+        "wai.annotations==0.7.1",
         "ufdl.json-messages"
     ]
 )

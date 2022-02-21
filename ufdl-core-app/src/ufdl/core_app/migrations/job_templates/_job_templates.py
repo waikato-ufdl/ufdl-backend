@@ -1,15 +1,23 @@
 import glob
+import json
 import os
-from typing import Iterator, Optional
+from typing import Iterator, Optional, Tuple
 
 from django.db import transaction
-from ufdl.json.core.jobs import JobTemplateSpec, WorkableTemplateSpec
+
+from ufdl.jobtypes.base import UFDLJSONType
+from ufdl.jobtypes.util import parse_type
+
+from ufdl.jobcontracts.util import parse_contract
+
+from ufdl.json.core.jobs import JobTemplateSpec, WorkableTemplateSpec, ParameterSpec
 from ufdl.json.core.jobs.meta import DependencyGraph
 
 from wai.json.object import Absent
 
 from ...apps import UFDLCoreAppConfig
-from ...util import max_value, split_multipart_field
+from ...initialise import initialise
+from ...util import max_value
 
 
 def iterate_job_templates(path: str) -> Iterator[JobTemplateSpec]:
@@ -51,11 +59,10 @@ def add_initial_job_templates(apps, schema_editor, job_template_iterator: Iterat
     :param job_template_iterator:   An iterator over a job template JSON files.
     """
     # Get the required models
-    input_model = apps.get_model(UFDLCoreAppConfig.label, "Input")
     parameter_model = apps.get_model(UFDLCoreAppConfig.label, "Parameter")
-    framework_model = apps.get_model(UFDLCoreAppConfig.label, "Framework")
     data_domain_model = apps.get_model(UFDLCoreAppConfig.label, "DataDomain")
     job_type_model = apps.get_model(UFDLCoreAppConfig.label, "JobType")
+    job_contract_model = apps.get_model(UFDLCoreAppConfig.label, "JobContract")
     licence_model = apps.get_model(UFDLCoreAppConfig.label, "Licence")
     job_template_model = apps.get_model(UFDLCoreAppConfig.label, "JobTemplate")
     workable_template_model = apps.get_model(UFDLCoreAppConfig.label, "WorkableTemplate")
@@ -67,11 +74,10 @@ def add_initial_job_templates(apps, schema_editor, job_template_iterator: Iterat
     for spec in job_template_iterator:
         add_job_template(
             spec,
-            input_model,
             parameter_model,
-            framework_model,
             data_domain_model,
             job_type_model,
+            job_contract_model,
             licence_model,
             job_template_model,
             workable_template_model,
@@ -84,11 +90,10 @@ def add_initial_job_templates(apps, schema_editor, job_template_iterator: Iterat
 @transaction.atomic
 def add_job_template(
         spec: JobTemplateSpec,
-        input_model,
         parameter_model,
-        framework_model,
         data_domain_model,
         job_type_model,
+        job_contract_model,
         licence_model,
         job_template_model,
         workable_template_model,
@@ -101,16 +106,14 @@ def add_job_template(
 
     :param spec:
                 The specification of the job-template.
-    :param input_model:
-                The Input model-class.
     :param parameter_model:
                 The Parameter model-class.
-    :param framework_model:
-                The Framework model-class.
     :param data_domain_model:
                 The DataDomain model-class.
     :param job_type_model:
-                The JobType model-class
+                The JobType model-class.
+    :param job_contract_model:
+                The JobContract model-class.
     :param licence_model:
                 The Licence model-class.
     :param job_template_model:
@@ -129,11 +132,10 @@ def add_job_template(
     if isinstance(spec.specific, WorkableTemplateSpec):
         return _add_workable_template(
             spec,
-            input_model,
             parameter_model,
-            framework_model,
             data_domain_model,
             job_type_model,
+            job_contract_model,
             licence_model,
             job_template_model,
             workable_template_model
@@ -141,7 +143,6 @@ def add_job_template(
     else:
         return _add_meta_template(
             spec,
-            input_model,
             parameter_model,
             data_domain_model,
             licence_model,
@@ -242,11 +243,10 @@ def parse_common_specs(
 
 def _add_workable_template(
         job_template_spec: JobTemplateSpec,
-        input_model,
         parameter_model,
-        framework_model,
         data_domain_model,
         job_type_model,
+        job_contract_model,
         licence_model,
         job_template_model,
         workable_template_model
@@ -256,16 +256,14 @@ def _add_workable_template(
 
     :param job_template_spec:
                 The JSON specification of the job-template.
-    :param input_model:
-                The Input model-class.
     :param parameter_model:
                 The Parameter model-class.
-    :param framework_model:
-                The Framework model-class.
     :param data_domain_model:
                 The DataDomain model-class.
     :param job_type_model:
                 The JobType model-class.
+    :param job_contract_model:
+                The JobContract model-class.
     :param licence_model:
                 The Licence model-class.
     :param job_template_model:
@@ -281,19 +279,10 @@ def _add_workable_template(
     )
 
     # Validate the job-type
-    job_type_instance = job_type_model.objects.filter(name=job_template_spec.specific.job_type).first()
-    if job_type_instance is None:
-        raise Exception(f"Unknown job-type '{job_template_spec.specific.job_type}'")
+    initialise(job_type_model, job_contract_model)
 
-    # Make sure the framework exists
-    framework_parts = split_multipart_field(job_template_spec.specific.framework)
-    if len(framework_parts) != 2:
-        raise Exception(f"Couldn't split framework '{job_template_spec.specific.framework}' into name and "
-                        f"version parts (separate with |)")
-    framework_instance = framework_model.objects.filter(name=framework_parts[0],
-                                                        version=framework_parts[1]).first()
-    if framework_instance is None:
-        raise Exception(f"Unknown framework {job_template_spec.specific.framework}")
+    # Parse the job-type spec to make sure it is valid
+    parse_contract(job_template_spec.specific.job_type)
 
     # Create the template
     job_template_instance = workable_template_model(
@@ -303,40 +292,74 @@ def _add_workable_template(
         scope=job_template_spec.scope,
         domain=data_domain_instance,
         licence=licence_instance,
-        framework=framework_instance,
-        type=job_type_instance,
+        type=job_template_spec.specific.job_type,
         executor_class=job_template_spec.specific.executor_class,
-        required_packages=job_template_spec.specific.required_packages,
-        body=job_template_spec.specific.body
+        required_packages=job_template_spec.specific.required_packages
     )
     job_template_instance.save()
 
-    # Add the inputs
-    for input_spec in job_template_spec.specific.inputs:
-        input_model(
-            template=job_template_instance,
-            name=input_spec.name,
-            types="\n".join(input_spec.types),
-            options=input_spec.options,
-            help=input_spec.help
-        ).save()
-
     # Add the parameters
-    for parameter_spec in job_template_spec.specific.parameters:
+    for parameter_name, parameter_spec in job_template_spec.specific.parameters.items():
+        default_value, default_type = _check_parameter_types(parameter_name, parameter_spec)
+
         parameter_model(
             template=job_template_instance,
-            name=parameter_spec.name,
-            type=parameter_spec.type,
-            default=parameter_spec.default,
+            name=parameter_name,
+            types="|".join(parameter_spec.types),
+            default=default_value,
+            default_type=default_type,
+            const=parameter_spec.const,
             help=parameter_spec.help
         ).save()
 
     return job_template_instance
 
 
+def _check_parameter_types(name: str, spec: ParameterSpec) -> Tuple[Optional[str], str]:
+    """
+    Checks the types and defaults are defined correctly.
+
+    :param name:
+                The parameter name.
+    :param spec:
+                The parameter specification.
+    :return:
+                The default value and the default type.
+    """
+    # Parse the types
+    parsed_types = [parse_type(type_string) for type_string in spec.types]
+
+    # Make sure all types are JSON-compatible
+    for type_string, parsed_type in zip(spec.types, parsed_types):
+        if not parsed_type.is_subtype_of(UFDLJSONType()):
+            raise Exception(f"Type {type_string} of parameter {name} is not JSON-compatible")
+
+    # Parse the default type
+    default_type = spec.default_type
+    if default_type is not Absent:
+        parsed_default_type = parse_type(default_type)
+
+        # The default type must be a sub-type of one of the allowed types
+        if not any(parsed_default_type.is_subtype_of(parsed_type) for parsed_type in parsed_types):
+            raise Exception(f"Default type is not a sub-type of any valid type for parameter '{name}'")
+    else:
+        parsed_default_type = parsed_types[0]
+        default_type = spec.types[0]
+
+    # Attempt to convert the default value to check it
+    default_value = spec.default
+    if default_value is not Absent:
+        assert isinstance(parsed_default_type, UFDLJSONType)
+        parsed_default_type.parse_json_value(default_value)
+        default_value = json.dumps(default_value)
+    else:
+        default_value = None
+
+    return default_value, default_type
+
+
 def _add_meta_template(
         spec: JobTemplateSpec,
-        input_model,
         parameter_model,
         data_domain_model,
         licence_model,
@@ -352,8 +375,6 @@ def _add_meta_template(
 
     :param spec:
                 The JSON specification of the job-template.
-    :param input_model:
-                The Input model-class.
     :param parameter_model:
                 The Parameter model-class.
     :param data_domain_model:
@@ -411,7 +432,6 @@ def _add_meta_template(
         dependency_graph,
         children,
         used_inputs,
-        input_model,
         parameter_model
     )
 
@@ -554,7 +574,6 @@ def _add_meta_template_inputs_and_parameters(
         dependency_graph: DependencyGraph,
         children,
         used_inputs,
-        input_model,
         parameter_model
 ):
     """
@@ -568,8 +587,6 @@ def _add_meta_template_inputs_and_parameters(
                 The child relationships.
     :param used_inputs:
                 The inputs that are internally connected.
-    :param input_model:
-                The Input model-class.
     :param parameter_model:
                 The Parameter model-class.
     """

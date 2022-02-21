@@ -8,6 +8,8 @@ from ._CopyableViewSet import CopyableViewSet
 from ._CreateJobViewSet import CreateJobViewSet
 from ._DownloadableViewSet import DownloadableViewSet
 from ._FileContainerViewSet import FileContainerViewSet
+from ._GetAllMatchingTemplatesViewSet import GetAllMatchingTemplatesViewSet
+from ._GetAllValuesOfTypeViewSet import GetAllValuesOfTypeViewSet
 from ._GetByNameViewSet import GetByNameViewSet
 from ._GetHardwareGenerationViewSet import GetHardwareGenerationViewSet
 from ._ImportTemplateViewSet import ImportTemplateViewSet

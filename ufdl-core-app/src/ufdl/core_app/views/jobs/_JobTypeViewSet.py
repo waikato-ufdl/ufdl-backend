@@ -1,10 +1,11 @@
 from ...models.jobs import JobType
 from ...serialisers.jobs import JobTypeSerialiser
-from ...permissions import IsAuthenticated, IsAdminUser, AllowNone
+from ...permissions import IsAuthenticated, AllowNone
 from .._UFDLBaseViewSet import UFDLBaseViewSet
+from ..mixins import GetAllValuesOfTypeViewSet
 
 
-class JobTypeViewSet(UFDLBaseViewSet):
+class JobTypeViewSet(GetAllValuesOfTypeViewSet, UFDLBaseViewSet):
     queryset = JobType.objects.all()
     serializer_class = JobTypeSerialiser
 
@@ -14,5 +15,6 @@ class JobTypeViewSet(UFDLBaseViewSet):
         "retrieve": IsAuthenticated,
         "update": AllowNone,
         "partial_update": AllowNone,
-        "destroy": AllowNone
+        "destroy": AllowNone,
+        "get_all_values_of_type": IsAuthenticated
     }

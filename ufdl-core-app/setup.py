@@ -35,6 +35,9 @@ setup(
         "requests-file>=1.5,<1.6",
         "ufdl-annotation-utils",
         "channels",
-        "channels_redis"
+        "channels_redis",
+        "ufdl.jobtypes",
+        "ufdl.jobcontracts",
+        "wai.lazypip"
     ]
 )

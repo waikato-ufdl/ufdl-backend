@@ -13,7 +13,7 @@ RUN \
     export DEBIAN_FRONTEND=noninteractive && \
     # Install necessary tools for the build
     apt-get update && \
-    apt-get install -y --no-install-recommends git-core libglib2.0-0 libsm6 libxrender-dev libxrender1 libxext6 postgresql wget && \
+    apt-get install -y --no-install-recommends git-core libglib2.0-0 libsm6 libxrender-dev libxrender1 libxext6 postgresql wget libpq-dev && \
     apt-get install -y build-essential ${PYTHON} ${PYTHON}-dev lib${PYTHON}-dev virtualenv && \
     # Clean up the apt cache
     rm -rf /var/lib/apt/lists/*

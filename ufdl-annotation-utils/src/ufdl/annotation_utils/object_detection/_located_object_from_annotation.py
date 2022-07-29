@@ -1,4 +1,4 @@
-from ufdl.json.object_detection import Annotation
+from ufdl.json.object_detection import ImageAnnotation
 
 from wai.annotations.domain.image.object_detection.util import set_object_label, set_object_prefix
 
@@ -7,7 +7,7 @@ from wai.common.adams.imaging.locateobjects import LocatedObject
 from wai.json.object import Absent
 
 
-def located_object_from_annotation(annotation: Annotation) -> LocatedObject:
+def located_object_from_annotation(annotation: ImageAnnotation) -> LocatedObject:
     """
     Creates a located object from an annotation.
 

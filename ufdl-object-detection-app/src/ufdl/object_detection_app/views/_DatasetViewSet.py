@@ -12,9 +12,21 @@ class DatasetViewSet(AnnotationsViewSet, CoreDatasetViewSet):
 
     permission_classes = dict(
         get_annotations=IsMember,
-        get_annotations_for_image=IsMember,
-        set_annotations_for_image=WriteOrNodeExecutePermission,
-        delete_annotations_for_image=WriteOrNodeExecutePermission,
+        set_annotations=WriteOrNodeExecutePermission,
+        clear_annotations=WriteOrNodeExecutePermission,
+        get_annotations_for_file=IsMember,
+        add_annotations_to_file=WriteOrNodeExecutePermission,
+        set_annotations_for_file=WriteOrNodeExecutePermission,
+        delete_annotations_for_file=WriteOrNodeExecutePermission,
         get_labels=IsMember,
+        add_labels=WriteOrNodeExecutePermission,
+        delete_label=WriteOrNodeExecutePermission,
+        get_prefixes=IsMember,
+        add_prefixes=WriteOrNodeExecutePermission,
+        delete_prefixes=WriteOrNodeExecutePermission,
+        get_file_type=IsMember,
+        set_file_type=WriteOrNodeExecutePermission,
+        get_file_types=IsMember,
+
         **CoreDatasetViewSet.permission_classes
     )

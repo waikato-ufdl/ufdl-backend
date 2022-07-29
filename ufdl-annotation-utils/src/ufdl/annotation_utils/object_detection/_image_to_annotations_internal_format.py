@@ -12,7 +12,11 @@ from wai.json.object import Absent
 from ._located_object_from_annotation import located_object_from_annotation
 
 
-def image_to_annotations_internal_format(image: Optional[JSONImage], filename: str, data: bytes) -> ImageObjectDetectionInstance:
+def image_to_annotations_internal_format(
+        image: Optional[JSONImage],
+        filename: str,
+        data: bytes
+) -> ImageObjectDetectionInstance:
     """
     Converts an image record to the format expected by wai.annotations.
 
@@ -32,8 +36,10 @@ def image_to_annotations_internal_format(image: Optional[JSONImage], filename: s
     )
 
     # Create a located-objects list from the image's annotations, or an empty one if it is missing
-    located_objects = (LocatedObjects()
-                       if image is None
-                       else LocatedObjects(map(located_object_from_annotation, image.annotations)))
+    located_objects = (
+        LocatedObjects()
+        if image is None else
+        LocatedObjects(map(located_object_from_annotation, image.annotations))
+    )
 
     return ImageObjectDetectionInstance(image_info, located_objects)

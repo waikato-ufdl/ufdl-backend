@@ -327,7 +327,7 @@ class ObjectDetectionDataset(Dataset):
 
         # Make sure we own the file reference
         elif isinstance(file, FileReference):
-            if file not in self.files:
+            if not self.files.all().filter(pk__exact=file.pk).exists():
                 raise BadArgumentValue(
                     "get_annotations_container",
                     "file",
@@ -336,7 +336,7 @@ class ObjectDetectionDataset(Dataset):
                 )
 
         # Make sure the annotations are part of this dataset
-        elif file not in self.annotations:
+        elif not self.annotations.all().filter(pk__exact=file.pk).exists():
             raise BadArgumentValue(
                 "get_annotations_container",
                 "file",

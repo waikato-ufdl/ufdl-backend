@@ -14,6 +14,8 @@ from ufdl.json.object_detection import AnnotationsFile, Image, Video, ImageAnnot
 
 from wai.annotations.core.domain import Instance
 
+from wai.json.object import Absent
+
 from ._Annotation import Annotation
 from ._Annotations import Annotations, AnnotationsQuerySet
 from ._DatasetToLabel import DatasetToLabel
@@ -384,7 +386,7 @@ class ObjectDetectionDataset(Dataset):
             )
 
         # Parse common parts of the annotation
-        polygon = dumps(annotation.get_property_as_raw_json("polygon", validate=False))
+        polygon = annotation.get_property_as_raw_json("polygon", validate=False)
         label, label_ref = self.add_label(annotation.label)
         prefix, prefix_ref = self.add_prefix(annotation.prefix)
 
@@ -395,10 +397,11 @@ class ObjectDetectionDataset(Dataset):
             y=annotation.y,
             width=annotation.width,
             height=annotation.height,
-            polygon=polygon,
             label_reference=label_ref,
             prefix_reference=prefix_ref
         )
+        if polygon is not Absent:
+            annotation_args["polygon"] = dumps(polygon)
         if isinstance(annotation, VideoAnnotation):
             annotation_args["time"] = annotation.time
 

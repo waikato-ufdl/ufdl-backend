@@ -95,28 +95,36 @@ class Annotation(models.Model):
         TODO
         :return:
         """
-        return ImageAnnotation(
+        annotation = ImageAnnotation(
             x=self.x,
             y=self.y,
             width=self.width,
             height=self.height,
-            polygon=loads(self.polygon),
             label=self.label,
             prefix=self.prefix
         )
+        polygon = self.polygon
+        if polygon is not None:
+            annotation['polygon'] = loads(polygon)
+
+        return annotation
 
     @property
     def json_video(self) -> VideoAnnotation:
         """
         Creates an Image object from this set of annotations.
         """
-        return VideoAnnotation(
+        annotation = VideoAnnotation(
             x=self.x,
             y=self.y,
             width=self.width,
             height=self.height,
-            polygon=loads(self.polygon),
             label=self.label,
             prefix=self.prefix,
             time=self.time
         )
+        polygon = self.polygon
+        if polygon is not None:
+            annotation['polygon'] = loads(polygon)
+
+        return annotation

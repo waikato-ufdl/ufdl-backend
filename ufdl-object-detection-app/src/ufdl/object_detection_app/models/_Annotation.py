@@ -65,14 +65,14 @@ class Annotation(models.Model):
         """
         The label of this annotation.
         """
-        return self.label_reference.label
+        return self.label_reference.label.text
 
     @property
     def prefix(self) -> str:
         """
         The prefix of this annotation.
         """
-        return self.prefix_reference.prefix
+        return self.prefix_reference.prefix.text
 
     @property
     def is_image(self) -> bool:

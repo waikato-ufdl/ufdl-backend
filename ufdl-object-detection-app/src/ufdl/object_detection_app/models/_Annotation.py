@@ -31,7 +31,7 @@ class Annotation(models.Model):
     # The set of annotations this annotation belongs to
     container = models.ForeignKey(
         f"{UFDLObjectDetectionAppConfig.label}.Annotations",
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         related_name="annotations"
     )
 

@@ -442,7 +442,9 @@ class ObjectDetectionDataset(Dataset):
         :param file:
                     The file for which to remove annotations.
         """
-        self.annotations.for_file(file).first().annotations.all().delete()
+        annotations_container = self.annotations.for_file(file).first()
+        if annotations_container is not None:
+            annotations_container.annotations.all().delete()
 
     def set_annotations_for_file(
             self,

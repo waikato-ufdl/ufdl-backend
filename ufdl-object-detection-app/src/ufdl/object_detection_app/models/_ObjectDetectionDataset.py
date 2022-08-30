@@ -36,6 +36,39 @@ class ObjectDetectionDataset(Dataset):
         other: ObjectDetectionDataset = other.domain_specific
         # Overwrite the annotations for the target files
         for source_file, target_file in files:
+            # Get the annotations container for the source file
+            source_annotations = other._get_annotations_container(source_file)
+
+            # If there is none, this file has no annotations
+            if source_annotations is None:
+                continue
+
+            # Check if the annotations container for this file is already set,
+            # and if so, ensure it is identical
+            target_annotations = self._get_annotations_container(target_file)
+            if target_annotations is not None:
+                if (
+                    target_annotations.format != source_annotations.format
+                    or target_annotations.width != source_annotations.width
+                    or target_annotations.height != source_annotations.height
+                    or target_annotations.video_length != source_annotations.video_length
+                ):
+                    raise BadName(
+                        target_file.filename,
+                        f"File-type already set and differs from source file '{source_file.filename}'\n"
+                        f"Source: format={source_annotations.format}, width={source_annotations.width}, height={source_annotations.height}, length={source_annotations.video_length}"
+                        f"Target: format={target_annotations.format}, width={target_annotations.width}, height={target_annotations.height}, length={target_annotations.video_length}"
+                    )
+            else:
+                # Create an identical container for the target file
+                self.set_file_type(
+                    target_file,
+                    source_annotations.format,
+                    source_annotations.width,
+                    source_annotations.height,
+                    source_annotations.video_length
+                )
+
             self.set_annotations_for_file(
                 target_file,
                 other.get_annotations_for_file(source_file)
@@ -302,7 +335,7 @@ class ObjectDetectionDataset(Dataset):
             raise BadArgumentType(
                 "add_annotation_to_file",
                 "annotation",
-                str(type(annotation)),
+                str(ImageAnnotation if annotations.is_image else VideoAnnotation),
                 annotation
             )
 
@@ -351,10 +384,7 @@ class ObjectDetectionDataset(Dataset):
         if annotations is None:
             return []
 
-        return [
-            annotation.to_raw_json()
-            for annotation in annotations.json.annotations
-        ]
+        return list(annotations.json.annotations)
 
     def clear_annotations_for_file(self, file: Union[str, FileReference]):
         """

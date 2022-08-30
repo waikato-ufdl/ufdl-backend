@@ -340,7 +340,7 @@ class AnnotationsViewSet(RoutedViewSet):
         annotations = dataset.get_annotations_for_file(fn)
 
         # Return the annotations
-        return Response(annotations)
+        return Response([annotation.to_raw_json() for annotation in annotations])
 
     def set_annotations_for_file(self, request: Request, pk=None, fn=None):
         """

@@ -1,13 +1,9 @@
 from typing import List, Iterator, Tuple
 
-from ufdl.annotation_utils.image_classification import annotations_iterator
-
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.models import Dataset, DatasetQuerySet, FileReference
 
 from ufdl.json.image_classification import CategoriesFile
-
-from wai.annotations.domain.image.classification import ImageClassificationInstance
 
 from ._Category import Category, CategoryQuerySet
 
@@ -54,9 +50,6 @@ class ImageClassificationDataset(Dataset):
 
         # Delete the file as usual
         return super().delete_file(filename)
-
-    def get_annotations_iterator(self) -> Iterator[ImageClassificationInstance]:
-        return annotations_iterator(self.iterate_filenames(), self.get_categories_for_file, self.get_file)
 
     def get_categories_for_file(self, filename: str) -> List[str]:
         """

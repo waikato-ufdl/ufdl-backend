@@ -1,14 +1,8 @@
-from typing import Iterator
-
 from django.db import models
-
-from ufdl.annotation_utils.speech import annotations_iterator
 
 from ufdl.core_app.models import Dataset, DatasetQuerySet
 
 from ufdl.json.speech import TranscriptionsFile, Transcription
-
-from wai.annotations.domain.audio.speech import SpeechInstance
 
 
 class SpeechDatasetQuerySet(DatasetQuerySet):
@@ -62,19 +56,6 @@ class SpeechDataset(Dataset):
             self.set_transcriptions(transcriptions)
 
         return file
-
-    def get_annotations_iterator(self) -> Iterator[SpeechInstance]:
-        # Get the transcriptions file
-        transcriptions_file = self.get_transcriptions()
-
-        # Create a transcription supplier function
-        def get_transcription(filename: str) -> str:
-            if not transcriptions_file.has_property(filename):
-                return ""
-
-            return transcriptions_file[filename].transcription
-
-        return annotations_iterator(self.iterate_filenames(), get_transcription, self.get_file)
 
     def get_transcriptions(self) -> TranscriptionsFile:
         """

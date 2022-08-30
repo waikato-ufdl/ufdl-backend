@@ -1,1 +1,0 @@
-from ._annotations_iterator import annotations_iterator

@@ -1,18 +1,11 @@
-import os
 from json import dumps
-import tempfile
-from typing import Iterable, List, Optional, Iterator, Set, Tuple, Union
 
-from moviepy.editor import VideoFileClip
-
-from ufdl.annotation_utils.object_detection import annotations_iterator
+from typing import List, Optional, Set, Tuple, Union
 
 from ufdl.core_app.exceptions import BadName, BadArgumentValue, BadArgumentType
 from ufdl.core_app.models import Dataset, DatasetQuerySet, FileReference
 
 from ufdl.json.object_detection import AnnotationsFile, Image, Video, ImageAnnotation, VideoAnnotation
-
-from wai.annotations.core.domain import Instance
 
 from wai.json.object import Absent
 
@@ -232,78 +225,6 @@ class ObjectDetectionDataset(Dataset):
         annotations.save()
 
         return annotations
-
-    def get_annotations_iterator(self) -> Optional[Iterator[Instance]]:
-        # Create a supplier function for getting the image description for a file
-        def get_image(filename: str) -> Iterable[Tuple[str, bytes, Optional[Image]]]:
-            annotations: Optional[Annotations] = self.annotations.for_file(filename).first()
-
-            # If the file-type hasn't been set, skip this file
-            if annotations is None:
-                return
-
-            if annotations.is_image:
-                yield filename, self.get_file(filename), annotations.json
-            else:
-                # Get the annotations and sort them by frame-time
-                video_annotations: List[VideoAnnotation] = list(
-                    annotation.json_video
-                    for annotation in annotations.annotations.all()
-                )
-                video_annotations.sort(key=lambda video_annotation: video_annotation.time)
-
-                # If there are no annotated frames, skip this video
-                if len(video_annotations) == 0:
-                    return
-
-                # We need to write the video data to disk so that FFMPEG can read it,
-                # so do so in a temporary file
-                with tempfile.TemporaryDirectory() as tmp_dir:
-                    # Create a name for the temporary copy of the video data
-                    video_filename = os.path.join(tmp_dir.name, "video")
-
-                    # Copy the video data to a temporary file
-                    with open(video_filename, "wb") as tmp_video_file:
-                        tmp_video_file.write(self.get_file(filename))
-
-                    # Open the video with FFMPEG
-                    with VideoFileClip(video_filename, audio=False) as video_clip:
-                        # Create images
-                        while len(video_annotations) > 0:
-                            # Get the frame-time we are creating an image for
-                            frame_time = video_annotations[0].time
-
-                            # Convert the video annotations for this frame to image annotations
-                            image_annotations: List[ImageAnnotation] = []
-                            while len(video_annotations) > 0 and video_annotations[0].time == frame_time:
-                                image_annotations.append(video_annotations.pop(0).to_image_annotation())
-
-                            # Create an image descriptor for the frame
-                            image = Image(
-                                format="jpg",
-                                dimensions=[annotations.width, annotations.height],
-                                annotations=image_annotations
-                            )
-
-                            # Create an augmented filename for this frame of the video
-                            augmented_filename = f"{os.path.splitext(filename)[0]}.{frame_time}.jpg"
-
-                            # Create a temporary filename to store the frame image under
-                            tmp_image_filename = os.path.join(tmp_dir.name, "image")
-
-                            # Save the frame as a temporary JPEG
-                            video_clip.save_frame(tmp_image_filename, frame_time, False)
-
-                            # Read the image data back in to memory
-                            with open(tmp_image_filename, "rb") as tmp_image_file:
-                                frame_data = tmp_image_file.read()
-
-                            yield augmented_filename, frame_data, image
-
-        return annotations_iterator(
-            self.iterate_filenames(),
-            get_image
-        )
 
     def _get_annotations_container(
             self,

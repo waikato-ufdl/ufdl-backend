@@ -2,13 +2,9 @@ from typing import Iterator, List, Optional
 
 from django.db import models
 
-from ufdl.annotation_utils.image_segmentation import annotations_iterator
-
 from ufdl.core_app.exceptions import BadArgumentValue
 from ufdl.core_app.models import Dataset, DatasetQuerySet
 from ufdl.core_app.models.files import File
-
-from wai.annotations.domain.image.segmentation import ImageSegmentationInstance
 
 from ._SegmentationLayerImage import SegmentationLayerImage
 
@@ -69,14 +65,6 @@ class ImageSegmentationDataset(Dataset):
         self.annotations.for_file(filename).delete()
 
         return file
-
-    def get_annotations_iterator(self) -> Iterator[ImageSegmentationInstance]:
-        return annotations_iterator(
-            self.iterate_filenames(),
-            self.get_labels(),
-            self.get_layer,
-            self.get_file
-        )
 
     def get_layer(self, filename: str, label: str) -> Optional[bytes]:
         """

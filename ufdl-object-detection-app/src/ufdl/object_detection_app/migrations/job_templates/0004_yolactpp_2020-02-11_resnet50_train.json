@@ -24,9 +24,9 @@
       },
       "docker_image": {
         "types": [
-          "DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>",
-          "PK<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>>",
-          "Name<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>>"
+          "DockerImage<Domain<'Object Detection'>, Framework<'yolact', '2020-02-11'>>",
+          "PK<DockerImage<Domain<'Object Detection'>, Framework<'yolact', '2020-02-11'>>>",
+          "Name<DockerImage<Domain<'Object Detection'>, Framework<'yolact', '2020-02-11'>>>"
         ],
         "help": "The docker image to use"
       },

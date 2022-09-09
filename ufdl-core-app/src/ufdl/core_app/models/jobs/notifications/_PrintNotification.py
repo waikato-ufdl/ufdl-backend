@@ -1,5 +1,3 @@
-from typing import Dict
-
 from django.db import models
 
 from ufdl.json.core.jobs.notification import PrintNotification as JSONPrintNotification

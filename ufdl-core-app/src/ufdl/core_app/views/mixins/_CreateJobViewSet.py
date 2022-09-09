@@ -14,6 +14,8 @@ from ufdl.json.core.jobs import CreateJobSpec
 from wai.json.object import Absent
 
 from ...exceptions import JSONParseFailure, ChildNotificationOverridesForWorkableJob, CouldntParseType
+from ...initialise import initialise
+from ...models import JobContract, JobType
 from ...models.jobs import JobTemplate, WorkableTemplate
 from ...serialisers.jobs import JobSerialiser
 from ._RoutedViewSet import RoutedViewSet
@@ -48,6 +50,8 @@ class CreateJobViewSet(RoutedViewSet):
         :param pk:          The primary key of the job template.
         :return:            The response containing the job.
         """
+        initialise(JobType, JobContract)
+
         # Get the job template the job is being created from
         job_template = self.get_object_of_type(JobTemplate).upcast()
 

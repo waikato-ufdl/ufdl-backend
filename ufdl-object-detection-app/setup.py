@@ -30,8 +30,6 @@ setup(
     install_requires=[
         "Django>=2.2.6,<3",
         "djangorestframework>=3.10.3,<4",
-        "ufdl-core-app",
-        "ufdl-annotation-utils",
-        "moviepy"
+        "ufdl-core-app"
     ]
 )

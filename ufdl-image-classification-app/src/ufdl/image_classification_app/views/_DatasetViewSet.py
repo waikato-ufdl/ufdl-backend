@@ -12,6 +12,7 @@ class DatasetViewSet(CategoriesViewSet, CoreDatasetViewSet):
 
     permission_classes = dict(
         get_categories=IsMember,
+        get_categories_for_file=IsMember,
         modify_categories=WriteOrNodeExecutePermission,
         set_categories=WriteOrNodeExecutePermission,
         **CoreDatasetViewSet.permission_classes

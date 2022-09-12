@@ -32,6 +32,15 @@ class CategoriesViewSet(RoutedViewSet):
                 name='{basename}-categories',
                 detail=True,
                 initkwargs={cls.MODE_ARGUMENT_NAME: CategoriesViewSet.MODE_KEYWORD}
+            ),
+            routers.Route(
+                url=r'^{prefix}/{lookup}/categories/(?P<fn>.+){trailing_slash}$',
+                mapping={
+                    'get': 'get_categories_for_file'
+                },
+                name='{basename}-categories-for-file',
+                detail=True,
+                initkwargs={cls.MODE_ARGUMENT_NAME: CategoriesViewSet.MODE_KEYWORD}
             )
         ]
 
@@ -48,6 +57,20 @@ class CategoriesViewSet(RoutedViewSet):
 
         # Return the categories
         return Response(dataset.get_categories().to_raw_json())
+
+    def get_categories_for_file(self, request: Request, pk=None, fn=None):
+        """
+        Gets the categories of a particular file in a data-set.
+
+        :param request:     The request.
+        :param pk:          The primary key of the data-set being accessed.
+        :return:            The response containing the categories.
+        """
+        # Get the data-set
+        dataset = self.get_object_of_type(ImageClassificationDataset)
+
+        # Return the categories
+        return Response(dataset.get_categories_for_file(fn))
 
     def modify_categories(self, request: Request, pk=None):
         """

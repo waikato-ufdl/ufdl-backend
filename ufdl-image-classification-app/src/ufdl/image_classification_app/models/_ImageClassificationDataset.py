@@ -1,4 +1,4 @@
-from typing import List, Iterator, Tuple
+from typing import List, Tuple
 
 from ufdl.core_app.exceptions import *
 from ufdl.core_app.models import Dataset, DatasetQuerySet, FileReference

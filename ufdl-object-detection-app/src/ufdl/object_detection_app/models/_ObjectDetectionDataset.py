@@ -69,9 +69,15 @@ class ObjectDetectionDataset(Dataset):
                     source_annotations.video_length
                 )
 
+            # Get the list of annotations already set on the file
+            current_annotations = self.get_annotations_for_file(target_file)
+
+            # Append the annotations of the source file
+            new_annotations = current_annotations + other.get_annotations_for_file(source_file)
+
             self.set_annotations_for_file(
                 target_file,
-                other.get_annotations_for_file(source_file)
+                new_annotations
             )
 
     def clear_annotations(self):

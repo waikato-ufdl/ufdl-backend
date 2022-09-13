@@ -75,8 +75,7 @@ class ObjectDetectionDataset(Dataset):
             )
 
     def clear_annotations(self):
-        for annotations in self.annotations.all():
-            annotations.annotations.delete()
+        Annotation.objects.filter(container__in=self.annotations.all()).delete()
 
     def delete_file(self, filename: str):
         # Remove the annotations for the file

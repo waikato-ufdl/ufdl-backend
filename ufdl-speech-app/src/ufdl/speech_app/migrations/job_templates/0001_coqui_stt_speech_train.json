@@ -1,0 +1,67 @@
+{
+  "name": "coqui_stt_speech-train",
+  "version": 1,
+  "description": "TODO",
+  "scope": "public",
+  "domain": "sp",
+  "licence": "Apache 2.0",
+  "specific": {
+    "job_type": "Train<Domain<'Speech'>, Framework<'coqui_stt', '1'>>",
+    "executor_class": "ufdl.joblauncher.speech.coqui_stt.SpeechTrain_Coqui_STT",
+    "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
+    "parameters": {
+      "dataset_options": {
+        "types": ["Array<str>", "str"],
+        "default": [
+          "to-coqui-stt-sp",
+          "-o", "samples.csv",
+          "--split-names", "train", "test", "val",
+          "--split-ratios", "70", "15", "15"
+        ],
+        "help": "Options to the dataset input"
+      },
+      "docker_image": {
+        "types": [
+          "Name<DockerImage<Domain<'Speech'>, Framework<'coqui_stt', '1'>>>",
+          "PK<DockerImage<Domain<'Speech'>, Framework<'coqui_stt', '1'>>>",
+          "DockerImage<Domain<'Speech'>, Framework<'coqui_stt', '1'>>"
+        ],
+        "help": "The docker image to use"
+      },
+      "epochs": {
+        "types": ["int"],
+        "default": 75,
+        "help": "The number of epochs to train for."
+      },
+      "pretrained_model": {
+        "types": [
+          "Name<PretrainedModel<Domain<'Speech'>, Framework<'coqui_stt', '1'>>>",
+          "PK<PretrainedModel<Domain<'Speech'>, Framework<'coqui_stt', '1'>>>"
+        ],
+        "default": "coqui_stt_base",
+        "help": "The pretrained model to use."
+      },
+      "export_quantize": {
+        "types": ["bool"],
+        "default": false,
+        "help": "Create a model optimized for speed/memory, but less accurate."
+      },
+      "body": {
+        "types": ["Array<str>", "str"],
+        "default": [
+          "# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]",
+          "path: /data # dataset root dir",
+          "train: images/train  # train images (relative to 'path')",
+          "val: images/val  # val images (relative to 'path')",
+          "test: images/test # test images (optional)",
+          "",
+          "# Classes",
+          "nc: ${num-classes}  # number of classes",
+          "names: ${classes}",
+          ""
+        ],
+        "help": "The body of the function"
+      }
+    }
+  }
+}

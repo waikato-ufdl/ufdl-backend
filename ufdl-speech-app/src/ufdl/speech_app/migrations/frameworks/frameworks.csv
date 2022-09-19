@@ -1,3 +1,4 @@
 name,version
 tensorflow,1.15
 pytorch,1.2
+coqui_stt,1

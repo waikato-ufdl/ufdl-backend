@@ -13,7 +13,7 @@
     {
       "dataset_options": {
         "types": ["Array<str>", "str"],
-        "default": ["to-subdir-ic"],
+        "default": ["to-subdir-ic", "-o", "."],
         "help": "Options to pass to wai-annotations when downloading the dataset"
       },
       "docker_image": {

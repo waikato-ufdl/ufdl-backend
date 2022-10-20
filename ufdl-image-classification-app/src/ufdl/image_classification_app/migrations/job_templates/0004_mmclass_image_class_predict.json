@@ -40,8 +40,8 @@
           "mmcls_predict_poll",
           "--model", "/workspace/output/latest.pth",
           "--config", "/workspace/output/config.py",
-          "--prediction_in", "/workspace/predictions/in",
-          "--prediction_out", "/workspace/predictions/out"
+          "--prediction_in", "/workspace/prediction/in",
+          "--prediction_out", "/workspace/prediction/out"
         ],
         "help": "The command passed to the Docker image."
       }

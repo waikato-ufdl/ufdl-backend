@@ -1,0 +1,10 @@
+{
+  "name": "resnet18_batch256_imagenet_20200708-34ab8f90",
+  "description": "TODO",
+  "url": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet18_batch256_imagenet_20200708-34ab8f90.pth",
+  "framework": "resnet18|mmclass_0.23.1",
+  "domain": "ic",
+  "source": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet18_batch256_imagenet_20200708-34ab8f90.pth",
+  "metadata": {},
+  "licence": "Apache 2.0"
+}

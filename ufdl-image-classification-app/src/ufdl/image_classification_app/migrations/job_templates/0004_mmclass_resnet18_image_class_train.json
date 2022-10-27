@@ -49,10 +49,10 @@
       },
       "pretrained_model": {
         "types": [
+          "Nothing",
           "Name<PretrainedModel<Domain<'Image Classification'>, Framework<'resnet18', 'mmclass_0.23.1'>>>",
           "PK<PretrainedModel<Domain<'Image Classification'>, Framework<'resnet18', 'mmclass_0.23.1'>>>",
-          "PretrainedModel<Domain<'Image Classification'>, Framework<'resnet18', 'mmclass_0.23.1'>>",
-          "Nothing"
+          "PretrainedModel<Domain<'Image Classification'>, Framework<'resnet18', 'mmclass_0.23.1'>>"
         ],
         "default": null,
         "help": "The pretrained model to fine-tune."

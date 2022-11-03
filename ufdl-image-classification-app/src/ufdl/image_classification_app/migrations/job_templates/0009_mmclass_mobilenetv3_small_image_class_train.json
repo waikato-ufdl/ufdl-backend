@@ -64,7 +64,7 @@
           "    type='ImageClassifier',",
           "    backbone=dict(",
           "        type='MobileNetV3',",
-          "        arch='small'",
+          "        arch='small',",
           "        ${pretrained_model_config}",
           "    ),",
           "    neck=dict(type='GlobalAveragePooling'),",

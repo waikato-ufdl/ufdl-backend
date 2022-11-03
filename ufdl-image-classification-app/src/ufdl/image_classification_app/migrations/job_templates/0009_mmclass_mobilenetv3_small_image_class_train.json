@@ -47,6 +47,16 @@
         "default": 16,
         "help": "The number of images to in a batch (per GPU)."
       },
+      "pretrained_model": {
+        "types": [
+          "Nothing",
+          "Name<PretrainedModel<Domain<'Image Classification'>, Framework<'mobilenetv3-small', 'mmclass_0.23.1'>>>",
+          "PK<PretrainedModel<Domain<'Image Classification'>, Framework<'mobilenetv3-small', 'mmclass_0.23.1'>>>",
+          "PretrainedModel<Domain<'Image Classification'>, Framework<'mobilenetv3-small', 'mmclass_0.23.1'>>"
+        ],
+        "default": null,
+        "help": "The pretrained model to fine-tune."
+      },
       "body": {
         "types": ["Array<str>", "str"],
         "default": [

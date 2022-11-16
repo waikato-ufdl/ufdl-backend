@@ -1,0 +1,26 @@
+{
+  "name": "dogs_dummy_image_class_predict",
+  "version": 1,
+  "description": "TRIAL",
+  "scope": "public",
+  "domain": "ic",
+  "licence": "Apache 2.0",
+  "specific": {
+    "job_type": "Predict<Domain<'Image Classification'>, Framework<'dogs_dummy', '1'>>",
+    "executor_class": "ufdl.joblauncher.classify.dogs_dummy.ImageClassificationPredict_DogsDummy_1",
+    "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
+    "parameters":
+    {
+      "store_predictions": {
+        "types": ["bool"],
+        "default": true,
+        "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+      },
+      "per_class": {
+        "types": ["bool"],
+        "default": true,
+        "help": "If enabled, accuracy is applied per-class rather than across the entire dataset."
+      }
+    }
+  }
+}

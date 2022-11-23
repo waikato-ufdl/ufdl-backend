@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('ufdl-core', '0002_the_rest'),
+        ('ufdl_core', '0002_the_rest'),
     ]
 
     operations = [
@@ -34,19 +34,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ObjectDetectionDataset',
             fields=[
-                ('dataset_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Dataset')),
+                ('dataset_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.Dataset')),
             ],
             options={
                 'abstract': False,
             },
-            bases=('ufdl-core.dataset',),
+            bases=('ufdl_core.dataset',),
         ),
         migrations.CreateModel(
             name='Prefix',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.TextField(unique=True)),
-                ('datasets', models.ManyToManyField(related_name='prefixes', through='ufdl-object-detection.DatasetToPrefix', to='ufdl-object-detection.ObjectDetectionDataset')),
+                ('datasets', models.ManyToManyField(related_name='prefixes', through='ufdl_object_detection.DatasetToPrefix', to='ufdl_object_detection.ObjectDetectionDataset')),
             ],
             options={
                 'abstract': False,
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.TextField(unique=True)),
-                ('datasets', models.ManyToManyField(related_name='labels', through='ufdl-object-detection.DatasetToLabel', to='ufdl-object-detection.ObjectDetectionDataset')),
+                ('datasets', models.ManyToManyField(related_name='labels', through='ufdl_object_detection.DatasetToLabel', to='ufdl_object_detection.ObjectDetectionDataset')),
             ],
             options={
                 'abstract': False,
@@ -66,22 +66,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='datasettoprefix',
             name='dataset',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-object-detection.ObjectDetectionDataset'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_object_detection.ObjectDetectionDataset'),
         ),
         migrations.AddField(
             model_name='datasettoprefix',
             name='prefix',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-object-detection.Prefix'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_object_detection.Prefix'),
         ),
         migrations.AddField(
             model_name='datasettolabel',
             name='dataset',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-object-detection.ObjectDetectionDataset'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_object_detection.ObjectDetectionDataset'),
         ),
         migrations.AddField(
             model_name='datasettolabel',
             name='label',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-object-detection.Label'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_object_detection.Label'),
         ),
         migrations.CreateModel(
             name='Annotations',
@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
                 ('width', models.IntegerField(default=None, null=True)),
                 ('height', models.IntegerField(default=None, null=True)),
                 ('video_length', models.FloatField(default=None, null=True)),
-                ('file', models.OneToOneField(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.FileReference')),
+                ('file', models.OneToOneField(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.FileReference')),
             ],
         ),
         migrations.CreateModel(
@@ -104,9 +104,9 @@ class Migration(migrations.Migration):
                 ('height', models.IntegerField()),
                 ('time', models.FloatField(default=None, null=True)),
                 ('polygon', models.TextField(default=None, null=True)),
-                ('container', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl-object-detection.Annotations')),
-                ('label_reference', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl-object-detection.DatasetToLabel')),
-                ('prefix_reference', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl-object-detection.DatasetToPrefix')),
+                ('container', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl_object_detection.Annotations')),
+                ('label_reference', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl_object_detection.DatasetToLabel')),
+                ('prefix_reference', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl_object_detection.DatasetToPrefix')),
             ],
         ),
     ]

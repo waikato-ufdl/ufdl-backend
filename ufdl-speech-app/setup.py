@@ -27,10 +27,10 @@ setup(
     version="0.0.1",
     author='Corey Sterling',
     author_email='coreytsterling@gmail.com',
+    python_requires="==3.8.*",
     install_requires=[
-        # TODO: Check these
-        "Django>=2.2.6,<3",
-        "djangorestframework>=3.10.3,<4",
+        "Django>=4.1,<5",
+        "djangorestframework>=3.14,<4",
         "ufdl-core-app",
         "ufdl.json-messages"
     ]

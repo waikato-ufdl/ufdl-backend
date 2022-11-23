@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     Migration inserting the Docker image presets into the database.
     """
     dependencies = [
-        ('ufdl-speech', '0003_frameworks')
+        ('ufdl_speech', '0003_frameworks')
     ]
 
     operations = [

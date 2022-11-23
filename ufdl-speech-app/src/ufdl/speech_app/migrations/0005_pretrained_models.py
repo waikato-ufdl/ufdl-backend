@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     Migration inserting the pre-trained model presets into the database.
     """
     dependencies = [
-        ('ufdl-speech', '0004_docker')
+        ('ufdl_speech', '0004_docker')
     ]
 
     operations = [

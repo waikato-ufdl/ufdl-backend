@@ -11,8 +11,8 @@ class Migration(migrations.Migration):
     Migration inserting the framework presets into the database.
     """
     dependencies = [
-        ('ufdl-core', '0006_job_types'),
-        ('ufdl-object-detection', '0002_add_data_domain')
+        ('ufdl_core', '0006_job_types'),
+        ('ufdl_object_detection', '0002_add_data_domain')
     ]
 
     operations = [

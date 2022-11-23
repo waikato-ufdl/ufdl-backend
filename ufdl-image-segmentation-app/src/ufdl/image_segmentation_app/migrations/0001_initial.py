@@ -9,20 +9,20 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('ufdl-core', '0006_job_types'),
+        ('ufdl_core', '0006_job_types'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='ImageSegmentationDataset',
             fields=[
-                ('dataset_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Dataset')),
+                ('dataset_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.Dataset')),
                 ('labels', models.TextField()),
             ],
             options={
                 'abstract': False,
             },
-            bases=('ufdl-core.dataset',),
+            bases=('ufdl_core.dataset',),
         ),
         migrations.CreateModel(
             name='SegmentationLayerImage',
@@ -30,8 +30,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('filename', models.CharField(editable=False, max_length=200)),
                 ('label', models.TextField()),
-                ('dataset', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl-image-segmentation.ImageSegmentationDataset')),
-                ('mask', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.File')),
+                ('dataset', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl_image_segmentation.ImageSegmentationDataset')),
+                ('mask', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.File')),
             ],
         ),
         migrations.AddConstraint(

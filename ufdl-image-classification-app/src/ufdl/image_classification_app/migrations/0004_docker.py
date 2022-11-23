@@ -11,8 +11,8 @@ class Migration(migrations.Migration):
     Migration inserting the Docker image presets into the database.
     """
     dependencies = [
-        ('ufdl-core', '0006_job_types'),
-        ('ufdl-image-classification', '0003_frameworks')
+        ('ufdl_core', '0006_job_types'),
+        ('ufdl_image_classification', '0003_frameworks')
     ]
 
     operations = [

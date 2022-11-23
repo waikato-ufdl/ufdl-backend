@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
     Migration inserting the CUDA presets into the database.
     """
     dependencies = [
-        ('ufdl-core', '0004_hardware')  # Actually dependent on '0002_the_rest' but Django needs a linear
+        ('ufdl_core', '0004_hardware')  # Actually dependent on '0002_the_rest' but Django needs a linear
                                         # dependency
     ]
 

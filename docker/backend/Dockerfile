@@ -2,7 +2,7 @@
 ARG DOCKER_REGISTRY=public.aml-repo.cms.waikato.ac.nz:443/
 FROM ${DOCKER_REGISTRY}ubuntu:bionic
 
-ARG PYTHON=python3.7
+ARG PYTHON=python3.8
 ARG NODE_VERSION=v15.12.0
 
 # ======== #

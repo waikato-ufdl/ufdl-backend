@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
     Migration inserting the job-contracts into the database.
     """
     dependencies = [
-        ('ufdl-core', '0006_job_types')
+        ('ufdl_core', '0006_job_types')
     ]
 
     operations = [

@@ -91,7 +91,7 @@ class Migration(migrations.Migration):
     Migration inserting the licence presets into the database.
     """
     dependencies = [
-        ('ufdl-core', '0002_the_rest')  # Is where the licence models are defined
+        ('ufdl_core', '0002_the_rest')  # Is where the licence models are defined
     ]
 
     operations = [

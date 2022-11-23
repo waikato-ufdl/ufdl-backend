@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('simple_django_teams', '0003_add_execute_permission'),
-        ('ufdl-core', '0001_initial'),
+        ('ufdl_core', '0001_initial'),
     ]
 
     operations = [
@@ -336,31 +336,31 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='EmailNotification',
             fields=[
-                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Notification')),
+                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.Notification')),
                 ('subject', models.TextField()),
                 ('body', models.TextField()),
                 ('to', models.TextField(null=True)),
                 ('cc', models.TextField(null=True)),
                 ('bcc', models.TextField(null=True)),
             ],
-            bases=('ufdl-core.notification',),
+            bases=('ufdl_core.notification',),
         ),
         migrations.CreateModel(
             name='MetaTemplate',
             fields=[
-                ('jobtemplate_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.JobTemplate')),
+                ('jobtemplate_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.JobTemplate')),
             ],
             options={
                 'abstract': False,
                 'base_manager_name': 'objects',
                 'default_manager_name': 'objects',
             },
-            bases=('ufdl-core.jobtemplate',),
+            bases=('ufdl_core.jobtemplate',),
         ),
         migrations.CreateModel(
             name='PreTrainedModel',
             fields=[
-                ('model_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Model')),
+                ('model_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.Model')),
                 ('url', models.CharField(max_length=200)),
                 ('description', models.TextField(blank=True)),
                 ('name', models.CharField(max_length=200)),
@@ -369,27 +369,27 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=('ufdl-core.model',),
+            bases=('ufdl_core.model',),
         ),
         migrations.CreateModel(
             name='PrintNotification',
             fields=[
-                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Notification')),
+                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.Notification')),
                 ('message', models.TextField()),
             ],
-            bases=('ufdl-core.notification',),
+            bases=('ufdl_core.notification',),
         ),
         migrations.CreateModel(
             name='WebSocketNotification',
             fields=[
-                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Notification')),
+                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.Notification')),
             ],
-            bases=('ufdl-core.notification',),
+            bases=('ufdl_core.notification',),
         ),
         migrations.CreateModel(
             name='WorkableTemplate',
             fields=[
-                ('jobtemplate_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.JobTemplate')),
+                ('jobtemplate_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.JobTemplate')),
                 ('type', models.CharField(max_length=256)),
                 ('executor_class', models.CharField(default='', max_length=128)),
                 ('required_packages', models.TextField(blank=True, default='')),
@@ -399,7 +399,7 @@ class Migration(migrations.Migration):
                 'base_manager_name': 'objects',
                 'default_manager_name': 'objects',
             },
-            bases=('ufdl-core.jobtemplate',),
+            bases=('ufdl_core.jobtemplate',),
         ),
         migrations.CreateModel(
             name='Project',
@@ -424,42 +424,42 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='parameter',
             name='template',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='parameters', to='ufdl-core.JobTemplate'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='parameters', to='ufdl_core.JobTemplate'),
         ),
         migrations.AddField(
             model_name='notificationoverride',
             name='job',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='notification_overrides', to='ufdl-core.Job'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='notification_overrides', to='ufdl_core.Job'),
         ),
         migrations.AddField(
             model_name='notificationaction',
             name='job',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='notification_actions', to='ufdl-core.Job'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='notification_actions', to='ufdl_core.Job'),
         ),
         migrations.AddField(
             model_name='notificationaction',
             name='notification',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Notification'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.Notification'),
         ),
         migrations.AddField(
             model_name='node',
             name='current_job',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Job'),
+            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.Job'),
         ),
         migrations.AddField(
             model_name='node',
             name='hardware_generation',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='nodes', to='ufdl-core.Hardware'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='nodes', to='ufdl_core.Hardware'),
         ),
         migrations.AddField(
             model_name='namedfile',
             name='file',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.File'),
+            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.File'),
         ),
         migrations.AddField(
             model_name='namedfile',
             name='name',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Filename'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.Filename'),
         ),
         migrations.AddField(
             model_name='model',
@@ -469,32 +469,32 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='model',
             name='data',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.NamedFile'),
+            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.NamedFile'),
         ),
         migrations.AddField(
             model_name='model',
             name='domain',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl-core.DataDomain'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl_core.DataDomain'),
         ),
         migrations.AddField(
             model_name='model',
             name='framework',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl-core.Framework'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl_core.Framework'),
         ),
         migrations.AddField(
             model_name='model',
             name='licence',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl-core.Licence'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='models', to='ufdl_core.Licence'),
         ),
         migrations.AddField(
             model_name='metatemplatedependency',
             name='dependency',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='dependents', to='ufdl-core.MetaTemplateChildRelation'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='dependents', to='ufdl_core.MetaTemplateChildRelation'),
         ),
         migrations.AddField(
             model_name='metatemplatedependency',
             name='dependent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='dependencies', to='ufdl-core.MetaTemplateChildRelation'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='dependencies', to='ufdl_core.MetaTemplateChildRelation'),
         ),
         migrations.AddField(
             model_name='metatemplatedependency',
@@ -504,7 +504,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='metatemplatechildrelation',
             name='child',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.JobTemplate'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.JobTemplate'),
         ),
         migrations.AddConstraint(
             model_name='limitation',
@@ -513,22 +513,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='licence',
             name='conditions',
-            field=models.ManyToManyField(related_name='_licence_conditions_+', to='ufdl-core.Condition'),
+            field=models.ManyToManyField(related_name='_licence_conditions_+', to='ufdl_core.Condition'),
         ),
         migrations.AddField(
             model_name='licence',
             name='domains',
-            field=models.ManyToManyField(related_name='_licence_domains_+', to='ufdl-core.Domain'),
+            field=models.ManyToManyField(related_name='_licence_domains_+', to='ufdl_core.Domain'),
         ),
         migrations.AddField(
             model_name='licence',
             name='limitations',
-            field=models.ManyToManyField(related_name='_licence_limitations_+', to='ufdl-core.Limitation'),
+            field=models.ManyToManyField(related_name='_licence_limitations_+', to='ufdl_core.Limitation'),
         ),
         migrations.AddField(
             model_name='licence',
             name='permissions',
-            field=models.ManyToManyField(related_name='_licence_permissions_+', to='ufdl-core.Permission'),
+            field=models.ManyToManyField(related_name='_licence_permissions_+', to='ufdl_core.Permission'),
         ),
         migrations.AddField(
             model_name='jobtemplate',
@@ -538,12 +538,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='jobtemplate',
             name='domain',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl-core.DataDomain'),
+            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl_core.DataDomain'),
         ),
         migrations.AddField(
             model_name='jobtemplate',
             name='licence',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl-core.Licence'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='job_templates', to='ufdl_core.Licence'),
         ),
         migrations.AddField(
             model_name='joboutput',
@@ -553,12 +553,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='joboutput',
             name='data',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.File'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.File'),
         ),
         migrations.AddField(
             model_name='joboutput',
             name='job',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='outputs', to='ufdl-core.Job'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='outputs', to='ufdl_core.Job'),
         ),
         migrations.AddField(
             model_name='job',
@@ -568,17 +568,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='job',
             name='node',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='jobs', to='ufdl-core.Node'),
+            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='jobs', to='ufdl_core.Node'),
         ),
         migrations.AddField(
             model_name='job',
             name='parent',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='children', to='ufdl-core.Job'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='children', to='ufdl_core.Job'),
         ),
         migrations.AddField(
             model_name='job',
             name='template',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='jobs', to='ufdl-core.JobTemplate'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='jobs', to='ufdl_core.JobTemplate'),
         ),
         migrations.AddConstraint(
             model_name='hardware',
@@ -591,7 +591,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='filereference',
             name='file',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='file_references', to='ufdl-core.NamedFile'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='file_references', to='ufdl_core.NamedFile'),
         ),
         migrations.AddConstraint(
             model_name='filename',
@@ -608,42 +608,42 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dockerimagetojobcontract',
             name='docker_image',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.DockerImage'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.DockerImage'),
         ),
         migrations.AddField(
             model_name='dockerimagetojobcontract',
             name='job_contract',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.JobContract'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.JobContract'),
         ),
         migrations.AddField(
             model_name='dockerimage',
             name='cuda_version',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl-core.CUDAVersion'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl_core.CUDAVersion'),
         ),
         migrations.AddField(
             model_name='dockerimage',
             name='domain',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl-core.DataDomain'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl_core.DataDomain'),
         ),
         migrations.AddField(
             model_name='dockerimage',
             name='framework',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl-core.Framework'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl_core.Framework'),
         ),
         migrations.AddField(
             model_name='dockerimage',
             name='licence',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl-core.Licence'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='docker_images', to='ufdl_core.Licence'),
         ),
         migrations.AddField(
             model_name='dockerimage',
             name='min_hardware_generation',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl-core.Hardware'),
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='ufdl_core.Hardware'),
         ),
         migrations.AddField(
             model_name='dockerimage',
             name='tasks',
-            field=models.ManyToManyField(related_name='docker_images', through='ufdl-core.DockerImageToJobContract', to='ufdl-core.JobContract'),
+            field=models.ManyToManyField(related_name='docker_images', through='ufdl_core.DockerImageToJobContract', to='ufdl_core.JobContract'),
         ),
         migrations.AddField(
             model_name='dataset',
@@ -653,22 +653,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dataset',
             name='domain',
-            field=models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl-core.DataDomain'),
+            field=models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl_core.DataDomain'),
         ),
         migrations.AddField(
             model_name='dataset',
             name='files',
-            field=models.ManyToManyField(related_name='_dataset_files_+', to='ufdl-core.FileReference'),
+            field=models.ManyToManyField(related_name='_dataset_files_+', to='ufdl_core.FileReference'),
         ),
         migrations.AddField(
             model_name='dataset',
             name='licence',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl-core.Licence'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl_core.Licence'),
         ),
         migrations.AddField(
             model_name='dataset',
             name='project',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl-core.Project'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='datasets', to='ufdl_core.Project'),
         ),
         migrations.AddConstraint(
             model_name='condition',
@@ -713,7 +713,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='metatemplatechildrelation',
             name='parent',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='child_relations', to='ufdl-core.MetaTemplate'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='child_relations', to='ufdl_core.MetaTemplate'),
         ),
         migrations.AddConstraint(
             model_name='licence',

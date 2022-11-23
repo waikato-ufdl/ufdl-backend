@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     Migration inserting the Docker image presets into the database.
     """
     dependencies = [
-        ('ufdl-image-segmentation', '0003_frameworks')
+        ('ufdl_image_segmentation', '0003_frameworks')
     ]
 
     operations = [

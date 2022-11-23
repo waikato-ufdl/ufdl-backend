@@ -9,19 +9,19 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('ufdl-core', '0002_the_rest'),
+        ('ufdl_core', '0002_the_rest'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='SpeechDataset',
             fields=[
-                ('dataset_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl-core.Dataset')),
+                ('dataset_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='ufdl_core.Dataset')),
                 ('transcriptions', models.TextField()),
             ],
             options={
                 'abstract': False,
             },
-            bases=('ufdl-core.dataset',),
+            bases=('ufdl_core.dataset',),
         ),
     ]

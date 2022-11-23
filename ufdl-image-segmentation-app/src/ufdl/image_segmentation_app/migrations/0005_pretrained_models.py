@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     Migration inserting the pre-trained model presets into the database.
     """
     dependencies = [
-        ('ufdl-image-segmentation', '0004_docker')
+        ('ufdl_image_segmentation', '0004_docker')
     ]
 
     operations = [

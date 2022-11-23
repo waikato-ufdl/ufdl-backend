@@ -27,7 +27,7 @@ class UserViewSet(GetByNameViewSet, UFDLBaseViewSet):
             data["password"] = "<REDACTED>"
 
         return (
-            f"URI='{request.get_raw_uri()}'\n"
+            f"URI='{request.get_full_path()}'\n"
             f"METHOD='{request.method}'\n"
             f"ACTION='{self.action}'\n"
             f"DATA={data}\n"

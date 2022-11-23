@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
     Migration inserting the hardware presets into the database.
     """
     dependencies = [
-        ('ufdl-core', '0003_standard_licences')  # Actually dependent on '0002_the_rest' but Django needs a linear
+        ('ufdl_core', '0003_standard_licences')  # Actually dependent on '0002_the_rest' but Django needs a linear
                                                  # dependency
     ]
 

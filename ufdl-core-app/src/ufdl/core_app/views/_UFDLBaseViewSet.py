@@ -1,3 +1,4 @@
+from rest_framework.request import Request
 from rest_framework.viewsets import ModelViewSet
 
 from ufdl.json.core.filter import FilterSpec
@@ -74,7 +75,7 @@ class UFDLBaseViewSet(ModelViewSet):
 
         all_requests.send(self.__class__, request=request)
 
-    def format_request_log_message(self, request) -> str:
+    def format_request_log_message(self, request: Request) -> str:
         """
         Formats the automatic logging message from the request.
 
@@ -82,7 +83,7 @@ class UFDLBaseViewSet(ModelViewSet):
         :return:            The logging message.
         """
         return (
-            f"URI='{request.get_raw_uri()}'\n"
+            f"URI='{request.get_full_path()}'\n"
             f"METHOD='{request.method}'\n"
             f"ACTION='{self.action}'\n"
             f"DATA={request.data}\n"

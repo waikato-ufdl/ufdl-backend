@@ -23,6 +23,8 @@ RUN \
     rm ACCC4CF8.asc && \
     apt-get update && \
     apt-get -y install postgresql-15 && \
+    locale-gen en_NZ.UTF-8 && \
+    update-locale && \
     # Clean up the apt cache
     rm -rf /var/lib/apt/lists/*
 

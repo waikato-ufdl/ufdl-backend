@@ -1,19 +1,19 @@
 import os
 
 from channels.auth import AuthMiddlewareStack
-from channels.http import AsgiHandler
 from channels.routing import ProtocolTypeRouter, URLRouter
 
 import django
+from django.core.asgi import get_asgi_application
 from django.urls import re_path
-
-from ufdl.core_app.models.jobs.notifications import WebSocketNotificationConsumer
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ufdl.api_site.settings')
 django.setup()
 
+from ufdl.core_app.models.jobs.notifications import WebSocketNotificationConsumer
+
 application = ProtocolTypeRouter({
-    'http': AsgiHandler(),
+    'http': get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
             [

@@ -11,7 +11,7 @@ services:
       - "5432/tcp"
     image: public.aml-repo.cms.waikato.ac.nz:443/ufdl/ufdl_postgres:latest
     volumes:
-      - pg:/var/lib/postgresql/10/main
+      - pg:/var/lib/postgresql/15/main
 
   redis:
     container_name: ufdl-redis

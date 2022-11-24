@@ -21,7 +21,8 @@ services:
 
   ufdl:
     build:
-      context: ../backend
+      context: ../..
+      dockerfile: docker/backend/Dockerfile
     container_name: ufdl-backend
     depends_on:
       - database

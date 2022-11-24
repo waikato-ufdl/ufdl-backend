@@ -5,9 +5,8 @@ import sys
 
 
 def run(argv=sys.argv):
-    from .manage import main
-    script = argv[0].replace("run.py", "manage.py")
-    main([script, "runserver"] + sys.argv[1:])
+    from daphne.cli import CommandLineInterface
+    sys.exit(CommandLineInterface().run(["ufdl.api_site.asgi:application"] + argv[1:]))
 
 
 if __name__ == '__main__':

@@ -34,7 +34,7 @@ setup(
         "simple-django-teams==0.0.6",
         "ufdl.json-messages",
         "requests-file>=1.5,<1.6",
-        "channels>=3,<4",
+        "channels>=4,<5",
         "channels_redis>=4,<5",
         "ufdl.jobtypes",
         "ufdl.jobcontracts",

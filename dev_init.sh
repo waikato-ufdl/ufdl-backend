@@ -208,8 +208,8 @@ then
 fi
 
 echo "Start dev server with:"
-echo "  ./$VENV/bin/python -m ufdl.api_site.scripts.manage runserver [BIND]"
+echo "  ./$VENV/bin/python -m ufdl.api_site.scripts.run [BIND]"
 echo "Server is then running on:"
 echo "  localhost:8000"
-echo "Using '0.0.0.0:8000' as BIND address will make the server available on"
+echo "Using '-b 0.0.0.0' as BIND address will make the server available on"
 echo "port 8000 outside of localhost."

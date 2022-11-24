@@ -10,14 +10,17 @@ ARG UFDL_POSTGRESQL_PASSWORD=ufdl
 # ======== #
 # OS Setup #
 # ======== #
+ENV TZ=Etc/UTC
 RUN \
     # Make sure that we aren't prompted for timezone information
     export DEBIAN_FRONTEND=noninteractive && \
     # Install necessary tools for the build
     apt-get update && \
-    apt-get install -y --no-install-recommends git-core libglib2.0-0 libsm6 libxrender-dev libxrender1 libxext6 wget && \
+    apt-get install -y --no-install-recommends git-core libglib2.0-0 libsm6 libxrender-dev libxrender1 libxext6 wget gpg gpg-agent ca-certificates && \
     echo "deb http://apt.postgresql.org/pub/repos/apt bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    wget -O ACCC4CF8.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc && \
+    apt-key add ACCC4CF8.asc && \
+    rm ACCC4CF8.asc && \
     apt-get update && \
     apt-get -y install postgresql-15 && \
     # Clean up the apt cache

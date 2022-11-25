@@ -21,6 +21,8 @@ services:
 
   ufdl:
     build:
+      args:
+        UFDL_FRONTEND_BRANCH: ${UFDL_FRONTEND_BRANCH:-main}
       context: ../..
       dockerfile: docker/backend/Dockerfile
     container_name: ufdl-backend

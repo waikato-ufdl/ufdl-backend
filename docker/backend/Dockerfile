@@ -4,6 +4,7 @@ FROM ${DOCKER_REGISTRY}ubuntu:bionic
 
 ARG PYTHON=python3.8
 ARG NODE_VERSION=v15.12.0
+ARG UFDL_FRONTEND_BRANCH=main
 
 # ======== #
 # OS Setup #
@@ -49,6 +50,7 @@ RUN \
     npm run rebuild && \
     # Build the HTML client
     cd /ufdl/ufdl-frontend-ts && \
+    git checkout $UFDL_FRONTEND_BRANCH && \
     npm install . && \
     npm run rebuild && \
     # Copy the HTML client build into the top-level directory (linked after backend build for serving)

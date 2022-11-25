@@ -51,7 +51,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp/ufdl-job-launcher:/tmp/ufdl-job-launcher
-      - job-launcher-docker.conf:/ufdl/ufdl-job-launcher/examples/job-launcher-example.conf
+      - ./job-launcher-docker.conf:/ufdl/ufdl-job-launcher/examples/job-launcher-example.conf
 
 volumes:
   pg:

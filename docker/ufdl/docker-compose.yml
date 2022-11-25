@@ -41,6 +41,18 @@ services:
     volumes:
       - fs:/ufdl/ufdl-backend/fs
 
+  job-launcher:
+    container_name: ufdl-job-launcher
+    depends_on:
+      - ufdl
+    image: public.aml-repo.cms.waikato.ac.nz:443/ufdl/ufdl_job_launcher:latest
+    profiles:
+      - with-job-launcher
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/ufdl-job-launcher:/tmp/ufdl-job-launcher
+      - job-launcher-docker.conf:/ufdl/ufdl-job-launcher/examples/job-launcher-example.conf
+
 volumes:
   pg:
   fs:

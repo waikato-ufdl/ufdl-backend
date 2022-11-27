@@ -42,6 +42,7 @@ services:
         mode: host
     volumes:
       - fs:/ufdl/ufdl-backend/fs
+      - ./extra/:/ufdl/static/extra
 
   job-launcher:
     container_name: ufdl-job-launcher

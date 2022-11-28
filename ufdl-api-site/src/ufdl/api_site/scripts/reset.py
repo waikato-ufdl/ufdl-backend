@@ -64,7 +64,8 @@ def reset(argv=sys.argv):
 
     # Run the server if the option is given
     if len(argv) >= 2 and argv[1] == "--run":
-        main([script, "runserver"])
+        script = argv[0].replace("manage.py", "run.py")
+        main([script] + argv[2:])
 
 
 if __name__ == '__main__':

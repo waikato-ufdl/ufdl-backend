@@ -34,6 +34,7 @@ services:
       UFDL_POSTGRESQL_PASSWORD: ${UFDL_POSTGRESQL_PASSWORD}
       UFDL_POSTGRESQL_HOST: database
       UFDL_REDIS_HOST: redis
+      UFDL_RESET_BACKEND_ON_RUN: ${UFDL_RESET_BACKEND_ON_RUN}
     image: public.aml-repo.cms.waikato.ac.nz:443/ufdl/ufdl_backend:latest
     ports:
       - target: 8000

@@ -20,6 +20,10 @@
         "types": ["bool"],
         "default": true,
         "help": "If enabled, accuracy is applied per-class rather than across the entire dataset."
+      },
+      "frontend_metadata": {
+        "types": ["JSON"],
+        "help": "Metadata to upload to the job-launcher."
       }
     }
   }

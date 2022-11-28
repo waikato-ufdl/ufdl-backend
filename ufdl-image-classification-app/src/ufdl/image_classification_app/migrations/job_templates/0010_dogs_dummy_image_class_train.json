@@ -20,6 +20,10 @@
         "types": ["float"],
         "default": 0.0,
         "help": "How long to sleep between processing each image."
+      },
+      "frontend_metadata": {
+        "types": ["JSON"],
+        "help": "Metadata to upload to the job-launcher."
       }
     }
   }

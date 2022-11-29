@@ -2,13 +2,10 @@
 ARG DOCKER_REGISTRY=public.aml-repo.cms.waikato.ac.nz:443/
 FROM ${DOCKER_REGISTRY}ubuntu:bionic
 
-ARG PYTHON=python3.8
-ARG NODE_VERSION=v15.12.0
-ARG UFDL_FRONTEND_BRANCH=main
-
 # ======== #
 # OS Setup #
 # ======== #
+ARG PYTHON=python3.8
 RUN \
     # Make sure that we aren't prompted for timezone information
     export DEBIAN_FRONTEND=noninteractive && \
@@ -19,9 +16,9 @@ RUN \
     # Clean up the apt cache
     rm -rf /var/lib/apt/lists/*
 
-# ================================= #
-# Backend Dependencies Installation #
-# ================================= #
+# ==================== #
+# Backend Installation #
+# ==================== #
 RUN \
     # Create and change into base directory
     mkdir /ufdl && \
@@ -31,9 +28,31 @@ RUN \
     git clone https://github.com/waikato-ufdl/ufdl-job-types.git && \
     git clone https://github.com/waikato-ufdl/ufdl-job-contracts.git
 
+COPY ufdl-api-site/ /ufdl/ufdl-backend/ufdl-api-site/
+COPY ufdl-core-app/ /ufdl/ufdl-backend/ufdl-core-app/
+COPY ufdl-html-client-app/ /ufdl/ufdl-backend/ufdl-html-client-app/
+COPY ufdl-image-classification-app/ /ufdl/ufdl-backend/ufdl-image-classification-app/
+COPY ufdl-image-segmentation-app/ /ufdl/ufdl-backend/ufdl-image-segmentation-app/
+COPY ufdl-object-detection-app/ /ufdl/ufdl-backend/ufdl-object-detection-app/
+COPY ufdl-speech-app/ /ufdl/ufdl-backend/ufdl-speech-app/
+COPY \
+    dev_init.sh \
+    dev_reset.sh \
+    dev_start.sh \
+    /ufdl/ufdl-backend/
+
+RUN \
+    # Run the dev-init script, no prompts, and don't try and reset the database
+    cd /ufdl/ufdl-backend && \
+    ./dev_init.sh -y -r && \
+    # Link the HTML client into the static file server
+    ln -s /ufdl/static /ufdl/ufdl-backend/venv.dev/lib/${PYTHON}/site-packages/ufdl/html_client_app/static
+
 # ======================== #
 # HTML Client Installation #
 # ======================== #
+ARG NODE_VERSION=v15.12.0
+ARG UFDL_FRONTEND_BRANCH=main
 RUN \
     # Download and install Node.js, adding it to PATH
     cd / && \
@@ -60,29 +79,6 @@ RUN \
     rm -rf node-${NODE_VERSION}-linux-x64.tar.xz node-${NODE_VERSION}-linux-x64 && \
     cd ufdl && \
     rm -rf ufdl-ts-client ufdl-frontend-ts
-
-# ==================== #
-# Backend Installation #
-# ==================== #
-COPY ufdl-api-site/ /ufdl/ufdl-backend/ufdl-api-site/
-COPY ufdl-core-app/ /ufdl/ufdl-backend/ufdl-core-app/
-COPY ufdl-html-client-app/ /ufdl/ufdl-backend/ufdl-html-client-app/
-COPY ufdl-image-classification-app/ /ufdl/ufdl-backend/ufdl-image-classification-app/
-COPY ufdl-image-segmentation-app/ /ufdl/ufdl-backend/ufdl-image-segmentation-app/
-COPY ufdl-object-detection-app/ /ufdl/ufdl-backend/ufdl-object-detection-app/
-COPY ufdl-speech-app/ /ufdl/ufdl-backend/ufdl-speech-app/
-COPY \
-    dev_init.sh \
-    dev_reset.sh \
-    dev_start.sh \
-    /ufdl/ufdl-backend/
-
-RUN \
-    # Run the dev-init script, no prompts, and don't try and reset the database
-    cd /ufdl/ufdl-backend && \
-    ./dev_init.sh -y -r && \
-    # Link the HTML client into the static file server
-    ln -s /ufdl/static /ufdl/ufdl-backend/venv.dev/lib/${PYTHON}/site-packages/ufdl/html_client_app/static
 
 # Add default values for the Postgres environment
 ENV UFDL_POSTGRESQL_USER=ufdl

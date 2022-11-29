@@ -31,18 +31,9 @@ except ImportError:
     with open(os.path.join(current_dir, "secret.py"), "w") as file:
         file.write(f"SECRET_KEY='{get_random_secret_key()}'\n")
         file.write(f"JWT_SIGNING_KEY='{get_random_secret_key()}'\n")
-        file.write(f"DEBUG=True\n")
+        file.write(f"DEBUG=True\n") # FIXME: SECURITY WARNING: don't run with debug turned on in production!
         file.write(f"ALLOWED_HOSTS=['*']\n")
-    from .secret import SECRET_KEY, JWT_SIGNING_KEY
-    
-    # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = True
-    
-    ALLOWED_HOSTS = [
-        "localhost",
-        "127.0.0.1",
-    ]
-
+    from .secret import SECRET_KEY, JWT_SIGNING_KEY, DEBUG, ALLOWED_HOSTS
 
 # Application definition
 

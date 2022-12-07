@@ -1,28 +1,28 @@
 # Ubuntu 18.04 with Python 3.7
 ARG DOCKER_REGISTRY=public.aml-repo.cms.waikato.ac.nz:443/
-FROM ${DOCKER_REGISTRY}ubuntu:bionic
 
-# ======== #
-# OS Setup #
-# ======== #
+# ================== #
+# Setup the build OS #
+# ================== #
+FROM ${DOCKER_REGISTRY}ubuntu:bionic AS build_os
 ARG PYTHON=python3.8
 RUN \
     # Make sure that we aren't prompted for timezone information
     export DEBIAN_FRONTEND=noninteractive && \
     # Install necessary tools for the build
     apt-get update && \
-    apt-get install -y --no-install-recommends git-core libglib2.0-0 libsm6 libxrender-dev libxrender1 libxext6 postgresql wget libpq-dev && \
+    apt-get install -y --no-install-recommends git-core libglib2.0-0 libsm6 libxrender-dev libxrender1 libxext6 wget libpq-dev && \
     apt-get install -y build-essential ${PYTHON} ${PYTHON}-dev lib${PYTHON}-dev virtualenv && \
-    # Clean up the apt cache
-    rm -rf /var/lib/apt/lists/*
+    # Make the root UFDL directory
+    mkdir /ufdl
+WORKDIR /ufdl
 
 # ==================== #
 # Backend Installation #
 # ==================== #
+FROM build_os AS backend
+ARG UFDL_BACKEND_CACHE_INVALIDATION
 RUN \
-    # Create and change into base directory
-    mkdir /ufdl && \
-    cd /ufdl && \
     # Clone the required repos
     git clone https://github.com/waikato-ufdl/ufdl-json-messages.git && \
     git clone https://github.com/waikato-ufdl/ufdl-job-types.git && \
@@ -35,24 +35,20 @@ COPY ufdl-image-classification-app/ /ufdl/ufdl-backend/ufdl-image-classification
 COPY ufdl-image-segmentation-app/ /ufdl/ufdl-backend/ufdl-image-segmentation-app/
 COPY ufdl-object-detection-app/ /ufdl/ufdl-backend/ufdl-object-detection-app/
 COPY ufdl-speech-app/ /ufdl/ufdl-backend/ufdl-speech-app/
-COPY \
-    dev_init.sh \
-    dev_reset.sh \
-    dev_start.sh \
-    /ufdl/ufdl-backend/
+COPY dev_init.sh /ufdl/ufdl-backend/
 
 RUN \
     # Run the dev-init script, no prompts, and don't try and reset the database
     cd /ufdl/ufdl-backend && \
-    ./dev_init.sh -y -r && \
-    # Link the HTML client into the static file server
-    ln -s /ufdl/static /ufdl/ufdl-backend/venv.dev/lib/${PYTHON}/site-packages/ufdl/html_client_app/static
+    ./dev_init.sh -y -r
 
 # ======================== #
 # HTML Client Installation #
 # ======================== #
+FROM build_os AS frontend
 ARG NODE_VERSION=v15.12.0
 ARG UFDL_FRONTEND_BRANCH=main
+ARG UFDL_FRONTEND_CACHE_INVALIDATION
 RUN \
     # Download and install Node.js, adding it to PATH
     cd / && \
@@ -71,14 +67,38 @@ RUN \
     cd /ufdl/ufdl-frontend-ts && \
     git checkout $UFDL_FRONTEND_BRANCH && \
     npm install . && \
-    npm run rebuild && \
-    # Copy the HTML client build into the top-level directory (linked after backend build for serving)
-    cp -rf /ufdl/ufdl-frontend-ts/build /ufdl/static && \
-    # Remove Node.js and the repos as they are no longer required
-    cd / && \
-    rm -rf node-${NODE_VERSION}-linux-x64.tar.xz node-${NODE_VERSION}-linux-x64 && \
-    cd ufdl && \
-    rm -rf ufdl-ts-client ufdl-frontend-ts
+    npm run rebuild
+
+# ======================== #
+# Final Image Construction #
+# ======================== #
+FROM ${DOCKER_REGISTRY}ubuntu:bionic
+ARG PYTHON=python3.8
+
+# Setup the base run-time OS
+RUN \
+    # Make sure that we aren't prompted for timezone information
+    export DEBIAN_FRONTEND=noninteractive && \
+    # Install necessary tools for the build
+    apt-get update && \
+    #apt-get install -y --no-install-recommends git-core libglib2.0-0 libsm6 libxrender-dev libxrender1 libxext6 postgresql wget libpq-dev && \
+    apt-get install -y --no-install-recommends postgresql && \
+    #apt-get install -y build-essential ${PYTHON} ${PYTHON}-dev lib${PYTHON}-dev virtualenv && \
+    apt-get install -y build-essential ${PYTHON} && \
+    # Clean up the apt cache
+    rm -rf /var/lib/apt/lists/* && \
+    # Make the root UFDL directory
+    mkdir /ufdl
+
+# Copy over artifacts from backend and frontend builds
+COPY --from=backend /ufdl/ufdl-backend/venv.dev /ufdl/ufdl-backend/venv.dev
+COPY --from=frontend /ufdl/ufdl-frontend-ts/build /ufdl/static
+
+# Copy in run-time scripts
+COPY dev_reset.sh dev_start.sh /ufdl/ufdl-backend/
+
+# Link the HTML client into the static file server
+RUN ln -s /ufdl/static /ufdl/ufdl-backend/venv.dev/lib/${PYTHON}/site-packages/ufdl/html_client_app/static
 
 # Add default values for the Postgres environment
 ENV UFDL_POSTGRESQL_USER=ufdl

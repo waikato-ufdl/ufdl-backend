@@ -195,6 +195,7 @@ echo "Installing UFDL modules..."
 ./$VENV/bin/pip install ../ufdl-job-contracts/
 ./$VENV/bin/pip install ufdl-core-app/
 ./$VENV/bin/pip install ufdl-image-classification-app/
+./$VENV/bin/pip install ufdl-spectrum-classification-app/
 ./$VENV/bin/pip install ufdl-image-segmentation-app/
 ./$VENV/bin/pip install ufdl-object-detection-app/
 ./$VENV/bin/pip install ufdl-speech-app/

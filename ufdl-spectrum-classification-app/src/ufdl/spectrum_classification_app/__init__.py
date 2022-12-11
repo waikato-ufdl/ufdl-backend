@@ -1,0 +1,1 @@
+default_app_config = 'ufdl.spectrum_classification_app.apps.UFDLSpectrumClassificationAppConfig'

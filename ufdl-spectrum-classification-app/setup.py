@@ -4,8 +4,8 @@ from setuptools import setup, find_namespace_packages
 
 
 setup(
-    name="ufdl-api-site",
-    description="The main Django site for UFDL server.",
+    name="ufdl-spectrum-classification-app",
+    description="App for classification of spectra.",
     url="https://github.com/waikato-ufdl/ufdl-backend",
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -17,6 +17,9 @@ setup(
     package_dir={
         '': 'src'
     },
+    package_data={
+        '': ['*.csv', '*.txt', '*.json']
+    },
     packages=find_namespace_packages(where='src'),
     namespace_packages=[
         "ufdl"
@@ -27,20 +30,8 @@ setup(
     python_requires="==3.8.*",
     install_requires=[
         "Django>=4.1,<5",
-        "djangorestframework-simplejwt>=5.2,<6",
-        "django-cors-headers>=3.13,<4",
-        "psycopg2>=2.9,<3",
+        "djangorestframework>=3.14,<4",
         "ufdl-core-app",
-        "ufdl-image-classification-app",
-        "ufdl-object-detection-app",
-        "ufdl-speech-app",
-        "ufdl-spectrum-classification-app"
-    ],
-    entry_points={
-        "console_scripts": [
-            "ufdl-reset=ufdl.api_site.scripts.reset:reset",
-            "ufdl-manage=ufdl.api_site.scripts.manage:main",
-            "ufdl-run=ufdl.api_site.scripts.run:run"
-        ]
-    }
+        "ufdl.json-messages"
+    ]
 )

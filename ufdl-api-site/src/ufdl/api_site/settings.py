@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'ufdl.object_detection_app',
     'ufdl.speech_app',
     'ufdl.image_segmentation_app',
+    'ufdl.spectrum_classification_app',
     'simple_django_teams',
     'ufdl.html_client_app'
 ]

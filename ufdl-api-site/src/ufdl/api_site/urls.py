@@ -23,6 +23,7 @@ urlpatterns = [
     path('v1/classify/', include('ufdl.image_classification_app.urls')),
     path('v1/objdet/', include('ufdl.object_detection_app.urls')),
     path('v1/speech/', include('ufdl.speech_app.urls')),
+    path('v1/spectra/', include('ufdl.spectrum_classification_app.urls')),
     path('v1/segments/', include('ufdl.image_segmentation_app.urls')),
     path('v1/html', include('ufdl.html_client_app.urls')),
     re_path('v1/auth/refresh/?', token_refresh, name='refresh_jwt_token'),

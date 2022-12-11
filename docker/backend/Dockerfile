@@ -32,6 +32,7 @@ COPY ufdl-api-site/ /ufdl/ufdl-backend/ufdl-api-site/
 COPY ufdl-core-app/ /ufdl/ufdl-backend/ufdl-core-app/
 COPY ufdl-html-client-app/ /ufdl/ufdl-backend/ufdl-html-client-app/
 COPY ufdl-image-classification-app/ /ufdl/ufdl-backend/ufdl-image-classification-app/
+COPY ufdl-spectrum-classification-app/ /ufdl/ufdl-backend/ufdl-spectrum-classification-app/
 COPY ufdl-image-segmentation-app/ /ufdl/ufdl-backend/ufdl-image-segmentation-app/
 COPY ufdl-object-detection-app/ /ufdl/ufdl-backend/ufdl-object-detection-app/
 COPY ufdl-speech-app/ /ufdl/ufdl-backend/ufdl-speech-app/

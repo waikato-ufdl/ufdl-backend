@@ -1,0 +1,26 @@
+{
+  "name": "weka_spec_class_predict",
+  "version": 1,
+  "description": "Predicts spectrum classifications using a WEKA classifier",
+  "scope": "public",
+  "domain": "sc",
+  "licence": "Apache 2.0",
+  "specific": {
+    "job_type": "Predict<Domain<'Spectrum Classification'>, Framework<'weka', 'classifier'>>",
+    "executor_class": "ufdl.joblauncher.spectra.weka.executors.SpectrumClassificationPredict_Weka",
+    "required_packages": "",
+    "parameters":
+    {
+      "clear_dataset": {
+        "types": ["bool"],
+        "default": false,
+        "help": "If enabled, any meta-data or predictions get removed from the dataset beforehand."
+      },
+      "store_predictions": {
+        "types": ["bool"],
+        "default": false,
+        "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+      }
+    }
+  }
+}

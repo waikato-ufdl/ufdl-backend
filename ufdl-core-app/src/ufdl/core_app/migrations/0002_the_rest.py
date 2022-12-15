@@ -513,22 +513,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='licence',
             name='conditions',
-            field=models.ManyToManyField(related_name='_licence_conditions_+', to='ufdl_core.Condition'),
+            field=models.ManyToManyField(related_name='+', to='ufdl_core.Condition'),
         ),
         migrations.AddField(
             model_name='licence',
             name='domains',
-            field=models.ManyToManyField(related_name='_licence_domains_+', to='ufdl_core.Domain'),
+            field=models.ManyToManyField(related_name='+', to='ufdl_core.Domain'),
         ),
         migrations.AddField(
             model_name='licence',
             name='limitations',
-            field=models.ManyToManyField(related_name='_licence_limitations_+', to='ufdl_core.Limitation'),
+            field=models.ManyToManyField(related_name='+', to='ufdl_core.Limitation'),
         ),
         migrations.AddField(
             model_name='licence',
             name='permissions',
-            field=models.ManyToManyField(related_name='_licence_permissions_+', to='ufdl_core.Permission'),
+            field=models.ManyToManyField(related_name='+', to='ufdl_core.Permission'),
         ),
         migrations.AddField(
             model_name='jobtemplate',
@@ -658,7 +658,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='dataset',
             name='files',
-            field=models.ManyToManyField(related_name='_dataset_files_+', to='ufdl_core.FileReference'),
+            field=models.ManyToManyField(related_name='+', to='ufdl_core.FileReference'),
         ),
         migrations.AddField(
             model_name='dataset',

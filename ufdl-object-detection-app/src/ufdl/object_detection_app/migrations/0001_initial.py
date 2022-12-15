@@ -104,7 +104,7 @@ class Migration(migrations.Migration):
                 ('height', models.IntegerField()),
                 ('time', models.FloatField(default=None, null=True)),
                 ('polygon', models.TextField(default=None, null=True)),
-                ('container', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl_object_detection.Annotations')),
+                ('container', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='annotations', to='ufdl_object_detection.Annotations')),
                 ('label_reference', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl_object_detection.DatasetToLabel')),
                 ('prefix_reference', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='annotations', to='ufdl_object_detection.DatasetToPrefix')),
             ],

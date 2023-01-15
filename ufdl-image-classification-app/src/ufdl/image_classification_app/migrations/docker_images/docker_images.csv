@@ -4,4 +4,4 @@ tf_imageclass_cpu,1.14,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_cl
 pytorch_imageclass,1.6,public.aml-repo.cms.waikato.ac.nz:443/pytorch/image_classification:1.6,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.2,pytorch,1.6,ic,"Train,Predict",Pascal,false,BSD 3-clause
 pytorch_imageclass_cpu,1.6,public.aml-repo.cms.waikato.ac.nz:443/pytorch/image_classification:1.6_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.2,pytorch,1.6,ic,"Train,Predict",,true,BSD 3-clause
 mmclassification,0.23.1,public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/mmclassification:0.23.1_cuda11.1,public.aml-repo.cms.waikato.ac.nz:443,public,public,11.1,mmclass,0.23.1,ic,"Train,Predict",Pascal,false,Apache 2.0
-mmclassification_cpu,0.23.1,public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/mmclassification:0.23.1_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,11.1,mmclass,0.23.1,ic,"Train,Predict",,true,Apache 2.0
+mmclassification_cpu,0.23.1,public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/mmclassification:0.23.1_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,11.1,mmclass,0.23.1,ic,"Predict",,true,Apache 2.0

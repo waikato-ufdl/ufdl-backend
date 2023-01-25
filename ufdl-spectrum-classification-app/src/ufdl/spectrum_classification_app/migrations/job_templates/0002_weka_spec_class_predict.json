@@ -8,7 +8,7 @@
   "specific": {
     "job_type": "Predict<Domain<'Spectrum Classification'>, Framework<'weka', 'classifier'>>",
     "executor_class": "ufdl.joblauncher.spectra.weka.executors.SpectrumClassificationPredict_Weka",
-    "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
+    "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git python-javabridge python-weka-wrapper3",
     "parameters":
     {
       "clear_dataset": {

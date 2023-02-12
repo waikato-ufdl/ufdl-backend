@@ -39,7 +39,7 @@ services:
     image: public.aml-repo.cms.waikato.ac.nz:443/ufdl/ufdl_backend:latest
     ports:
       - target: 8000
-        published: ${UFDL_SERVER_PORT}
+        published: ${UFDL_SERVER_PORT:-8000}
         protocol: tcp
         mode: host
     volumes:

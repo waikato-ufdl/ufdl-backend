@@ -24,6 +24,7 @@ class TranscriptionsViewSet(RoutedViewSet):
         return [
             routers.Route(
                 url=r'^{prefix}/{lookup}/transcriptions{trailing_slash}$',
+                # TODO: Add bulk transcription upload
                 mapping={'get': 'get_transcriptions'},
                 name='{basename}-transcriptions',
                 detail=True,

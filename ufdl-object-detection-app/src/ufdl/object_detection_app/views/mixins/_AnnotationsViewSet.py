@@ -86,6 +86,7 @@ class AnnotationsViewSet(RoutedViewSet):
                 mapping={
                     'get': 'get_annotations',
                     'post': 'set_annotations',
+                    # TODO: Add patch method for updating file annotations in bulk
                     'delete': 'clear_annotations'
                 },
                 name='{basename}-annotations',

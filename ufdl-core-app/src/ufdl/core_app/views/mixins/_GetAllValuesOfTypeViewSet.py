@@ -56,4 +56,4 @@ class GetAllValuesOfTypeViewSet(RoutedViewSet):
         if type.is_abstract:
             raise TypeIsAbstract(type_string)
 
-        return Response(type.list_all_values())
+        return Response(type.list_all_json_values())

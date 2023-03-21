@@ -59,7 +59,6 @@ class ImportTemplateViewSet(RoutedViewSet):
         try:
             instance = add_job_template(
                 spec,
-                Input,
                 Parameter,
                 Framework,
                 DataDomain,

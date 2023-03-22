@@ -1,0 +1,4 @@
+c:License and copyright notice
+d:Software
+d:Models
+u:https://en.wikipedia.org/wiki/All_rights_reserved

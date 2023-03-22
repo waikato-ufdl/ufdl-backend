@@ -54,6 +54,23 @@ services:
       - /tmp/ufdl-job-launcher:/tmp/ufdl-job-launcher
       - ./job-launcher-docker.conf:/ufdl/ufdl-job-launcher/examples/job-launcher-example.conf
 
+  job-launcher-gpu:
+    depends_on:
+      - ufdl
+    image: public.aml-repo.cms.waikato.ac.nz:443/ufdl/ufdl_job_launcher-gpu:latest
+    profiles:
+      - with-job-launcher-gpu
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp/ufdl-job-launcher:/tmp/ufdl-job-launcher
+      - ./job-launcher-docker.conf:/ufdl/ufdl-job-launcher/examples/job-launcher-example.conf
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+
 volumes:
   pg:
   fs:

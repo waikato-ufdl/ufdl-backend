@@ -48,7 +48,7 @@ def iterate_docker_images_json(path: str):
             image["domain"],
             ",".join(image["tasks"]),
             image["min_hardware_generation"],
-            str(image["cpu"]),
+            str(image["cpu"]).lower(),
             image["license"],
         )
 

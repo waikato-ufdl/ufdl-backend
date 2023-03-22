@@ -34,7 +34,7 @@
       },
       "epochs": {
         "types": ["int"],
-        "default": 100,
+        "default": 20,
         "help": "The number of training steps to perform."
       },
       "checkpoint_interval": {

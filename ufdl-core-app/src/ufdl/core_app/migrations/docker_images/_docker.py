@@ -1,15 +1,59 @@
+import json
 import os
 from decimal import Decimal
 from typing import Iterator, Tuple, Optional
 
 from ...apps import UFDLCoreAppConfig
-from .._util import iterate_csv_file
 
 # The data directory containing the Docker image definitions
 ROOT = os.path.split(__file__)[0]
 
 
-def iterate_docker_images(path: str = os.path.join(ROOT, "docker_images.csv")) -> Iterator[Tuple[Optional[str], ...]]:
+def iterate_docker_images_json(path: str):
+    """
+    Loads the docker images from the JSON file and returns an iterator over the values.
+
+    See docker_images_example.json for example.
+
+    :return:    An iterator over the following fields of the known Docker images:
+                 - name
+                 - version
+                 - URL
+                 - registry URL
+                 - registry username
+                 - registry password
+                 - CUDA version
+                 - framework
+                 - framework version
+                 - domain
+                 - tasks
+                 - minimum hardware generation
+                 - cpu
+                 - license
+    """
+    with open(path, "r") as fp:
+        images = json.load(fp)
+
+    for image in images:
+        yield (
+            image["name"],
+            image["version"],
+            image["url"],
+            image["registry"]["url"],
+            image["registry"]["user"] if "user" in image["registry"] else "",
+            image["registry"]["password"] if "password" in image["registry"] else "",
+            image["cuda_version"],
+            image["framework"]["name"],
+            image["framework"]["version"],
+            image["domain"],
+            ",".join(image["tasks"]),
+            image["min_hardware_generation"],
+            str(image["cpu"]),
+            image["license"],
+        )
+
+
+def iterate_docker_images(path: str = os.path.join(ROOT, "docker_images.json")) -> Iterator[Tuple[Optional[str], ...]]:
     """
     Iterates over the known Docker images.
 
@@ -29,7 +73,7 @@ def iterate_docker_images(path: str = os.path.join(ROOT, "docker_images.csv")) -
                  - cpu
                  - license
     """
-    yield from iterate_csv_file(path)
+    yield from iterate_docker_images_json(path)
 
 
 def get_python_docker_migration(docker_image_iterator):

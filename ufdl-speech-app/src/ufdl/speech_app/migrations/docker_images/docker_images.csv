@@ -1,6 +1,0 @@
-name,version,url,registry_url,registry_user,registry_password,cuda_version,framework_name,framework_version,domain,types,min_hardware_generation,cpu,license
-tf_deepspeech,0.7.4,public.aml-repo.cms.waikato.ac.nz:443/tensorflow/deepspeech:0.7.4,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,tensorflow,1.15,sp,"Train,Predict",Pascal,false,Mozilla Public License 2.0
-pt_deepspeech2,2020-08-13,public.aml-repo.cms.waikato.ac.nz:443/pytorch/deepspeech2:2020-08-13,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.0,pytorch,1.2,sp,"Train,Predict",Pascal,false,MIT
-tf_coqui_stt,1.4.0_cuda11.6,public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.4.0_cuda11.6,public.aml-repo.cms.waikato.ac.nz:443,public,public,11.6,coqui_stt,1,sp,"Train",Pascal,false,Mozilla Public License 2.0
-tf_coqui_stt,1.3.0_cuda11.0,public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.3.0_cuda11.0,public.aml-repo.cms.waikato.ac.nz:443,public,public,11.0,coqui_stt,1,sp,"Train",Pascal,false,Mozilla Public License 2.0
-tf_coqui_stt,1.15.2_0.10.0a10_cpu,public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.15.2_0.10.0a10_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,11.0,coqui_stt,1,sp,"Predict",,true,Mozilla Public License 2.0

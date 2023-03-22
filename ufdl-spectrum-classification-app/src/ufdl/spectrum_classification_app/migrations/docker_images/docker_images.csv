@@ -1,2 +1,0 @@
-name,version,url,registry_url,registry_user,registry_password,cuda_version,framework_name,framework_version,domain,types,min_hardware_generation,cpu,license
-pww3_cpu,0.2.12,public.aml-repo.cms.waikato.ac.nz:443/fracpete/pww3:0.2.12_cpu,public.aml-repo.cms.waikato.ac.nz:443,public,public,10.2,weka,classifier,sc,"Train,Predict",,true,GPL3

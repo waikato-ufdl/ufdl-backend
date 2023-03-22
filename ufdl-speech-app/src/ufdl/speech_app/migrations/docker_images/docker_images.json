@@ -1,0 +1,114 @@
+[
+  {
+    "name": "tf_deepspeech",
+    "version": "0.7.4",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/tensorflow/deepspeech:0.7.4",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "10.0",
+    "framework": {
+      "name": "tensorflow",
+      "version": "1.15"
+    },
+    "domain": "sp",
+    "tasks": [
+      "Train",
+      "Predict"
+    ],
+    "min_hardware_generation": "Pascal",
+    "cpu": true,
+    "license": "Mozilla Public License 2.0"
+  },
+  {
+    "name": "pt_deepspeech2",
+    "version": "2020-08-13",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/pytorch/deepspeech2:2020-08-13",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "10.0",
+    "framework": {
+      "name": "pytorch",
+      "version": "1.2"
+    },
+    "domain": "sp",
+    "tasks": [
+      "Train",
+      "Predict"
+    ],
+    "min_hardware_generation": "Pascal",
+    "cpu": true,
+    "license": "MIT"
+  },
+  {
+    "name": "tf_coqui_stt",
+    "version": "1.4.0_cuda11.6",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.4.0_cuda11.6",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "11.6",
+    "framework": {
+      "name": "coqui_stt",
+      "version": "1"
+    },
+    "domain": "sp",
+    "tasks": [
+      "Train"
+    ],
+    "min_hardware_generation": "Pascal",
+    "cpu": true,
+    "license": "Mozilla Public License 2.0"
+  },
+  {
+    "name": "tf_coqui_stt",
+    "version": "1.3.0_cuda11.0",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.3.0_cuda11.0",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "11.0",
+    "framework": {
+      "name": "coqui_stt",
+      "version": "1"
+    },
+    "domain": "sp",
+    "tasks": [
+      "Train"
+    ],
+    "min_hardware_generation": "Pascal",
+    "cpu": true,
+    "license": "Mozilla Public License 2.0"
+  },
+  {
+    "name": "tf_coqui_stt",
+    "version": "1.15.2_0.10.0a10_cpu",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.15.2_0.10.0a10_cpu",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "11.0",
+    "framework": {
+      "name": "coqui_stt",
+      "version": "1"
+    },
+    "domain": "sp",
+    "tasks": [
+      "Predict"
+    ],
+    "min_hardware_generation": "",
+    "cpu": true,
+    "license": "Mozilla Public License 2.0"
+  }
+]

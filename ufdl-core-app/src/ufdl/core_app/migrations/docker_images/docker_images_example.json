@@ -1,0 +1,27 @@
+[
+  {
+    "name": "DISPLAYED_NAME",
+    "version": "DISPLAYED_VERSION",
+    "url": "DOCKER_IMAGE_URL",
+    "registry": {
+      "url": "eg public.aml-repo.cms.waikato.ac.nz:443 or https://index.docker.io/v1/",
+      "user": "USER",
+      "password": "PW"
+    },
+    "cuda_version": "CUDA_VERSION, eg 11.0",
+    "framework": {
+      "name": "NAME",
+      "version": "VERSION"
+    },
+    "domain": "one of: ic/od/is/sp/sc/... (depends on migrations in modules)",
+    "tasks": [
+      "For example:",
+      "Train",
+      "Export",
+      "Predict"
+    ],
+    "min_hardware_generation": "NVIDIA architecture name, eg: Pascal",
+    "cpu": true,
+    "license": "see licenses.csv, eg: Apache 2.0"
+  }
+]

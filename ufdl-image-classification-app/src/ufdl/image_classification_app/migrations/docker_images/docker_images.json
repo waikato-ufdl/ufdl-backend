@@ -1,0 +1,139 @@
+[
+  {
+    "name": "tf_imageclass",
+    "version": "1.14",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "10.0",
+    "framework": {
+      "name": "tensorflow",
+      "version": "1.14"
+    },
+    "domain": "ic",
+    "tasks": [
+      "Train",
+      "Predict"
+    ],
+    "min_hardware_generation": "Pascal",
+    "cpu": true,
+    "license": "Apache 2.0"
+  },
+  {
+    "name": "tf_imageclass_cpu",
+    "version": "1.14",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14_cpu",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "10.0",
+    "framework": {
+      "name": "tensorflow",
+      "version": "1.14"
+    },
+    "domain": "ic",
+    "tasks": [
+      "Train",
+      "Predict"
+    ],
+    "min_hardware_generation": "",
+    "cpu": true,
+    "license": "Apache 2.0"
+  },
+  {
+    "name": "pytorch_imageclass",
+    "version": "1.6",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/pytorch/image_classification:1.6",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "10.2",
+    "framework": {
+      "name": "pytorch",
+      "version": "1.6"
+    },
+    "domain": "ic",
+    "tasks": [
+      "Train",
+      "Predict"
+    ],
+    "min_hardware_generation": "Pascal",
+    "cpu": true,
+    "license": "BSD 3-clause"
+  },
+  {
+    "name": "pytorch_imageclass_cpu",
+    "version": "1.6",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/pytorch/image_classification:1.6_cpu",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "10.2",
+    "framework": {
+      "name": "pytorch",
+      "version": "1.6"
+    },
+    "domain": "ic",
+    "tasks": [
+      "Train",
+      "Predict"
+    ],
+    "min_hardware_generation": "",
+    "cpu": true,
+    "license": "BSD 3-clause"
+  },
+  {
+    "name": "mmclassification",
+    "version": "0.23.1",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/mmclassification:0.23.1_cuda11.1",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "11.1",
+    "framework": {
+      "name": "mmclass",
+      "version": "0.23.1"
+    },
+    "domain": "ic",
+    "tasks": [
+      "Train",
+      "Predict"
+    ],
+    "min_hardware_generation": "Pascal",
+    "cpu": true,
+    "license": "Apache 2.0"
+  },
+  {
+    "name": "mmclassification_cpu",
+    "version": "0.23.1",
+    "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/mmclassification:0.23.1_cpu",
+    "registry": {
+      "url": "public.aml-repo.cms.waikato.ac.nz:443",
+      "user": "public",
+      "password": "public"
+    },
+    "cuda_version": "11.1",
+    "framework": {
+      "name": "mmclass",
+      "version": "0.23.1"
+    },
+    "domain": "ic",
+    "tasks": [
+      "Predict"
+    ],
+    "min_hardware_generation": "",
+    "cpu": true,
+    "license": "Apache 2.0"
+  }
+]

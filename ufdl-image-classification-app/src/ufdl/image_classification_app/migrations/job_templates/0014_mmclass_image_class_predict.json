@@ -1,0 +1,50 @@
+{
+  "name": "mmclass_image_class_predict",
+  "version": 1,
+  "description": "Predicting with image classification models trained using MMClassification",
+  "scope": "public",
+  "domain": "ic",
+  "licence": "Apache 2.0",
+  "specific": {
+    "job_type": "Predict<Domain<'Image Classification'>, Framework<str, 'mmclass_0.25.0'>>",
+    "executor_class": "ufdl.joblauncher.classify.mmclassification.ImageClassificationPredict_MMClass_0_23_1",
+    "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
+    "parameters":
+    {
+      "dataset_options": {
+        "types": ["Array<str>", "str"],
+        "default": ["to-images-ic"],
+        "help": "Options to pass to wai-annotations when downloading the dataset"
+      },
+      "docker_image": {
+        "types": [
+          "Name<DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.25.0'>>>",
+          "DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.25.0'>>",
+          "PK<DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.25.0'>>>"
+        ],
+        "help": "The docker image to use"
+      },
+      "clear_dataset": {
+        "types": ["bool"],
+        "default": false,
+        "help": "If enabled, any meta-data or predictions get removed from the dataset beforehand."
+      },
+      "store_predictions": {
+        "types": ["bool"],
+        "default": false,
+        "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+      },
+      "body": {
+        "types": ["Array<str>", "str"],
+        "default": [
+          "mmcls_predict_poll",
+          "--model", "/workspace/output/latest.pth",
+          "--config", "/workspace/output/config.py",
+          "--prediction_in", "/workspace/prediction/in",
+          "--prediction_out", "/workspace/prediction/out"
+        ],
+        "help": "The command passed to the Docker image."
+      }
+    }
+  }
+}

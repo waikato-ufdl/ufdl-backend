@@ -2,6 +2,7 @@ name,version
 tensorflow,1.14
 pytorch,1.6
 mmclass,0.23.1
+mmclass,0.25.0
 resnet18,mmclass_0.23.1
 resnet34,mmclass_0.23.1
 resnet50,mmclass_0.23.1

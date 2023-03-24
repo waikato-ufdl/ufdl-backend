@@ -115,6 +115,7 @@ def gen_sqlite3_database_name() -> str:
     """
     return os.path.join(BASE_DIR, 'db.sqlite3')
 
+
 _UFDL_DATABASE_TYPE = "UFDL_DATABASE_TYPE"
 _DATABASE_SQLITE3 = "sqlite3"
 _DATABASE_POSTGRESQL = "postgresql"

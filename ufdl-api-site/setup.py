@@ -31,10 +31,12 @@ setup(
         "django-cors-headers>=3.13,<4",
         "psycopg2>=2.9,<3",
         "ufdl-core-app",
+        "ufdl-html-client",
         "ufdl-image-classification-app",
+        "ufdl-image-segmentation-app",
         "ufdl-object-detection-app",
+        "ufdl-spectrum-classification-app",
         "ufdl-speech-app",
-        "ufdl-spectrum-classification-app"
     ],
     entry_points={
         "console_scripts": [

@@ -9,4 +9,5 @@ resnet50,mmclass_0.23.1
 resnet101,mmclass_0.23.1
 resnet152,mmclass_0.23.1
 mobilenetv3-small,mmclass_0.23.1
+mobilenetv3-small,mmclass_0.25.1
 dogs_dummy,1

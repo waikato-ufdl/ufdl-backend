@@ -53,7 +53,9 @@ pip install ../ufdl-json-messages/
 pip install ufdl-annotation-utils/
 pip install ufdl-core-app/
 pip install ufdl-image-classification-app/
+pip install ufdl-image-segmentation-app/
 pip install ufdl-object-detection-app/
+pip install ufdl-spectrum-classification-app/
 pip install ufdl-speech-app/
 pip install ufdl-api-site/
 ```

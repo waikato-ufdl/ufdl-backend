@@ -1,5 +1,5 @@
 {
-  "name": "mmclass_resnet101_image_class_train",
+  "name": "mmclass_resnet101_image_class_train-0.25.0'",
   "version": 1,
   "description": "Training image classification models using ResNet-101 via MMClassification",
   "scope": "public",

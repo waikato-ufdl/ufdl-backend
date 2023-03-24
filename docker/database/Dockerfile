@@ -3,6 +3,7 @@ ARG DOCKER_REGISTRY=public.aml-repo.cms.waikato.ac.nz:443/
 FROM ${DOCKER_REGISTRY}ubuntu:bionic
 
 # Add default values for the Postgres environment
+ENV UFDL_DATABASE_TYPE=postgresql
 ARG UFDL_POSTGRESQL_DATABASE=ufdl
 ARG UFDL_POSTGRESQL_USER=ufdl
 ARG UFDL_POSTGRESQL_PASSWORD=ufdl

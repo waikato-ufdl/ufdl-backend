@@ -27,6 +27,7 @@ services:
       - database
       - redis
     environment:
+      UFDL_DATABASE_TYPE: postgresql
       UFDL_POSTGRESQL_USER: ${UFDL_POSTGRESQL_USER}
       UFDL_POSTGRESQL_PASSWORD: ${UFDL_POSTGRESQL_PASSWORD}
       UFDL_POSTGRESQL_HOST: database

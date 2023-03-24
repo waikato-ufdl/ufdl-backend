@@ -102,6 +102,7 @@ COPY dev_reset.sh dev_start.sh /ufdl/ufdl-backend/
 RUN ln -s /ufdl/static /ufdl/ufdl-backend/venv.dev/lib/${PYTHON}/site-packages/ufdl/html_client_app/static
 
 # Add default values for the Postgres environment
+ENV UFDL_DATABASE_TYPE=postgresql
 ENV UFDL_POSTGRESQL_USER=ufdl
 ENV UFDL_POSTGRESQL_PASSWORD=ufdl
 ENV UFDL_POSTGRESQL_HOST=localhost

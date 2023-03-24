@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 import datetime
+import logging
 import os
 
 import psycopg2.extensions
@@ -105,44 +106,61 @@ CHANNEL_LAYERS = {
     },
 }
 
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-def gen_database_name() -> str:
+def gen_sqlite3_database_name() -> str:
     """
-    Generates the name of the database.
+    Generates the name of the sqlite database.
     """
     return os.path.join(BASE_DIR, 'db.sqlite3')
 
+_UFDL_DATABASE_TYPE = "UFDL_DATABASE_TYPE"
+_DATABASE_SQLITE3 = "sqlite3"
+_DATABASE_POSTGRESQL = "postgresql"
+_DATABASE_TYPES = [_DATABASE_SQLITE3, _DATABASE_POSTGRESQL]
+_UFDL_POSTGRESQL_USER = "UFDL_POSTGRESQL_USER"
+_UFDL_POSTGRESQL_PASSWORD = "UFDL_POSTGRESQL_PASSWORD"
+_UFDL_POSTGRESQL_HOST = "UFDL_POSTGRESQL_HOST"
+_db_type = os.environ.get(_UFDL_DATABASE_TYPE, _DATABASE_SQLITE3).lower()
+if _db_type not in _DATABASE_TYPES:
+    logging.warning("WARNING: invalid database type '%s' (valid: %s)" % (_db_type, ",".join(_DATABASE_TYPES)))
+    logging.warning("WARNING: Falling back on '%s'" % _DATABASE_SQLITE3)
+    logging.warning("Use environment variable '%s' to specify backend" % _UFDL_DATABASE_TYPE)
+    logging.warning("Additional environment variables for '%s':" % _DATABASE_POSTGRESQL)
+    logging.warning("- user: %s" % _UFDL_POSTGRESQL_USER)
+    logging.warning("- pw: %s" % _UFDL_POSTGRESQL_PASSWORD)
+    logging.warning("- host: %s" % _UFDL_POSTGRESQL_HOST)
+    _db_type = _DATABASE_SQLITE3
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': gen_database_name()
-#    }
-#}
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'OPTIONS': {
-#            'read_default_file': '/Scratch/ufdl-backend/config/my.cnf',
-#        },
-#    }
-#}
-
-DATABASES = {
-    'default': {
-        'NAME': 'ufdl',
-        'ENGINE': 'django.db.backends.postgresql',
-        'USER': os.environ.get('UFDL_POSTGRESQL_USER', 'ufdl'),
-        'PASSWORD': os.environ.get('UFDL_POSTGRESQL_PASSWORD', ''),
-        'HOST': os.environ.get('UFDL_POSTGRESQL_HOST', 'localhost'),
-        'OPTIONS': {
-            'client_encoding': 'UTF8'
-        },
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DATABASES = None
+if _db_type == _DATABASE_SQLITE3:
+    logging.info("DATABASE: Using %s" % _db_type)
+    DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.sqlite3',
+           'NAME': gen_sqlite3_database_name()
+       }
     }
-}
+
+if _db_type == _DATABASE_POSTGRESQL:
+    logging.info("DATABASE: Using %s" % _db_type)
+    DATABASES = {
+        'default': {
+            'NAME': 'ufdl',
+            'ENGINE': 'django.db.backends.postgresql',
+            'USER': os.environ.get(_UFDL_POSTGRESQL_USER, 'ufdl'),
+            'PASSWORD': os.environ.get(_UFDL_POSTGRESQL_PASSWORD, ''),
+            'HOST': os.environ.get(_UFDL_POSTGRESQL_HOST, 'localhost'),
+            'OPTIONS': {
+                'client_encoding': 'UTF8'
+            },
+        }
+    }
+
+if DATABASES is None:
+    raise Exception("No database backend defined!")
 
 AUTH_USER_MODEL = 'ufdl_core.User'
 

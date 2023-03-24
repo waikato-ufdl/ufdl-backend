@@ -3,13 +3,7 @@ User-Friendly Deep Learning (UFDL) - backend system.
 
 ## Requirements
 
-* Python 3.7 or 3.8 (including development headers)
-
-  ```commandline
-  sudo apt-get install python3.7 python3.7-dev libpython3.7-dev
-  ```
-
-  or
+* Python 3.8 (including development headers)
 
   ```commandline
   sudo apt-get install python3.8 python3.8-dev libpython3.8-dev
@@ -46,36 +40,14 @@ User-Friendly Deep Learning (UFDL) - backend system.
   address and port to bind to is provided as argument (e.g., `0.0.0.0:8000`)
 
 
-## MySQL
+## Environment variables
 
-Change `DATABASES` in your `settings.py` to this:  
+The following environment variables can be used to 
 
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': '/some/where/my.cnf',
-        },
-    }
-}
-```
-
-The content of `/some/where/my.cnf` is as follows:
-
-```ini
-[client]
-host = SERVER
-database = DATABASE
-user = USER
-password = PASSWORD
-default-character-set = utf8
-sql_mode='STRICT_TRANS_TABLES'
-```
-
-Make sure to create the database with `utf-8` encoding rather than `latin1`.
-
-For more information, see the [Django documentation](https://docs.djangoproject.com/en/3.1/ref/databases/#mysql-notes).
+* `UFDL_DATABASE_TYPE` - the database to use for the backend (`sqlite3|postgresql`, default: `sqlite3`)
+* `UFDL_POSTGRESQL_HOST` - host for PostgreSQL DB
+* `UFDL_POSTGRESQL_USER` - user for PostgreSQL DB
+* `UFDL_POSTGRESQL_PASSWORD` - password for PostgreSQL DB
 
 
 ## Docker
@@ -88,34 +60,3 @@ See [here](docker/) for more scripts or [documentation](https://ufdl.cms.waikato
 For API documentation see:
 * [repository](https://github.com/waikato-ufdl/ufdl-api)
 * [website](https://waikato-ufdl.github.io/ufdl-api/)
-
-
-## Job templates
-
-* The migrations look for `.json` files in the `migrations/job_templates` directory.
-* Use the [template_to_json.py](ufdl-core-app/src/ufdl/core_app/migrations/job_templates/raw/template_to_json.py)
-  script to convert any text file into dummy JSON output (`body` element) for copy/pasting into an
-  actual template.
-* Compound fields get split on the `|`:
-
-  * framework: `name|version`
-  * input: `name|type|options`
-  * parameter: `name|type|default`
-  
-* Currently supported types for compound fields `input` and `parameter`:
-  
-  * bool
-  * int
-  * float
-  * str
-  * choice (`parameter` only; options to be listed in the `default` field, separated by `,` and default value surrounded by `[]`)
-  * dataset
-  * model (for selecting pretrained models)
-  * joboutput (specifies the job output `type` in the `options` field of parameters)
-
-
-## Job execution
-
-Jobs that were created from job templates get executed using the 
-[Job launcher framework](https://github.com/waikato-ufdl/ufdl-job-launcher) 
-on worker nodes.

@@ -141,6 +141,12 @@ fi
 REPO="ufdl-json-messages"
 check_repository
 
+REPO="ufdl-job-types"
+check_repository
+
+REPO="ufdl-job-contracts"
+check_repository
+
 #############
 # EXECUTION #
 #############

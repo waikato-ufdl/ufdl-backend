@@ -78,4 +78,4 @@ class DownloadableViewSet(RoutedViewSet):
 
         return Response(data=obj.as_file(file_format, **parameters),
                         content_type=BinaryFileRenderer.media_type,
-                        headers={"Content-Disposition": f"attachment; filename={filename}"})
+                        headers={"Content-Disposition": f"attachment; filename=\"{filename}\""})

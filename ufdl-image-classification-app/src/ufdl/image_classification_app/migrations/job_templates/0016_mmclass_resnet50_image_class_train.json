@@ -7,7 +7,7 @@
   "licence": "Apache 2.0",
   "specific": {
     "job_type": "Train<Domain<'Image Classification'>, Framework<'resnet50', 'mmclass_0.25.0'>>",
-    "executor_class": "ufdl.joblauncher.classify.mmclassification.ImageClassificationTrain_MMClass_0_23_1",
+    "executor_class": "ufdl.joblauncher.classify.mmclassification.ImageClassificationTrain_MMClass_0_25_0",
     "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
     "parameters":
     {

@@ -39,7 +39,7 @@
       },
       "checkpoint_interval": {
         "types": ["int"],
-        "default": 1,
+        "default": 20,
         "help": "How often to checkpoint the model."
       },
       "batch_size": {

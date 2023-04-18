@@ -19,7 +19,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Apache 2.0"
   },
   {
@@ -65,7 +65,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "BSD 3-clause"
   },
   {
@@ -111,7 +111,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Apache 2.0"
   },
   {
@@ -156,7 +156,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Apache 2.0"
   },
   {

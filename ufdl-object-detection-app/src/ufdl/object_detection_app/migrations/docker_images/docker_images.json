@@ -20,7 +20,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Apache 2.0"
   },
   {
@@ -43,7 +43,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "MIT"
   },
   {
@@ -66,7 +66,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Turing",
-    "cpu": true,
+    "cpu": false,
     "license": "MIT"
   },
   {
@@ -89,7 +89,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Turing",
-    "cpu": true,
+    "cpu": false,
     "license": "Apache 2.0"
   },
   {
@@ -112,7 +112,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Apache 2.0"
   },
   {
@@ -135,7 +135,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Apache 2.0"
   },
   {
@@ -181,7 +181,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "GPL3"
   }
 ]

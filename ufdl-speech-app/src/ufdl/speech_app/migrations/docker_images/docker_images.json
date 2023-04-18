@@ -19,7 +19,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Mozilla Public License 2.0"
   },
   {
@@ -42,7 +42,7 @@
       "Predict"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "MIT"
   },
   {
@@ -64,7 +64,7 @@
       "Train"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Mozilla Public License 2.0"
   },
   {
@@ -86,7 +86,7 @@
       "Train"
     ],
     "min_hardware_generation": "Pascal",
-    "cpu": true,
+    "cpu": false,
     "license": "Mozilla Public License 2.0"
   },
   {

@@ -1,5 +1,5 @@
 {
-  "name": "mmclass_image_class_predict-0.25.0'",
+  "name": "mmclass_image_class_predict-0.25.0",
   "version": 1,
   "description": "Predicting with image classification models trained using MMClassification",
   "scope": "public",

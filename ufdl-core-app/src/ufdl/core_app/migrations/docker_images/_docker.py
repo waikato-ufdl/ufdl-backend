@@ -1,3 +1,4 @@
+import glob
 import json
 import os
 from decimal import Decimal
@@ -11,9 +12,9 @@ ROOT = os.path.split(__file__)[0]
 
 def iterate_docker_images_json(path: str):
     """
-    Loads the docker images from the JSON file and returns an iterator over the values.
+    Loads the docker images from the individual JSON files and returns an iterator over the values.
 
-    See docker_images_example.json for example.
+    See docker_image_example.json for an example.
 
     :return:    An iterator over the following fields of the known Docker images:
                  - name
@@ -31,29 +32,34 @@ def iterate_docker_images_json(path: str):
                  - cpu
                  - license
     """
-    with open(path, "r") as fp:
-        images = json.load(fp)
+    # Get the files to import
+    filenames = list(glob.iglob(os.path.join(path, "*.json")))
 
-    for image in images:
-        yield (
-            image["name"],
-            image["version"],
-            image["url"],
-            image["registry"]["url"],
-            image["registry"]["user"] if "user" in image["registry"] else "",
-            image["registry"]["password"] if "password" in image["registry"] else "",
-            image["cuda_version"],
-            image["framework"]["name"],
-            image["framework"]["version"],
-            image["domain"],
-            ",".join(image["tasks"]),
-            image["min_hardware_generation"],
-            str(image["cpu"]).lower(),
-            image["license"],
-        )
+    # Sort into alphabetical order
+    filenames.sort()
+
+    for filename in filenames:
+        with open(filename, "r") as fp:
+            image = json.load(fp)
+            yield (
+                image["name"],
+                image["version"],
+                image["url"],
+                image["registry"]["url"],
+                image["registry"]["user"] if "user" in image["registry"] else "",
+                image["registry"]["password"] if "password" in image["registry"] else "",
+                image["cuda_version"],
+                image["framework"]["name"],
+                image["framework"]["version"],
+                image["domain"],
+                ",".join(image["tasks"]),
+                image["min_hardware_generation"],
+                str(image["cpu"]).lower(),
+                image["license"],
+            )
 
 
-def iterate_docker_images(path: str = os.path.join(ROOT, "docker_images.json")) -> Iterator[Tuple[Optional[str], ...]]:
+def iterate_docker_images(path: str = ROOT) -> Iterator[Tuple[Optional[str], ...]]:
     """
     Iterates over the known Docker images.
 

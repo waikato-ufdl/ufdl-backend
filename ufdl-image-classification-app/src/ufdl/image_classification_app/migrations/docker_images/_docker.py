@@ -8,4 +8,4 @@ ROOT = os.path.split(__file__)[0]
 
 
 def iterate_docker_images() -> Iterator[Tuple[Optional[str], ...]]:
-    yield from core_iterate_docker_images(os.path.join(ROOT, "docker_images.json"))
+    yield from core_iterate_docker_images(ROOT)

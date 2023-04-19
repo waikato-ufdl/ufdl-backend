@@ -1,9 +1,11 @@
+from django.db.utils import IntegrityError
+
 from rest_framework.request import Request
 from rest_framework.viewsets import ModelViewSet
 
 from ufdl.json.core.filter import FilterSpec
 
-from ..exceptions import JSONParseFailure
+from ..exceptions import JSONParseFailure, CreateViolatesUnique
 from ..filter import filter_list_request
 from ..logging import get_backend_logger
 from ..permissions import IsAdminUser
@@ -108,3 +110,9 @@ class UFDLBaseViewSet(ModelViewSet):
             f"STATUS={response.status_code}\n"
             f"DATA={response.data if not isinstance(response.data, bytes) else '<binary data>'}"
         )
+
+    def perform_create(self, serializer):
+        try:
+            super().perform_create(serializer)
+        except IntegrityError as e:
+            raise CreateViolatesUnique(str(e)) from e

@@ -12,6 +12,7 @@ from ._BadNodeID import BadNodeID
 from ._BadSource import BadSource
 from ._ChildNotificationOverridesForWorkableJob import ChildNotificationOverridesForWorkableJob
 from ._CouldntParseType import CouldntParseType
+from ._CreateViolatesUnique import CreateViolatesUnique
 from ._IllegalPhaseTransition import IllegalPhaseTransition
 from ._InvalidJobInput import InvalidJobInput
 from ._JobAcquired import JobAcquired

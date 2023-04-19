@@ -1,5 +1,5 @@
 {
-  "name": "mmclass_0.23.1_mobilenetv3_small_image_class_train",
+  "name": "mmclass_0.23.1_mobilenetv3_small_train",
   "version": 1,
   "description": "Training image classification models using MobileNetV3-Small via MMClassification",
   "scope": "public",

@@ -1,1 +1,23 @@
-{"name": "mmdetection", "version": "2020-03-01", "url": "public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01", "registry": {"url": "public.aml-repo.cms.waikato.ac.nz:443", "user": "public", "password": "public"}, "cuda_version": "10.1", "framework": {"name": "mmdetection", "version": "2020-03-01"}, "domain": "od", "tasks": ["Train", "Predict"], "min_hardware_generation": "Turing", "cpu": false, "license": "Apache 2.0"}
+{
+  "name": "mmdetection",
+  "version": "2020-03-01",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/open-mmlab/mmdetection:2020-03-01",
+  "registry": {
+    "url": "public.aml-repo.cms.waikato.ac.nz:443",
+    "user": "public",
+    "password": "public"
+  },
+  "cuda_version": "10.1",
+  "framework": {
+    "name": "mmdetection",
+    "version": "2020-03-01"
+  },
+  "domain": "od",
+  "tasks": [
+    "Train",
+    "Predict"
+  ],
+  "min_hardware_generation": "Turing",
+  "cpu": false,
+  "license": "Apache 2.0"
+}

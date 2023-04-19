@@ -1,1 +1,22 @@
-{"name": "tf_coqui_stt", "version": "1.4.0_cuda11.6", "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.4.0_cuda11.6", "registry": {"url": "public.aml-repo.cms.waikato.ac.nz:443", "user": "public", "password": "public"}, "cuda_version": "11.6", "framework": {"name": "coqui_stt", "version": "1"}, "domain": "sp", "tasks": ["Train"], "min_hardware_generation": "Pascal", "cpu": false, "license": "Mozilla Public License 2.0"}
+{
+  "name": "tf_coqui_stt",
+  "version": "1.4.0_cuda11.6",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.4.0_cuda11.6",
+  "registry": {
+    "url": "public.aml-repo.cms.waikato.ac.nz:443",
+    "user": "public",
+    "password": "public"
+  },
+  "cuda_version": "11.6",
+  "framework": {
+    "name": "coqui_stt",
+    "version": "1"
+  },
+  "domain": "sp",
+  "tasks": [
+    "Train"
+  ],
+  "min_hardware_generation": "Pascal",
+  "cpu": false,
+  "license": "Mozilla Public License 2.0"
+}

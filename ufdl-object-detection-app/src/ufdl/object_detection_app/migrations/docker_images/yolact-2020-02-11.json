@@ -1,1 +1,23 @@
-{"name": "yolact", "version": "2020-02-11", "url": "public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp:2020-02-11", "registry": {"url": "public.aml-repo.cms.waikato.ac.nz:443", "user": "public", "password": "public"}, "cuda_version": "10.0", "framework": {"name": "yolact", "version": "2020-02-11"}, "domain": "od", "tasks": ["Train", "Predict"], "min_hardware_generation": "Pascal", "cpu": false, "license": "MIT"}
+{
+  "name": "yolact",
+  "version": "2020-02-11",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/yolact/yolactpp:2020-02-11",
+  "registry": {
+    "url": "public.aml-repo.cms.waikato.ac.nz:443",
+    "user": "public",
+    "password": "public"
+  },
+  "cuda_version": "10.0",
+  "framework": {
+    "name": "yolact",
+    "version": "2020-02-11"
+  },
+  "domain": "od",
+  "tasks": [
+    "Train",
+    "Predict"
+  ],
+  "min_hardware_generation": "Pascal",
+  "cpu": false,
+  "license": "MIT"
+}

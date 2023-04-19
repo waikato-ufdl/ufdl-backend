@@ -1,1 +1,23 @@
-{"name": "tf_deepspeech", "version": "0.7.4", "url": "public.aml-repo.cms.waikato.ac.nz:443/tensorflow/deepspeech:0.7.4", "registry": {"url": "public.aml-repo.cms.waikato.ac.nz:443", "user": "public", "password": "public"}, "cuda_version": "10.0", "framework": {"name": "tensorflow", "version": "1.15"}, "domain": "sp", "tasks": ["Train", "Predict"], "min_hardware_generation": "Pascal", "cpu": false, "license": "Mozilla Public License 2.0"}
+{
+  "name": "tf_deepspeech",
+  "version": "0.7.4",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/tensorflow/deepspeech:0.7.4",
+  "registry": {
+    "url": "public.aml-repo.cms.waikato.ac.nz:443",
+    "user": "public",
+    "password": "public"
+  },
+  "cuda_version": "10.0",
+  "framework": {
+    "name": "tensorflow",
+    "version": "1.15"
+  },
+  "domain": "sp",
+  "tasks": [
+    "Train",
+    "Predict"
+  ],
+  "min_hardware_generation": "Pascal",
+  "cpu": false,
+  "license": "Mozilla Public License 2.0"
+}

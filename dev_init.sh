@@ -174,10 +174,6 @@ echo "Installing dependencies..."
 ./$VENV/bin/pip install --upgrade setuptools==59.4.0
 ./$VENV/bin/pip install Cython
 ./$VENV/bin/pip install numpy
-if [ "$MYSQLCONFIG_AVAILABLE" = "true" ]
-then
-  ./$VENV/bin/pip install mysqlclient
-fi
 ./$VENV/bin/pip install "opencv-python<4.2.0"
 # check for nvidia-smi and install GPU version
 if [ -f "/usr/bin/nvidia-smi" ]

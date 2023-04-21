@@ -14,7 +14,7 @@ def iterate_docker_images_json(path: str):
     """
     Loads the docker images from the individual JSON files and returns an iterator over the values.
 
-    See docker_image_example.json for an example.
+    See docker_image.json.example for an example.
 
     :return:    An iterator over the following fields of the known Docker images:
                  - name
@@ -39,6 +39,7 @@ def iterate_docker_images_json(path: str):
     filenames.sort()
 
     for filename in filenames:
+        print(filename)
         with open(filename, "r") as fp:
             image = json.load(fp)
             yield (

@@ -111,21 +111,6 @@ REQUIRED=true
 check_executable
 PYTHON38_AVAILABLE=$AVAILABLE
 
-EXEC="mysql_config"
-ADDITIONAL=""
-REQUIRED=false
-check_executable
-MYSQLCONFIG_AVAILABLE=$AVAILABLE
-
-if [ "MYSQLCONFIG_AVAILABLE" = "false" ]
-then
-  echo
-  echo "mysql_config is not available, i.e., you won't be able to use MySQL as database backend."
-  echo "Install on Debian systems with:"
-  echo "  sudo apt-get install libmysqlclient-dev"
-  echo
-fi
-
 if [ "$PYTHON38_AVAILABLE" = "true" ]
 then
   PYTHON=python3.8
@@ -164,6 +149,13 @@ then
   REPO="ufdl-json-messages"
   update_repository
 
+  REPO="ufdl-job-types"
+  update_repository
+
+  REPO="ufdl-job-contracts"
+  update_repository
+
+  echo "Updating this repo..."
   git pull
 fi
 

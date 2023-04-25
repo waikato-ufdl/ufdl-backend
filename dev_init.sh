@@ -166,6 +166,13 @@ then
   rm -rf ./$VENV
 fi
 
+# deleting old "build" directories
+echo "Removing old 'build' directories..."
+find . -prune -type d -name build -exec rm -R {} \;
+find ../ufdl-json-messages -prune -type d -name build -exec rm -R {} \;
+find ../ufdl-job-types -prune -type d -name build -exec rm -R {} \;
+find ../ufdl-job-contracts -prune -type d -name build -exec rm -R {} \;
+
 echo "Creating new virtual environment $VENV..."
 virtualenv -p /usr/bin/$PYTHON ./$VENV
 

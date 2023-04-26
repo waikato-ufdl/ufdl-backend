@@ -21,6 +21,7 @@ class DockerImageSerialiser(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation["cuda_version"] = CUDAVersionSerialiser().to_representation(instance.cuda_version)
         representation["framework"] = FrameworkSerialiser().to_representation(instance.framework)
+        representation["domain"] = instance.domain.description
         if instance.min_hardware_generation is not None:
             representation["min_hardware_generation"] = HardwareSerialiser().to_representation(instance.min_hardware_generation)
         return representation

@@ -18,6 +18,7 @@ class ModelSerialiser(SoftDeleteModelSerialiser):
     def to_representation(self, instance: Model):
         representation = super().to_representation(instance)
         representation["framework"] = FrameworkSerialiser().to_representation(instance.framework)
+        representation["domain"] = instance.domain.description
         return representation
 
     class Meta:

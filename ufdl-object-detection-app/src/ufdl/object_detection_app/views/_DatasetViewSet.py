@@ -23,7 +23,7 @@ class DatasetViewSet(AnnotationsViewSet, CoreDatasetViewSet):
         delete_label=WriteOrNodeExecutePermission,
         get_prefixes=IsMember,
         add_prefixes=WriteOrNodeExecutePermission,
-        delete_prefixes=WriteOrNodeExecutePermission,
+        delete_prefix=WriteOrNodeExecutePermission,
         get_file_type=IsMember,
         set_file_type=WriteOrNodeExecutePermission,
         get_file_types=IsMember,

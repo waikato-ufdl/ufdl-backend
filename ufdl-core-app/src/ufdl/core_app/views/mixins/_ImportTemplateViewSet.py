@@ -60,9 +60,9 @@ class ImportTemplateViewSet(RoutedViewSet):
             instance = add_job_template(
                 spec,
                 Parameter,
-                Framework,
                 DataDomain,
                 JobType,
+                JobContract,
                 Licence,
                 JobTemplate,
                 WorkableTemplate,

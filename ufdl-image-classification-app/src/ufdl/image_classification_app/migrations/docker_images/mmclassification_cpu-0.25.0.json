@@ -1,1 +1,22 @@
-{"name": "mmclassification_cpu", "version": "0.25.0", "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/mmclassification:0.25.0_cpu", "registry": {"url": "public.aml-repo.cms.waikato.ac.nz:443", "user": "public", "password": "public"}, "cuda_version": "11.1", "framework": {"name": "mmclass", "version": "0.25.0"}, "domain": "ic", "tasks": ["Predict"], "min_hardware_generation": "", "cpu": true, "license": "Apache 2.0"}
+{
+  "name": "mmclassification_cpu",
+  "version": "0.25.0",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/mmclassification:0.25.0_cpu",
+  "registry": {
+    "url": "public.aml-repo.cms.waikato.ac.nz:443",
+    "user": "public",
+    "password": "public"
+  },
+  "cuda_version": "11.1",
+  "framework": {
+    "name": "mmclass",
+    "version": "0.25.0"
+  },
+  "domain": "ic",
+  "tasks": [
+    "Predict"
+  ],
+  "min_hardware_generation": "",
+  "cpu": true,
+  "license": "Apache 2.0"
+}

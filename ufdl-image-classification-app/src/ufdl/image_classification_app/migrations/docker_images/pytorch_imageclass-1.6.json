@@ -1,1 +1,23 @@
-{"name": "pytorch_imageclass", "version": "1.6", "url": "public.aml-repo.cms.waikato.ac.nz:443/pytorch/image_classification:1.6", "registry": {"url": "public.aml-repo.cms.waikato.ac.nz:443", "user": "public", "password": "public"}, "cuda_version": "10.2", "framework": {"name": "pytorch", "version": "1.6"}, "domain": "ic", "tasks": ["Train", "Predict"], "min_hardware_generation": "Pascal", "cpu": false, "license": "BSD 3-clause"}
+{
+  "name": "pytorch_imageclass",
+  "version": "1.6",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/pytorch/image_classification:1.6",
+  "registry": {
+    "url": "public.aml-repo.cms.waikato.ac.nz:443",
+    "user": "public",
+    "password": "public"
+  },
+  "cuda_version": "10.2",
+  "framework": {
+    "name": "pytorch",
+    "version": "1.6"
+  },
+  "domain": "ic",
+  "tasks": [
+    "Train",
+    "Predict"
+  ],
+  "min_hardware_generation": "Pascal",
+  "cpu": false,
+  "license": "BSD 3-clause"
+}

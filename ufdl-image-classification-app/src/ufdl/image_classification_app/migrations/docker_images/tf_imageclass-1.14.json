@@ -1,1 +1,23 @@
-{"name": "tf_imageclass", "version": "1.14", "url": "public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14", "registry": {"url": "public.aml-repo.cms.waikato.ac.nz:443", "user": "public", "password": "public"}, "cuda_version": "10.0", "framework": {"name": "tensorflow", "version": "1.14"}, "domain": "ic", "tasks": ["Train", "Predict"], "min_hardware_generation": "Pascal", "cpu": false, "license": "Apache 2.0"}
+{
+  "name": "tf_imageclass",
+  "version": "1.14",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/tensorflow/image_classification:1.14",
+  "registry": {
+    "url": "public.aml-repo.cms.waikato.ac.nz:443",
+    "user": "public",
+    "password": "public"
+  },
+  "cuda_version": "10.0",
+  "framework": {
+    "name": "tensorflow",
+    "version": "1.14"
+  },
+  "domain": "ic",
+  "tasks": [
+    "Train",
+    "Predict"
+  ],
+  "min_hardware_generation": "Pascal",
+  "cpu": false,
+  "license": "Apache 2.0"
+}

@@ -10,7 +10,7 @@
   "cuda_version": "11.0",
   "framework": {
     "name": "coqui_stt",
-    "version": "1"
+    "version": "1.15.2"
   },
   "domain": "sp",
   "tasks": [

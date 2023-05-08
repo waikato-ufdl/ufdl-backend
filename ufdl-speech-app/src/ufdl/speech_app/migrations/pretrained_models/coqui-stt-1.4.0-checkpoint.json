@@ -2,7 +2,7 @@
   "name": "coqui-stt-1.4.0-checkpoint",
   "description": "TODO",
   "url": "https://github.com/coqui-ai/STT/releases/download/v1.3.0/coqui-stt-1.4.0-checkpoint.tar.gz",
-  "framework": "coqui_stt|1",
+  "framework": "coqui_stt|1.4.0",
   "domain": "sp",
   "source": "https://github.com/coqui-ai/STT/releases/download/v1.3.0/coqui-stt-1.4.0-checkpoint.tar.gz",
   "metadata": {},

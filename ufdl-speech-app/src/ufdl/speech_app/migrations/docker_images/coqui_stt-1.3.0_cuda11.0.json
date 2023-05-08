@@ -1,21 +1,20 @@
 {
-  "name": "tf_deepspeech",
-  "version": "0.7.4",
-  "url": "public.aml-repo.cms.waikato.ac.nz:443/tensorflow/deepspeech:0.7.4",
+  "name": "tf_coqui_stt",
+  "version": "1.3.0_cuda11.0",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.3.0_cuda11.0",
   "registry": {
     "url": "public.aml-repo.cms.waikato.ac.nz:443",
     "user": "public",
     "password": "public"
   },
-  "cuda_version": "10.0",
+  "cuda_version": "11.0",
   "framework": {
-    "name": "tensorflow",
-    "version": "1.15"
+    "name": "coqui_stt",
+    "version": "1.3.0"
   },
   "domain": "sp",
   "tasks": [
-    "Train",
-    "Predict"
+    "Train"
   ],
   "min_hardware_generation": "Pascal",
   "cpu": false,

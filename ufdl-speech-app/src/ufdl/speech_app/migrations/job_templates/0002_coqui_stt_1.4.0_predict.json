@@ -1,0 +1,56 @@
+{
+  "name": "coqui_stt_speech-predict",
+  "version": 1,
+  "description": "TODO",
+  "scope": "public",
+  "domain": "sp",
+  "licence": "Apache 2.0",
+  "specific": {
+    "job_type": "Predict<Domain<'Speech'>, Framework<'coqui_stt', '1.4.0'>>",
+    "executor_class": "ufdl.joblauncher.speech.coqui_stt.SpeechPredict_Coqui_STT_1_4_0",
+    "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
+    "parameters": {
+      "dataset_options": {
+        "types": ["Array<str>", "str"],
+        "default": [
+          "to-coqui-stt-sp",
+          "-o", "samples.csv"
+        ],
+        "help": "Options to the dataset input"
+      },
+      "docker_image": {
+        "types": [
+          "Name<DockerImage<Domain<'Speech'>, Framework<'coqui_stt', '1.4.0'>>>",
+          "PK<DockerImage<Domain<'Speech'>, Framework<'coqui_stt', '1.4.0'>>>",
+          "DockerImage<Domain<'Speech'>, Framework<'coqui_stt', '1.4.0'>>"
+        ],
+        "help": "The docker image to use"
+      },
+      "clear_dataset": {
+        "types": ["bool"],
+        "default": false,
+        "help": "If enabled, any meta-data or predictions get removed from the dataset beforehand."
+      },
+      "store_predictions": {
+        "types": ["bool"],
+        "default": false,
+        "help": "If enabled, the predictions get stored back in the dataset that they were generated for."
+      },
+      "confidence_scores": {
+        "types": ["Array<str>"],
+        "default": ["ufdl.joblauncher.objdet.confidence.Common"],
+        "help": "The semicolon-separated list of classes for calculating confidence scores, which get stored back in the meta-data of the image."
+      },
+      "body": {
+        "types": ["Array<str>", "str"],
+        "default": [
+          "stt_transcribe_poll",
+          "--model=/output/model.tflite",
+          "--prediction_in=/prediction/in",
+          "--prediction_out=/prediction/out"
+        ],
+        "help": "The body of the function"
+      }
+    }
+  }
+}

@@ -1,13 +1,13 @@
 {
-  "name": "mmclass_0.23.1_resnet18_train",
+  "name": "mmclassification_0.25.0_resnet50_train",
   "version": 1,
-  "description": "Training image classification models using ResNet-18 via MMClassification",
+  "description": "Training image classification models using ResNet-50 via MMClassification",
   "scope": "public",
   "domain": "ic",
   "licence": "Apache 2.0",
   "specific": {
-    "job_type": "Train<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>",
-    "executor_class": "ufdl.joblauncher.classify.mmclassification.ImageClassificationTrain_MMClass_0_23_1",
+    "job_type": "Train<Domain<'Image Classification'>, Framework<'mmclassification', '0.25.0'>>",
+    "executor_class": "ufdl.joblauncher.classify.mmclassification.ImageClassificationTrain_MMClass_0_25_0",
     "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
     "parameters":
     {
@@ -26,9 +26,9 @@
       },
       "docker_image": {
         "types": [
-          "Name<DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>>",
-          "DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>",
-          "PK<DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>>"
+          "Name<DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.25.0'>>>",
+          "DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.25.0'>>",
+          "PK<DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.25.0'>>>"
         ],
         "help": "The docker image to use"
       },
@@ -47,16 +47,6 @@
         "default": 16,
         "help": "The number of images to in a batch (per GPU)."
       },
-      "pretrained_model": {
-        "types": [
-          "Nothing",
-          "Name<PretrainedModel<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>>",
-          "PK<PretrainedModel<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>>",
-          "PretrainedModel<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>"
-        ],
-        "default": null,
-        "help": "The pretrained model to fine-tune."
-      },
       "body": {
         "types": ["Array<str>", "str"],
         "default": [
@@ -64,17 +54,15 @@
           "    type='ImageClassifier',",
           "    backbone=dict(",
           "        type='ResNet',",
-          "        depth=18,",
+          "        depth=50,",
           "        num_stages=4,",
           "        out_indices=(3, ),",
-          "        style='pytorch',",
-          "        ${pretrained_model_config}",
-          "    ),",
+          "        style='pytorch'),",
           "    neck=dict(type='GlobalAveragePooling'),",
           "    head=dict(",
           "        type='LinearClsHead',",
           "        num_classes=${num-classes},",
-          "        in_channels=512,",
+          "        in_channels=2048,",
           "        loss=dict(type='CrossEntropyLoss', loss_weight=1.0),",
           "        topk=(1, 5)))",
           "dataset_type = 'ImageNet'",

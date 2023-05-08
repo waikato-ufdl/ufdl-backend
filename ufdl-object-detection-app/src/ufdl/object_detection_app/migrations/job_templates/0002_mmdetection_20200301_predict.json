@@ -1,25 +1,25 @@
 {
-  "name": "mmdet_2020-03-01_cuda10-predict",
+  "name": "mmdetection_2020-03-01-predict",
   "version": 1,
-  "description": "Making predictions using object detection models built with MMDetection 2020-03-01 (for CUDA10)",
+  "description": "Making predictions using object detection models built with MMDetection 2020-03-01",
   "scope": "public",
   "domain": "od",
   "licence": "Apache 2.0",
   "specific": {
-    "job_type": "Predict<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01_cuda10'>>",
+    "job_type": "Predict<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>",
     "executor_class": "ufdl.joblauncher.objdet.mmdetection.ObjectDetectionPredict_MMDet_20200301",
     "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
     "parameters": {
       "dataset_options": {
         "types": ["Array<str>", "str"],
         "default": ["to-images-od"],
-        "help": "Options to the dataset input"
+        "help": "The options to the dataset input"
       },
       "docker_image": {
         "types": [
-          "DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01_cuda10'>>",
-          "PK<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01_cuda10'>>>",
-          "Name<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01_cuda10'>>>"
+          "DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>",
+          "PK<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>>",
+          "Name<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>>"
         ],
         "help": "The docker image to use"
       },

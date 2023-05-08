@@ -1,12 +1,12 @@
 {
-  "name": "mmdet_2020-03-01_mask_rcnn_r50_fpn_1x-train",
+  "name": "mmdetection_2020-03-01_cuda10_mask_rcnn_r50_fpn_1x-train",
   "version": 1,
   "description": "Building Mask R-CNN ResNet50 FPN models using MMDetection 2020-03-01",
   "scope": "public",
   "domain": "od",
   "licence": "Apache 2.0",
   "specific": {
-    "job_type": "Train<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>",
+    "job_type": "Train<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01_cuda10'>>",
     "executor_class": "ufdl.joblauncher.objdet.mmdetection.ObjectDetectionTrain_MMDet_20200301",
     "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
     "parameters": {
@@ -24,9 +24,9 @@
       },
       "docker_image": {
         "types": [
-          "DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>",
-          "PK<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>>",
-          "Name<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01'>>>"
+          "DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01_cuda10'>>",
+          "PK<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01_cuda10'>>>",
+          "Name<DockerImage<Domain<'Object Detection'>, Framework<'mmdetection', '2020-03-01_cuda10'>>>"
         ],
         "help": "The docker image to use"
       },

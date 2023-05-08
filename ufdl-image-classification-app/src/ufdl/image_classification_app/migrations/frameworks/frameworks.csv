@@ -1,6 +1,5 @@
 name,version
 tensorflow,1.14
-pytorch,1.6
 mmclassification,0.23.1
 mmclassification,0.25.0
 dogs_dummy,1

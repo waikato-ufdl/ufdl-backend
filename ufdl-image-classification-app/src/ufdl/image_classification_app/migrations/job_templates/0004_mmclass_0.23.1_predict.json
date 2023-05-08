@@ -18,9 +18,9 @@
       },
       "docker_image": {
         "types": [
-          "Name<DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.23.1'>>>",
-          "DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.23.1'>>",
-          "PK<DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.23.1'>>>"
+          "Name<DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>>",
+          "DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>",
+          "PK<DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.23.1'>>>"
         ],
         "help": "The docker image to use"
       },

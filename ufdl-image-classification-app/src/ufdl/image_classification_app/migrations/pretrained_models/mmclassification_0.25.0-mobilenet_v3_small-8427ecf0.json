@@ -2,7 +2,7 @@
   "name": "mobilenet_v3_small-8427ecf0",
   "description": "TODO",
   "url": "https://download.openmmlab.com/mmclassification/v0/mobilenet_v3/convert/mobilenet_v3_small-8427ecf0.pth",
-  "framework": "mobilenetv3-small|mmclass_0.25.0",
+  "framework": "mmclassification|0.25.0",
   "domain": "ic",
   "source": "https://download.openmmlab.com/mmclassification/v0/mobilenet_v3/convert/mobilenet_v3_small-8427ecf0.pth",
   "metadata": {},

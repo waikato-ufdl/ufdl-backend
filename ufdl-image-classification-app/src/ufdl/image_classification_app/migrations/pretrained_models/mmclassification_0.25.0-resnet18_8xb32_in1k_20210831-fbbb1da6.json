@@ -2,7 +2,7 @@
   "name": "resnet18_8xb32_in1k_20210831-fbbb1da6",
   "description": "TODO",
   "url": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet18_8xb32_in1k_20210831-fbbb1da6.pth",
-  "framework": "resnet18|mmclass_0.25.0",
+  "framework": "mmclassification|0.25.0",
   "domain": "ic",
   "source": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet18_8xb32_in1k_20210831-fbbb1da6.pth",
   "metadata": {},

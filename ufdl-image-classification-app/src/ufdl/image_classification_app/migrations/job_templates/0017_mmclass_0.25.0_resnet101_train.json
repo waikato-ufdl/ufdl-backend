@@ -6,7 +6,7 @@
   "domain": "ic",
   "licence": "Apache 2.0",
   "specific": {
-    "job_type": "Train<Domain<'Image Classification'>, Framework<'resnet101', 'mmclass_0.25.0'>>",
+    "job_type": "Train<Domain<'Image Classification'>, Framework<'mmclassification', '0.25.0'>>",
     "executor_class": "ufdl.joblauncher.classify.mmclassification.ImageClassificationTrain_MMClass_0_25_0",
     "required_packages": "git+https://github.com/waikato-ufdl/ufdl-job-launcher-plugins.git",
     "parameters":
@@ -26,9 +26,9 @@
       },
       "docker_image": {
         "types": [
-          "Name<DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.25.0'>>>",
-          "DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.25.0'>>",
-          "PK<DockerImage<Domain<'Image Classification'>, Framework<'mmclass', '0.25.0'>>>"
+          "Name<DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.25.0'>>>",
+          "DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.25.0'>>",
+          "PK<DockerImage<Domain<'Image Classification'>, Framework<'mmclassification', '0.25.0'>>>"
         ],
         "help": "The docker image to use"
       },

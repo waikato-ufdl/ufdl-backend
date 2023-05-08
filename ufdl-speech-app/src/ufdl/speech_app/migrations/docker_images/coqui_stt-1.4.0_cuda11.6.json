@@ -1,5 +1,5 @@
 {
-  "name": "tf_coqui_stt",
+  "name": "coqui_stt",
   "version": "1.4.0_cuda11.6",
   "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/tf_coqui_stt:1.4.0_cuda11.6",
   "registry": {

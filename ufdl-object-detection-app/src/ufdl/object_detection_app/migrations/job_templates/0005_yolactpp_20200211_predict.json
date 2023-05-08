@@ -12,7 +12,7 @@
     "parameters": {
       "dataset_options": {
         "types": ["Array<str>", "str"],
-        "default": ["to-coco-od"],
+        "default": ["to-images-od"],
         "help": "Options to the dataset input"
       },
       "docker_image": {

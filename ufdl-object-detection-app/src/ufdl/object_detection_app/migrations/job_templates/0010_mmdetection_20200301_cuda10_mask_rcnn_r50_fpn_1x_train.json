@@ -32,12 +32,12 @@
       },
       "epochs": {
         "types": ["int"],
-        "default": 200,
+        "default": 20,
         "help": "The number of training epochs to perform."
       },
       "checkpoint_interval": {
         "types": ["int"],
-        "default": 50,
+        "default": 20,
         "help": "The number of training epochs after which to save a checkpoint (at most the number of epochs)."
       },
       "image_width": {

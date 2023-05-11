@@ -1,0 +1,10 @@
+{
+  "name": "yolov7_v0.1",
+  "description": "TODO",
+  "url": "https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7_training.pt",
+  "framework": "yolo|v7",
+  "domain": "od",
+  "source": "https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7_training.pt",
+  "metadata": {},
+  "licence": "GPL3"
+}

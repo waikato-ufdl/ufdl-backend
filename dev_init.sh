@@ -168,10 +168,10 @@ fi
 
 # deleting old "build" directories
 echo "Removing old 'build' directories..."
-find . -prune -type d -name build -exec rm -R {} \;
-find ../ufdl-json-messages -prune -type d -name build -exec rm -R {} \;
-find ../ufdl-job-types -prune -type d -name build -exec rm -R {} \;
-find ../ufdl-job-contracts -prune -type d -name build -exec rm -R {} \;
+find . -type d -name build -exec rm -R {} \; 2>/dev/null
+find ../ufdl-json-messages -type d -name build -exec rm -R {} \; 2>/dev/null
+find ../ufdl-job-types -type d -name build -exec rm -R {} \; 2>/dev/null
+find ../ufdl-job-contracts -type d -name build -exec rm -R {} \; 2>/dev/null
 
 echo "Creating new virtual environment $VENV..."
 virtualenv -p /usr/bin/$PYTHON ./$VENV

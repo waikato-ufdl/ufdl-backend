@@ -7,7 +7,7 @@
     "user": "public",
     "password": "public"
   },
-  "cuda_version": "11.1",
+  "cuda_version": "0.0",
   "framework": {
     "name": "yolo",
     "version": "v5"

@@ -7,7 +7,7 @@
     "user": "public",
     "password": "public"
   },
-  "cuda_version": "10.2",
+  "cuda_version": "0.0",
   "framework": {
     "name": "weka",
     "version": "classifier"

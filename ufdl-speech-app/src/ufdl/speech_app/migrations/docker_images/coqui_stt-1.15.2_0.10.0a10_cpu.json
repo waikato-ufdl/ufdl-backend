@@ -7,7 +7,7 @@
     "user": "public",
     "password": "public"
   },
-  "cuda_version": "11.0",
+  "cuda_version": "0.0",
   "framework": {
     "name": "coqui_stt",
     "version": "1.15.2"

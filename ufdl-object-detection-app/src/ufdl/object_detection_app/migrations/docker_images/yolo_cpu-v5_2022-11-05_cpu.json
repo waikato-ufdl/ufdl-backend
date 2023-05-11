@@ -1,0 +1,23 @@
+{
+  "name": "yolo_cpu",
+  "version": "v5_2022-11-05_cpu",
+  "url": "public.aml-repo.cms.waikato.ac.nz:443/waikatodatamining/pytorch-yolov5:2022-11-05_cpu",
+  "registry": {
+    "url": "public.aml-repo.cms.waikato.ac.nz:443",
+    "user": "public",
+    "password": "public"
+  },
+  "cuda_version": "11.1",
+  "framework": {
+    "name": "yolo",
+    "version": "v5"
+  },
+  "domain": "od",
+  "tasks": [
+    "Train",
+    "Predict"
+  ],
+  "min_hardware_generation": "",
+  "cpu": true,
+  "license": "GPL3"
+}

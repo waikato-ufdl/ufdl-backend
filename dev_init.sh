@@ -107,13 +107,13 @@ check_executable
 
 EXEC="python3.8"
 ADDITIONAL="python3.8-dev"
-REQUIRED=true
+REQUIRED=false
 check_executable
 PYTHON38_AVAILABLE=$AVAILABLE
 
 EXEC="python3.10"
 ADDITIONAL="python3.10-dev"
-REQUIRED=true
+REQUIRED=false
 check_executable
 PYTHON310_AVAILABLE=$AVAILABLE
 

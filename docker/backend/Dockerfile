@@ -1,11 +1,11 @@
-# Ubuntu 18.04 with Python 3.7
+# Ubuntu 22.04 with Python 3.10
 ARG DOCKER_REGISTRY=public.aml-repo.cms.waikato.ac.nz:443/
 
 # ================== #
 # Setup the build OS #
 # ================== #
-FROM ${DOCKER_REGISTRY}ubuntu:bionic AS build_os
-ARG PYTHON=python3.8
+FROM ${DOCKER_REGISTRY}ubuntu:jammy AS build_os
+ARG PYTHON=python3.10
 RUN \
     # Make sure that we aren't prompted for timezone information
     export DEBIAN_FRONTEND=noninteractive && \
@@ -73,8 +73,8 @@ RUN \
 # ======================== #
 # Final Image Construction #
 # ======================== #
-FROM ${DOCKER_REGISTRY}ubuntu:bionic
-ARG PYTHON=python3.8
+FROM ${DOCKER_REGISTRY}ubuntu:jammy
+ARG PYTHON=python3.10
 
 # Setup the base run-time OS
 RUN \

@@ -26,7 +26,7 @@ setup(
     version="0.0.1",
     author='Corey Sterling',
     author_email='coreytsterling@gmail.com',
-    python_requires=">=3.8.*",
+    python_requires=">=3.8.0",
     install_requires=[
         "wai.json==0.0.5",
         "Django>=4.1,<5",
